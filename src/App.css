@@ -1,0 +1,94 @@
+.nav_gaction li {
+    float: left;
+    list-style: none;
+    margin-left: 9px;
+    background-color: #004c7f;
+    width: 40px;
+    height: 40px;
+    text-align: center;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all ease .5s;
+}
+.nav_gaction li:hover{
+    transform: translateY(-10px);
+    background-color: #0084cc;
+}
+.nav_gaction li a{
+    color:#fff;
+    text-decoration: none;
+    font-size: 24px;
+}
+.nav_gaction li i{
+    font-size: 18px;
+}
+ul.cus-sign{}
+ul.cus-sign li{
+}
+
+ul.cus-sign li a{
+}
+header {
+    background-color: #46b0f0;
+    padding: 7px 0 7px 0;
+}
+.clear{clear: both;}
+.nav_gaction{    text-align: right;}
+.nav_gaction ul{
+    text-align: right;
+    display: inline-block;
+}
+.logo_header img {
+    width: 60%;
+}
+.navbar-brand{
+    height: auto;
+}
+
+
+.icon-green {
+    color: green;
+}
+  .icon-red {
+    color: red;
+}
+  
+  .finish{
+      /* margin: auto;
+      width: 200px;
+      height: 200px;
+      text-align: center;
+      background: chocolate;
+      font-size: 2rem;
+      display: flex;
+      justify-content: center;
+      align-items: center; */
+
+      
+      background-size: cover;
+      padding: 11% 0;
+      background-position: center;
+      height: 100vh;
+}
+  .finish-btn{
+
+      font-size: 2rem;
+      padding: 5px;
+}
+ .main-input{
+    height: 40px;
+    font-size: 3rem;
+    font-weight: bold;
+    width: 88%;
+    border-radius: 25px;
+    border: 1px solid #ffeb3c;
+    padding: 0 11px;
+    text-align: center;
+    background-color: #ffeb3c;
+}
+ .round_text h1 {
+    color: #fff;
+    font-weight: 700;
+}
+
+

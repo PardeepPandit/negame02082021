@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+       <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    
+</head>
+<body>
+    <div class="man">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="logo lp_top text-center">
+                        <img src="img/logo.png" alt="logo">
+                        <h3 class=" text-white">
+<!--
+                           <div class="pos"> <img src="img/usericon.png" alt="">
+                           <i class="fa fa-camera cm" aria-hidden="true"></i>
+                           </div>
+-->
+                       
+                       <div class="image-upload pos">
+  <label for="file-input">
+    <img src="img/usericon.png"/>
+  </label>
+
+  <input id="file-input" type="file" />
+  <i class="fa fa-camera cm" aria-hidden="true"></i>
+</div>
+                       
+                        </h3>
+                    </div>
+                </div>
+            <!-- top-input-->
+                <div class="col-md-12">
+                    <div class="input-form w70">
+                        <input type="text" class="form-control" placeholder="Full Name ">
+                        
+                        <input type="text" class="form-control" placeholder="Email Address">
+                        
+                        <input type="text" class="form-control" placeholder="Mobile(Optional)">
+                        
+                      
+                        
+              <input id="password-field" type="password" placeholder="Password " class="form-control" name="password" value="">
+              <span toggle="#password-field" class="fa fa-eye field-icon toggle-password"></span>
+                    
+                    <input id="password-field" type="password" placeholder="Conform Password "  class="form-control" name="password" value="">
+              <span toggle="#password-field" class="fa fa-eye field-icon toggle-password"></span>
+                    
+                    
+                    
+                
+                    
+               
+                    </div>
+                </div>
+                
+                       <div class="col-md-12">
+                    <div class="input-form_l res w70">
+                       <a href="dashboard.html"> <input type="text" class="form-control text-center border-0 f text-white " value="Sign Up"></a>
+                       
+                    </div>
+                   
+                    
+                </div>
+            
+                            <div class="col-md-12">
+                    <div class="input-form_l w70 text-center">
+                     <p><a class="text-white" href="login.html"><b>New user? ckick here for Login</b></a></p>
+                       
+                    </div>
+                    
+                   
+                
+                
+                
+                
+            </div>
+        </div>
+    </div>
+    </div>
+    
+    
+       <script>
+    $(".toggle-password").click(function() {
+
+  $(this).toggleClass("fa-eye fa-eye-slash");
+  var input = $($(this).attr("toggle"));
+  if (input.attr("type") == "password") {
+    input.attr("type", "text");
+  } else {
+    input.attr("type", "password");
+  }
+});
+    </script>
+</body>
+</html>

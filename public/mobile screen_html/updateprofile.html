@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+       <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    
+</head>
+<body>
+    <div class="man">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="logo lp_top text-center">
+                        <img src="img/logo.png" alt="logo">
+                        <h3 class=" text-white ">
+                        
+                        <p class="up_pro">Update Profile</p>
+                       <div class="image-upload pos">
+                         
+                          <label for="file-input">
+                            <img src="img/usericon.png"/>
+                          </label>
+
+                          <input id="file-input" type="file" />
+                          <i class="fa fa-camera cm" aria-hidden="true"></i>
+                        </div>
+                       
+                        </h3>
+                    </div>
+                </div>
+            <!-- top-input-->
+                <div class="col-md-12">
+                    <div class="input-form w70">
+                        <input type="text" class="form-control" placeholder="Full Name ">
+                          <input type="text" class="form-control" placeholder="Mobile(Optional)">
+                        <input type="text" class="form-control" placeholder="Bio">
+                        <input type="date" class="form-control"  >
+                      <select  class="select">
+                          <option>1</option>
+                          <option>1</option>
+                          <option>1</option>
+                          <option>1</option>
+                      </select>
+                        
+                      
+                        
+                      
+                        
+             
+                   </div>
+                </div>
+                
+                       <div class="col-md-12">
+                    <div class="input-form_l res w70">
+                        <input type="text" class="form-control text-center border-0 f text-white " value="Update Profile">
+                       
+                    </div>
+                   
+                    
+                </div>
+            
+        </div>
+    </div>
+    
+    
+    <script src="js/bootstrap.min.js"></script>
+       <script>
+    $(".toggle-password").click(function() {
+
+  $(this).toggleClass("fa-eye fa-eye-slash");
+  var input = $($(this).attr("toggle"));
+  if (input.attr("type") == "password") {
+    input.attr("type", "text");
+  } else {
+    input.attr("type", "password");
+  }
+});
+    </script>
+</body>
+</html>

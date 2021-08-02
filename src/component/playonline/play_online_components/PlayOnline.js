@@ -50,7 +50,8 @@ const PlayOnline = () => {
     setShowKeyboard,
     reset_state,
     setApiHit,
-    getwordapihit
+    getwordapihit,
+    clearAllInterval
   } = playOnlineContext;
 
   let gamestatus=''
@@ -148,9 +149,10 @@ console.log("PLAYONLIHNE =",round_online,",",roundList1.r1_loser,",",roundList2.
   }, [showChallenge]);
 
   useEffect(() => {
-    if (user1.start === "0") {
-      console.log("calling save word API from playonline useEffect=", onlineUser);
-      setApiHit(60)
+    if (user1.start === "0" || reset_state===true) {
+      clearAllInterval()
+      console.log("calling save word API from playonline useEffect");
+      
        saveWord({
         match_id:onlineUser.user1.match_id,
         gamestatus:'0',
@@ -160,15 +162,16 @@ console.log("PLAYONLIHNE =",round_online,",",roundList1.r1_loser,",",roundList2.
     })  
       //getWord(user1.match_id, user.data.id, 20);
     }
-  }, [onlineUser])
+  }, [onlineUser,reset_state])
 
 
 
-  useEffect(()=>{
+ /* useEffect(()=>{
 
 
-    if(reset_state===true){
-      console.log("calling saveword API from useEffec when turn change")
+     if(reset_state===true){
+      console.log("calling saveword API from useEffec when state reset")
+      clearAllInterval()
       saveWord({
         match_id:onlineUser.user1.match_id,
         gamestatus:'0',
@@ -180,7 +183,7 @@ console.log("PLAYONLIHNE =",round_online,",",roundList1.r1_loser,",",roundList2.
     }
 
   },[reset_state])
-
+ */
 
 
 
@@ -221,6 +224,8 @@ console.log("PLAYONLIHNE =",round_online,",",roundList1.r1_loser,",",roundList2.
     setShowKeyboard(true);
   };
 
+
+
   const onClick = (e) => {
     //console.log("onClick called in playOnline", e.target.outerText);
     if (inputText + e.target.outerText.length === 36) {
@@ -243,6 +248,9 @@ console.log("PLAYONLIHNE =",round_online,",",roundList1.r1_loser,",",roundList2.
     
     setPlayButtonHide(true);
   };
+
+
+
   const onChange = (e) => {
     //console.log("onChange called in playOnline");
   };

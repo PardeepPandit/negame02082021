@@ -71,8 +71,8 @@ const {getHintWordList,wordDefinition,setTimeOut,timeout,hint_wordlist,resultWor
                 challenge:"0",
                 word:""
             }) 
-            console.log("ALL STATE RESET IN PLAYONLINE")
-            resetState()
+            console.log("ALL STATE RESET for playonline IN Timer Context")
+            resetState(true)
             //setwinnerLoser(null)
             setRoundComplete(false)
             //setSeconds()

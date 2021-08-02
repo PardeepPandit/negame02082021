@@ -1,4 +1,4 @@
-import React, { Fragment,useContext,useEffect } from 'react';
+import React, { Fragment,useContext,useEffect,useState } from 'react';
 import {Link} from 'react-router-dom'
 import PlayOnlineContext from './playonline/context/playOnlineContext'
 import {useTimerConsumer,useTimerConsumerUpdate} from './MyComponent/TimerContext'
@@ -13,17 +13,49 @@ const YouWin = () => {
     const {setSeconds,seconds,setIsActive}=commonContext
 
     const playOnlineContext=useContext(PlayOnlineContext)
-    const {word_definition,resetState,winner_loser,saveWord,onlineUser,matchRound,round_online,setRoundComplete,round_complete,setApiHit,setCurrentStatus,setShowKeyboard,interval_id}=playOnlineContext
+    const {word_definition,resetState,winner_loser,saveWord,onlineUser,matchRound,round_online,setRoundComplete,round_complete,setApiHit,setCurrentStatus,setShowKeyboard,interval_id,get_word,clearAllInterval,opponent_click_next_round_button,user_click_next_round_button,showNextRoundButton,setShowNextRoundButton}=playOnlineContext
     const humanContext=useContext(HumanContext);
     const {setConcede,getHintWordList}=humanContext
-    
+    const {data}=get_word || {}
+    const {word,user_id,gamestatus,challenge,concede}=data || {}
+
+
+    useEffect(()=>{
+
+        if(winner_loser==='winner'){
+
+            setTimeout(()=>{
+                console.log("Show Next round button you winner")
+                setShowNextRoundButton(true)
+            },13000)
+
+        }
+},[winner_loser])
+
+
+    useEffect(()=>{
+        console.log("After 6 seconds",showNextRoundButton)
+        if(showNextRoundButton===true){
+            console.log("After 6 seconds hit save word API")
+            saveWord({
+                match_id:onlineUser.user1.match_id,
+                gamestatus:'0',
+                concede:round_online,
+                user_id:parseInt(onlineUser.user1.user_id),
+                challenge:"0",
+                word:""
+            })
+        }
+    },[showNextRoundButton])
+
+
     useEffect(()=>{
         if(winner_loser==='winner')
         {
-            console.log("Sending Status =",onlineUser)
+            console.log("Sending Status Winner")
             //setCurrentStatus('winner')
             localStorage.setItem('current_status','loser')
-            setApiHit(120)
+           // setApiHit(120)
             
               matchRound(
                 {
@@ -33,19 +65,41 @@ const YouWin = () => {
                     points:"5"   
                 }
             )
-            console.log("calling save word API form you Win on winner popup")
-            saveWord({
-                match_id:onlineUser.user1.match_id,
-                gamestatus:'3',
-                concede:round_online,
-                user_id:parseInt(onlineUser.user1.user_id),
-                challenge:"0",
-                word:""
-            })
-            
-            console.log("Time Reset@@@@@@@@@@@@@  11")
 
-            setSeconds(120)
+                    if(onlineUser.user1.user_id!==user_id && gamestatus==='101' && challenge==='0' && concede==='0'){
+                            console.log("calling save word API in response of 101 ")
+                        saveWord({
+                            match_id:onlineUser.user1.match_id,
+                            gamestatus:'0',
+                            concede:'0',
+                            user_id:parseInt(onlineUser.user1.user_id),
+                            challenge:"0",
+                            word:""
+                        })
+                       
+                    }
+                    else{
+                        console.log("calling save word API form you Win on winner popup")
+                        saveWord({
+                            match_id:onlineUser.user1.match_id,
+                            gamestatus:'3',
+                            concede:"1",
+                            user_id:parseInt(onlineUser.user1.user_id),
+                            challenge:"0",
+                            word:""
+                        })
+                        
+                        console.log("Time Reset@@@@@@@@@@@@@  11")
+                               
+                    }
+
+                      //  interval_id.forEach(clearInterval)
+                      clearAllInterval()
+
+                  
+
+             setSeconds(120)
+             setIsActive(true)
             //setRoundComplete(true)
       
      }
@@ -56,26 +110,51 @@ const YouWin = () => {
             resetState()
     },[round_complete]) */
 
+    useEffect(()=>
+    {
+
+        if(user_click_next_round_button===true && opponent_click_next_round_button===true && winner_loser==='winner'){
+            
+            console.log("calling save word API from WIN set all fields to ZERO")
+            saveWord({
+                match_id:onlineUser.user1.match_id,
+                gamestatus:"0",
+                concede:"0",
+                user_id:parseInt(onlineUser.user1.user_id),
+                challenge:"0",
+                word:""
+            },false)
+                
+            
+            setTimeout(()=>{
+                console.log("calling reset state in you win after 3 seconds")
+                resetState(true)
+            },[1000])
+            setRoundComplete(true)
+            setIsActive(true)
+            setSeconds(60)
+            setShowKeyboard(true)
+        }
+
+    },[user_click_next_round_button,opponent_click_next_round_button])
+
+
+
 const onClick=()=>{
     console.log("calling save word API form you Win on button click")
-    
-    setApiHit(60)
+    setShowNextRoundButton(false)
+    //setApiHit(60)
+    clearAllInterval()
     saveWord({
         match_id:onlineUser.user1.match_id,
         gamestatus:'5',
-        concede:round_online,
+        concede:"1",
         user_id:parseInt(onlineUser.user1.user_id),
         challenge:"0",
         word:""
     })
-    setTimeout(()=>{
-        resetState(true)
-    },[4000])
-    setRoundComplete(true)
-    setIsActive(false)
-    setSeconds(60)
-    setShowKeyboard(true)
-    interval_id.forEach(clearInterval)
+   
+   // interval_id.forEach(clearInterval)
 }
 
     return (
@@ -102,7 +181,7 @@ const onClick=()=>{
                                         <h1 className="win-text">You Win</h1>
                                         <h1><span style={{color:'white'}}>{word_definition && word_definition.word}</span></h1>
                                         <h1><span style={{color:'white'}}>{word_definition &&  word_definition.definition}</span></h1>
-                                        <Link to="/playonline" onClick={()=>onClick()} className="play-again">Next Round{"   "}{seconds}</Link>
+                                        {showNextRoundButton && <Link to="/playonline" onClick={()=>onClick()} className="play-again">Next Round{"   "}{seconds}</Link>}
                                     </div>
                                 </div>
                             </div>

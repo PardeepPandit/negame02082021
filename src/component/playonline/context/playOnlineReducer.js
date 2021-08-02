@@ -17,7 +17,10 @@ import{
   SET_SHOW_KEYBOARD,
   STOP_OLD_INSTANCE,
   SET_INTERVAL_ID,
-  SET_CURRENT_STATUS
+  SET_CURRENT_STATUS,
+  CLEAR_INTERVAL,
+  NEXT_ROUND_BUTTON,
+  SHOW_NEXT_ROUND_BUTTON
   } from '../../../type'; 
   
   //comment
@@ -138,12 +141,38 @@ import{
                                   ...state,
                                   interval_id:[...state.interval_id,payload]
                                 }
+                              case CLEAR_INTERVAL:
+                                state.interval_id.forEach(clearInterval)
+                                return{
+                                  ...state,
+                                  interval_id:[]
+                                }
                                 case SET_CURRENT_STATUS:
                                   localStorage.setItem('currnet_status',payload)
                                   return{
                                     ...state,
                                     currnet_status:payload
                                   }
+                                  case NEXT_ROUND_BUTTON:
+                                    if(payload==='user')
+                                    {
+                                      return{
+                                        ...state,
+                                        user_click_next_round_button:payload==='user' ?  true : false,
+                                      }
+                                  }
+                                  else if(payload==='opponent'){
+                                    return{
+                                      ...state,
+                                      opponent_click_next_round_button:payload==='opponent' ? true : false
+                                    }
+                                  }
+                                  case SHOW_NEXT_ROUND_BUTTON:
+                                    return{
+                                      ...state,
+                                      showNextRoundButton:payload
+                                    }
+
                 case RESET_STATE:
                   return{
                     ...state,
@@ -157,7 +186,10 @@ import{
                     winner_loser:null,
                     round_online:state.round_online+1,
                     round_complete:false,
-                    interval_id:[]
+                    next_round_button_click:null,
+                    opponent_click_next_round_button:false,
+                    user_click_next_round_button:false
+                    //interval_id:[]
                     //showKeyboard:false
                   }
               

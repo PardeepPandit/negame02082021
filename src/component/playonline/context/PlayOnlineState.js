@@ -23,12 +23,15 @@ import {
     STOP_OLD_INSTANCE,
     STATE_LIST,
     SET_INTERVAL_ID,
-    SET_CURRENT_STATUS
+    SET_CURRENT_STATUS,
+    CLEAR_INTERVAL,
+    NEXT_ROUND_BUTTON,
+    SHOW_NEXT_ROUND_BUTTON
 } from '../../../type'
 const PlayOnlineState=({children})=>{
 
 const initialState={
-onlineUser:null,
+onlineUser:JSON.parse(localStorage.getItem('start_match_online')) ,
 save_word:null,
 get_word:null,
 loading:false,
@@ -48,7 +51,10 @@ showKeyboard:false,
 stop_old_instance:false,
 reset_state:false,
 interval_id:[],
-current_status:localStorage.getItem('current_status')
+user_click_next_round_button:false,
+opponent_click_next_round_button:false,
+current_status:localStorage.getItem('current_status'),
+showNextRoundButton:false
 }
 
 const [state, dispatch] = useReducer(playOnlineReducer, initialState)
@@ -64,6 +70,13 @@ const stopOldInstance=(true_false)=>{
     })
 }
 
+
+const setShowNextRoundButton=(true_false)=>{
+        dispatch({
+            type:SHOW_NEXT_ROUND_BUTTON,
+            payload:true_false
+        })
+}
 
 const setCurrentStatus=(winner_loser)=>{
     dispatch({
@@ -221,7 +234,7 @@ const searchUserOnline=async(id)=>{
     try {
 
         const res=await axios.get(process.env.REACT_APP_BASEURL+`/api/start/match?user_id=${id}&level=1`,config)
-        //console.log("Response from search_user_online",res.data)
+        console.log("Response from search_user_online",res.data)
 
         if(JSON.stringify(res.status)==='200' && JSON.stringify(res.data.status)==='200')
         {
@@ -234,6 +247,7 @@ const searchUserOnline=async(id)=>{
                 round:state.round_online
             })
             localStorage.setItem('info',JSON.stringify(state.info))
+            localStorage.setItem('start_match_online',JSON.stringify(res.data))
             clearInterval(myinterval)
         }
         else if(time===0){
@@ -254,18 +268,10 @@ const searchUserOnline=async(id)=>{
   
 }
 ////////////////////////////////////////////////SAVE WORD
-const saveWord=async(formData)=>{
+const saveWord=async(formData,flag=true)=>{
 
     
-   /*  if(state.stop_old_instance)
-    {
-        clearInterval(myinterval2)
-        stopOldInstance(false)
-    }
-    else{
-
-        stopOldInstance(true)
-    } */
+  console.log("getword API flag=",flag)
 
     const {user_id,match_id,word,gamestatus}=formData
     const config={
@@ -295,7 +301,9 @@ const saveWord=async(formData)=>{
 
         
         if(res.data.status===200){
-           
+
+            if(flag)
+            {           
                 setTimeout(()=>{
 
                     if(state.winner_loser==="winner" || state.winner_loser==="loser") 
@@ -310,6 +318,7 @@ const saveWord=async(formData)=>{
                     } 
 
                 },2000)
+            }
            
         }
         else{
@@ -325,97 +334,27 @@ const saveWord=async(formData)=>{
 
 }
 
-/* 
-useEffect(()=>{
 
-    if(state.onlineUser){
-        time=state.getwordapihit
-    getWord(state.onlineUser.user1.match_id,state.onlineUser.user1.user_id)
-    }
-},[state.onlineUser,state.save_word]) */
+const clearAllInterval=()=>{
+dispatch({
+    type:CLEAR_INTERVAL
+})
+}
 
+const nextRoundButton=(user)=>{
+        dispatch({
+            type:NEXT_ROUND_BUTTON,
+            payload:user
+        })
+}
 
-/* useEffect(()=>{
-
-    const {match_id,user_id,gamestatus,challenge,concede,word}=state.get_word.data
-
-    if(state.onlineUser.user1.user_id!==parseInt(user_id) && gamestatus==="0" && challenge==="0" && concede==="1")
-    {
-           // setwinnerLoser('loser')
-           console.log("YOU CAN PLAY NEXT MOVE")
-           //clearInterval(myinterval)
-    }
-    else if(state.onlineUser.user1.user_id!==parseInt(user_id) && gamestatus==="5" && challenge==="0" && concede==="1"){
-
-        console.log("YOUR OPPONENT PLAYED IT FIRST , NOW ITS YOUR TURN...")
-        //clearInterval(myinterval)
-    }
-    else if(state.onlineUser.user1.user_id===parseInt(user_id) && gamestatus==="5"  && challenge==="0" && concede==="0"){
-        console.log("What to do next")
-        console.log("Clear get word API 2")
-        ///clearInterval(myinterval)
-    }
-    else if(state.onlineUser.user1.user_id!==parseInt(user_id)  && (gamestatus!=="0" && challenge!=="0" && concede!=="0"))
-    {
-        console.log("STOP CALLING GET WORD and Clear get word API 3",user_id,",",parseInt(user_id),",",state.getwordapihit)
-        if(word.length===36){
-            alert("word length==36")
-        }
-    }
-   else if(state.onlineUser.user1.user_id!==parseInt(user_id)  && (gamestatus==="101" || gamestatus==="3" || gamestatus==="4"))
-    {
-        // getWordDefinition(res.data.data.word)
-        console.log("*********SET LOSER*************")
-        setwinnerLoser('loser')
-        console.log("Clear get word API 4")
-        ///clearInterval(myinterval)
-    }
-    else if(gamestatus==="5")
-    {
-        //console.log("Setting Winner from playonline getWord API")
-        //setwinnerLoser('winner')
-    }
-    else if(word && user_id!==parseInt(user_id)  && (gamestatus==="1" && challenge==="0" && concede==="0"))
-    {
-        console.log("Changing turn and Clear get word API 5")
-            if(!isActive){
-                setIsActive(true)
-            }
-        //alert("changing turn and setShowkeyboard true")
-           setTurn(true) 
-           setShowKeyboard(true)
-        setInputText(word)
-        //console.log("Clear get word API 5")
-        ///clearInterval(myinterval)
-     }
-    else if(word==="") {
-       // console.log("Setting input text  2=",res.data.data.word)
-        console.log("SET INPUT TEXT 4 and Clear get word API 6")
-        setInputText('')
-        //console.log("Clear get word API 6")
-        ///clearInterval(myinterval)
-    }
-   else if(word && user_id!==parseInt(user_id) && concede==="0" && gamestatus==="0" && challenge==="0")
-    {
-        //console.log("*************SPECIAL CASE 2***********")
-        console.log("SET INPUT TEXT 5")
-        setInputText('')
-        //clearInterval(myinterval)
-    }
-    else{
-        console.log("SET INPUT TEXT 3")
-        setInputText(word)
-        //clearInterval(myinterval)
-    }
-
-},[state.get_word])
- */
 
 //////////////////////////////      GET WORD
 const getWord=(match_id,user_id,time)=>{
 
     //console.log("My interval in get word API =",user_id)
-state.interval_id.forEach(clearInterval);
+//state.interval_id.forEach(clearInterval);
+    clearAllInterval()
     let myinterval= setInterval(async()=>{
 
         //console.log("My Interval instance start=",myinterval)
@@ -432,7 +371,7 @@ state.interval_id.forEach(clearInterval);
     try {
 
         const res=await axios.get(process.env.REACT_APP_BASEURL+`/api/get/word?match_id=${match_id}`,config)
-       console.log("Response from getWord=",res.data.data)
+       //console.log("Response from getWord=",res.data.data)
 
        const{concede,gamestatus,challenge}=res.data.data
          //console.log("Response from getWord=",user_id,",",res.data.data.user_id,",",res.data.data.word,",",time)
@@ -443,7 +382,7 @@ state.interval_id.forEach(clearInterval);
             payload:res.data
         })
     }
-    console.log(time,",",res.data.data.word,",",user_id,",",parseInt(res.data.data.user_id))
+    console.log(`getword=${myinterval}=`,time,",",res.data.data.word,",",user_id,",",parseInt(res.data.data.user_id),",",res.data.data.gamestatus,",",res.data.data.challenge,",",res.data.data.concede)
 
        // setApiHit(state.getwordapihit)
         //user_id!==parseInt(res.data.data.user_id)
@@ -465,20 +404,28 @@ state.interval_id.forEach(clearInterval);
                //console.log("YOU CAN PLAY NEXT MOVE")
                //clearInterval(myinterval)
         }
+        else if(state.user_click_next_round_button===true && state.opponent_click_next_round_button===true && gamestatus==='5' && state.round_result[state.round_online-2]==='winner'){
+                 console.log("Both users clicked on next round button")
+                setInputText('')
+                nextRoundButton(false)
+                clearInterval(myinterval) 
+        }
+        else if(state.user_click_next_round_button===true && state.opponent_click_next_round_button===true  && gamestatus==='5' && state.round_result[state.round_online-2]==='loser'){
+                 console.log("Both users clicked on next round button and continue hit get API")
+                setInputText('')
+                setInputText(res.data.data.word)
+                nextRoundButton(false)
+        }
         else if(user_id!==parseInt(res.data.data.user_id) && gamestatus==="5" && challenge==="0" && concede==="1"){
 
-            //console.log("YOUR OPPONENT PLAYED IT FIRST , NOW ITS YOUR TURN...")
+            console.log("YOUR OPPONENT CLICKED ON NEXT ROUND BUTTON")
+            nextRoundButton("opponent")
             //clearInterval(myinterval)
         }
         else if(user_id===parseInt(res.data.data.user_id) && gamestatus==="5" && challenge==="0" && concede==="1"){
-
-            //console.log("My Interval instance end=",myinterval)
+            console.log("YOU CLICKED ON  NEXT ROUND BUTTON")
+            nextRoundButton("user")
             //clearInterval(myinterval)
-        }
-        else if(user_id===parseInt(res.data.data.user_id) && gamestatus==="5"  && challenge==="0" && concede==="0"){
-           // console.log("What to do next")
-           // console.log("Clear get word API 2")
-            ///clearInterval(myinterval)
         }
         else if(user_id!==parseInt(res.data.data.user_id)  && (gamestatus!=="0" && challenge!=="0" && concede!=="0"))
         {
@@ -505,15 +452,15 @@ state.interval_id.forEach(clearInterval);
             //console.log("Setting Winner from playonline getWord API")
             //setwinnerLoser('winner')
         }
-        else if(res.data.data.word && user_id!==parseInt(res.data.data.user_id)  && (gamestatus==="1" && challenge==="0" && concede==="0"))
+        else if(res.data.data.word && user_id!==parseInt(res.data.data.user_id)  && gamestatus==="1" && challenge==="0" && concede==="0")
         {
             console.log("Changing turn and Clear get word API 5")
                 if(!isActive){
                     setIsActive(true)
                 }
             //alert("changing turn and setShowkeyboard true")
-               setTurn(true) 
-               setShowKeyboard(true)
+            setTurn(true) 
+            setShowKeyboard(true)
             setInputText(res.data.data.word)
             //console.log("Clear get word API 5")
             console.log("My Interval instance end=",myinterval)
@@ -528,15 +475,34 @@ state.interval_id.forEach(clearInterval);
         }
        else if(res.data.data.word && user_id!==parseInt(res.data.data.user_id) && concede==="0" && gamestatus==="0" && challenge==="0")
         {
-            //console.log("*************SPECIAL CASE 2***********")
-            console.log("SET INPUT TEXT 5")
-            //console.log("My Interval instance end=",myinterval)
-            setInputText('')
-            //clearInterval(myinterval)
+            
+            saveWord({
+                    match_id:state.onlineUser.user1.match_id,
+                    gamestatus:"0",
+                    concede:"0",
+                    user_id:parseInt(state.onlineUser.user1.user_id),
+                    challenge:"0",
+                    word:""
+                },false)
+                setInputText('')
+            if(state.round_result >=2 && state.round_result[state.round_online-2]==='winner')
+            {
+                //console.log("*************SPECIAL CASE 2***********")
+                console.log("SET INPUT TEXT 5")
+                console.log("My Interval instance end=",myinterval)
+               // setInputText('')
+                clearInterval(myinterval)
+            }
+            else if(state.round_result >=2 && state.round_result[state.round_online-2]==='loser' ){
+                //setInputText('')
+                clearInterval(myinterval)
+                console.log("continue hitting get word API")
+            }
+           // setRoundComplete(true)
         }
         else{
-            console.log("SET INPUT TEXT 3")
-            setInputText(res.data.data.word)
+            //console.log("SET INPUT TEXT 3")
+            //setInputText(res.data.data.word)
             //clearInterval(myinterval)
         }
        
@@ -711,6 +677,9 @@ const setApiHit=(count)=>{
             reset_state:state.reset_state,
             interval_id:state.interval_id,
             current_status:state.current_status,
+            user_click_next_round_button:state.user_click_next_round_button,
+            opponent_click_next_round_button:state.opponent_click_next_round_button,
+            showNextRoundButton:state.showNextRoundButton,
             setLoading,
             searchUserOnline,
             saveWord,
@@ -730,7 +699,10 @@ const setApiHit=(count)=>{
             setShowKeyboard,
             stopOldInstance,
             setIntervalId,
-            setCurrentStatus
+            setCurrentStatus,
+            clearAllInterval,
+            nextRoundButton,
+            setShowNextRoundButton
         }}>
             {children }
 

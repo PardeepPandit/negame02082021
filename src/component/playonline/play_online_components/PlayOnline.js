@@ -41,7 +41,7 @@ const PlayOnline = () => {
     setTurn,
     getWordDefinition,
     winner_loser,
-    round_online,
+    online_round_counter,
     round_complete,
     popdisabled,
     setPopup,
@@ -51,7 +51,9 @@ const PlayOnline = () => {
     reset_state,
     setApiHit,
     getwordapihit,
-    clearAllInterval
+    clearAllInterval,
+    finalResultCounter,
+    final_result_data
   } = playOnlineContext;
 
   let gamestatus=''
@@ -67,7 +69,7 @@ const PlayOnline = () => {
 
 
   
-  const { user1, user2 ,image_path} = onlineUser;
+  const { user1, user2 ,image_path} =JSON.parse(localStorage.getItem('start_match_online')) || onlineUser
 
   const {  isActive } = useTimerConsumer();
   const {resetTime, clearTime, setSeconds } =
@@ -78,60 +80,6 @@ const PlayOnline = () => {
   let round = 1;
 
 
-  /*const [roundList1, setRoundList1] = useState(()=> ({ r1: "1", r1_loser: null }));
-  const [roundList2, setRoundList2] = useState(()=>({ r2: "2", r2_loser: null }));
-  const [roundList3, setRoundList3] = useState({ r3: "3", r3_loser: null });
-  const [roundList4, setRoundList4] = useState({ r4: "4", r4_loser: null });
-  const [roundList5, setRoundList5] = useState({ r5: "5", r5_loser: null });
-
-console.log("PLAYONLIHNE =",round_online,",",roundList1.r1_loser,",",roundList2.r2_loser)
-
-    useEffect(()=>{
-
-
-      console.log("Change in setRoundList=",roundList1.r1_loser)
-    },[roundList1.r1_loser,roundList2.r2_loser,roundList3.r3_loser,roundList4.r4_loser,roundList5.r5_loser])
-
-
- useEffect(()=>{
-
-  console.log("winner_loser=",winner_loser)
-  if (round_online === 1) 
-  {
-    console.log("WINNER_LOSER 1=====",winner_loser)
-    winner_loser==="winner" && setRoundList1({ r1_loser: "winner" });
-    winner_loser==="loser"  && setRoundList1({ r1_loser: "loser" });
-  }
-  if (round_online === 2)
-  {
-    console.log("WINNER_LOSER 2=====",winner_loser)
-     setRoundList2({ r2_loser: winner_loser });
-  }
-  if (round_online === 3)
-  {
-    console.log("WINNER_LOSER 3=====",winner_loser)
-     setRoundList3({ r3_loser: winner_loser });
-  }
-  if (round_online === 4)
-  {
-  console.log("WINNER_LOSER 4=====",winner_loser)
-    setRoundList4({ r4_loser: winner_loser });
-  }
-  if (round_online === 5)
-  {
-  console.log("WINNER_LOSER 5=====",winner_loser)
-  setRoundList5({ r5_loser: winner_loser });
-  }
-},[winner_loser]) */
-
-
-
-
-
-
- /*  const [showKeyboard, setShowKeyboard] = useState(() =>
-    user1.start === "1" ? true :  winner_loser==="winner" ? true :false
-  ); */
   const [callHint, setCallHint] = useState(true);
   const [playButtonHide, setPlayButtonHide] = useState(false);
   const [changeTurn, setChangeTurn] = useState(() =>
@@ -149,8 +97,24 @@ console.log("PLAYONLIHNE =",round_online,",",roundList1.r1_loser,",",roundList2.
   }, [showChallenge]);
 
   useEffect(() => {
-    if (user1.start === "0" || reset_state===true) {
-      clearAllInterval()
+    if (user1.start === "0" && final_result_data===null) {
+     // clearAllInterval()
+      console.log("calling save word API from playonline useEffect",final_result_data);
+      
+       saveWord({
+        match_id:onlineUser.user1.match_id,
+        gamestatus:'0',
+        concede:"0",
+        user_id:parseInt(onlineUser.user1.user_id),
+        challenge:"0"
+    },12)  
+      //getWord(user1.match_id, user.data.id, 20);
+    }
+  }, [onlineUser])
+
+  useEffect(() => {
+    if (reset_state===true && final_result_data===null) {
+      //clearAllInterval()
       console.log("calling save word API from playonline useEffect");
       
        saveWord({
@@ -159,10 +123,10 @@ console.log("PLAYONLIHNE =",round_online,",",roundList1.r1_loser,",",roundList2.
         concede:"0",
         user_id:parseInt(onlineUser.user1.user_id),
         challenge:"0"
-    })  
+    },14)  
       //getWord(user1.match_id, user.data.id, 20);
     }
-  }, [onlineUser,reset_state])
+  }, [reset_state])
 
 
 
@@ -187,6 +151,12 @@ console.log("PLAYONLIHNE =",round_online,",",roundList1.r1_loser,",",roundList2.
 
 
 
+
+
+
+                                            
+         
+
   useEffect(() => {
     console.log("Input text changed=", inputText);
   }, [inputText]);
@@ -202,7 +172,7 @@ console.log("PLAYONLIHNE =",round_online,",",roundList1.r1_loser,",",roundList2.
       gamestatus:"1",
       concede:"0",
       challenge:"0"
-    });
+    },13);
 
     setTurn(null);
     //setShowKeyboard(true)
@@ -220,7 +190,7 @@ console.log("PLAYONLIHNE =",round_online,",",roundList1.r1_loser,",",roundList2.
     console.log("SET INPUT TEXT 7")
     setInputText(inputText.slice(0, inputText.length - 1));
     //show keyboard again to enter new character
-    console.log("setshow keyboard true 6")
+    console.log("KEYBOARD ON 7")
     setShowKeyboard(true);
   };
 
@@ -293,7 +263,7 @@ console.log("PLAYONLIHNE =",round_online,",",roundList1.r1_loser,",",roundList2.
                     Round{" "}
                     {
                       //JSON.parse(localStorage.getItem("info"))[JSON.parse(localStorage.getItem("info")).length - 1].round
-                      round_online
+                      online_round_counter
                     }
                   </span>
                   {/*  <span>Round {JSON.parse(localStorage.getItem('info')).map((item)=><h1>{item.round}</h1>)}</span> */}
@@ -302,7 +272,7 @@ console.log("PLAYONLIHNE =",round_online,",",roundList1.r1_loser,",",roundList2.
                     <ul>
                       <li>
                         <div className="cup_icon">
-                          {round_online === 1 ? (
+                          {online_round_counter === 1 ? (
                             <img
                               className="icon_g"
                               src="assets/img/blank.png"
@@ -321,12 +291,12 @@ console.log("PLAYONLIHNE =",round_online,",",roundList1.r1_loser,",",roundList2.
                               alt="trofi"
                             />
                           )}
-                          {round_online}
+                          {online_round_counter}
                         </div>
                       </li>
                       <li>
                         <div className="cup_icon">
-                          {round_online <= 2 ? (
+                          {online_round_counter <= 2 ? (
                             <img
                               className="icon_g"
                               src="assets/img/blank.png"
@@ -345,12 +315,12 @@ console.log("PLAYONLIHNE =",round_online,",",roundList1.r1_loser,",",roundList2.
                               alt="trofi"
                             />
                           )}
-                          {round_online}
+                          {online_round_counter}
                         </div>
                       </li>
                       <li>
                         <div className="cup_icon">
-                          {round_online <= 3 ? (
+                          {online_round_counter <= 3 ? (
                             <img
                               className="icon_g"
                               src="assets/img/blank.png"
@@ -373,7 +343,7 @@ console.log("PLAYONLIHNE =",round_online,",",roundList1.r1_loser,",",roundList2.
                       </li>
                       <li>
                         <div className="cup_icon">
-                          {round_online <= 4 ? (
+                          {online_round_counter <= 4 ? (
                             <img
                               className="icon_g"
                               src="assets/img/blank.png"
@@ -396,7 +366,7 @@ console.log("PLAYONLIHNE =",round_online,",",roundList1.r1_loser,",",roundList2.
                       </li>
                       <li>
                         <div className="cup_icon">
-                          {round_online <= 5 ? (
+                          {online_round_counter <= 5 ? (
                             <img
                               className="icon_g"
                               src="assets/img/blank.png"
@@ -484,8 +454,8 @@ console.log("PLAYONLIHNE =",round_online,",",roundList1.r1_loser,",",roundList2.
 
 
              <h2>keyboard {showKeyboard ? "show" :"hide"}</h2>
-             <h2>round_online {round_online}</h2>
-             <h2>round_result {round_online>=2 ? round_result[round_online-2] : "wait"}</h2>
+             <h2>online_round_counter {online_round_counter}</h2>
+             <h2>round_result {online_round_counter>=2 ? round_result[online_round_counter-2] : "wait"}</h2>
             <h2>API HIT {getwordapihit}</h2>
                 {onlineUser && showKeyboard ? (
                   <div class="keypad">

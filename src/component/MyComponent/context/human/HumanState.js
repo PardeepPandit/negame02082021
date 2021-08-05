@@ -124,6 +124,8 @@ const setPosition=(position)=>{
       console.log("Word list in HUman state=",state.wordList)
       try {
           const res =await axios.get(`https://wordsapiv1.p.rapidapi.com/words/?letterPattern=^${str.toLowerCase()}[a-zA-Z]*$`, config)
+
+          //const res=await axios.get(`https://wordsapiv1.p.rapidapi.com/words/?letterPattern=^${str.toLowerCase()}[a-zA-Z]*$&random=true`,config)
         
       console.log("NEW API WORD+=",res.data)
 

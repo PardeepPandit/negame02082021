@@ -20,7 +20,12 @@ import{
   SET_CURRENT_STATUS,
   CLEAR_INTERVAL,
   NEXT_ROUND_BUTTON,
-  SHOW_NEXT_ROUND_BUTTON
+  SHOW_NEXT_ROUND_BUTTON,
+  USER_OPPONENT_AGREE,
+  FINAL_RESULT_COUNTER,
+  SET_FINAL_RESULT_DATA,
+  MATCH_FINISH,
+  CHANGE_MATCH_STATUS
   } from '../../../type'; 
   
   //comment
@@ -29,6 +34,17 @@ import{
     //console.log("payload=",action)
     switch(type){
     case SEARCH_ONLINE:
+      if(payload===null){
+        localStorage.removeItem('start_match_online')
+        return{
+          ...state,
+            onlineUser:payload,
+            loading:false,
+            winner_loser:null,
+            reset_state:false
+        }
+      }
+      else{
         return{
             ...state,
             onlineUser:payload,
@@ -36,6 +52,7 @@ import{
             winner_loser:null,
             reset_state:false
         }
+      }
         case SAVE_WORD:
           return{
             ...state,
@@ -121,7 +138,7 @@ import{
                         case SET_ROUND_RESULT:
                           return{
                             ...state,
-                            round_result:[...state.round_result,payload],
+                            round_result:payload ===null ? [] : [...state.round_result,payload],
                             reset_state:false
                           }
                           case SET_SHOW_KEYBOARD:
@@ -156,12 +173,14 @@ import{
                                   case NEXT_ROUND_BUTTON:
                                     if(payload==='user')
                                     {
+                                      localStorage.setItem('user_click_NRB',true)
                                       return{
                                         ...state,
                                         user_click_next_round_button:payload==='user' ?  true : false,
                                       }
                                   }
                                   else if(payload==='opponent'){
+                                    localStorage.setItem('opponent_click_NRB',true)
                                     return{
                                       ...state,
                                       opponent_click_next_round_button:payload==='opponent' ? true : false
@@ -172,8 +191,46 @@ import{
                                       ...state,
                                       showNextRoundButton:payload
                                     }
+                                    case USER_OPPONENT_AGREE:
+                                      return{
+                                        ...state,
+                                        user_opponent_agree:payload
+                                      }
+                                      case FINAL_RESULT_COUNTER:
+                                       if(payload==='winner'){
+                                       return{
+                                         ...state,
+                                        final_result_winner_counter:state.final_result_winner_counter+1
+                                       }
+                                       }
+                                       else if(payload==='loser'){
+                                       return{
+                                         ...state,
+                                        final_result_loser_counter:state.final_result_loser_counter+1
+                                       }
+                                       }
+                                       else{
+                                         return{
+                                           ...state,
+                                           final_result_winner_counter:0,
+                                           final_result_loser_counter:0
+                                         }
+                                       }
+                                       case SET_FINAL_RESULT_DATA:
+                                         localStorage.setItem('final_result_data',JSON.stringify(payload))
+                                         return{
+                                           ...state,
+                                           final_result_data:payload
+                                         }
+                                         case MATCH_FINISH:
+                                           return{
+                                             ...state,
+                                             online_match_finish:payload
+                                           }
 
                 case RESET_STATE:
+                  localStorage.setItem('user_click_NRB',false)
+                  localStorage.setItem('opponent_click_NRB',false)
                   return{
                     ...state,
                     reset_state:payload,
@@ -184,11 +241,12 @@ import{
                     turn_change:null,
                     word_definition:{word:"",definition:""},
                     winner_loser:null,
-                    round_online:state.round_online+1,
+                    online_round_counter:state.online_round_counter+1,
                     round_complete:false,
                     next_round_button_click:null,
                     opponent_click_next_round_button:false,
-                    user_click_next_round_button:false
+                    user_click_next_round_button:false,
+                    showNextRoundButton:false
                     //interval_id:[]
                     //showKeyboard:false
                   }

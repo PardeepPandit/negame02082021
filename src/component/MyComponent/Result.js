@@ -38,7 +38,7 @@ export const Result = () => {
   setPosition(null)
   setConcede(false)
   getHintWordList(false)
-  console.log("setshow keyboard true 3")
+  console.log("KEYBOARD ON 3")
   setShowKeyboard(true)
   setCon(false)
   setPlay(true)
@@ -55,7 +55,7 @@ export const Result = () => {
 }
 
 const finishFun=()=>{
-  console.log("setshow keyboard true 4")
+  console.log("KEYBOARD ON 4")
   setShowKeyboard(true)
   setFinish(true)
 }

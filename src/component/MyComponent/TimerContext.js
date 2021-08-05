@@ -70,7 +70,7 @@ const {getHintWordList,wordDefinition,setTimeOut,timeout,hint_wordlist,resultWor
                 user_id:parseInt(onlineUser.user1.user_id),
                 challenge:"0",
                 word:""
-            }) 
+            },10) 
             console.log("ALL STATE RESET for playonline IN Timer Context")
             resetState(true)
             //setwinnerLoser(null)

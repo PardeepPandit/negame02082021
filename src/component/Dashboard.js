@@ -37,7 +37,7 @@ const Dashboard = (props) => {
 
 
     const playOnlineContext=useContext(PlayOnlineContext)
-    const {searchUserOnline,onlineUser,exitUser,gameType,game_type}=playOnlineContext
+    const {searchUserOnline,onlineUser,exitUser,gameType,game_type,online_match_finish,onlineMatchFinish}=playOnlineContext
     const [search,setSearch]=useState(false)
     const [sec,setSec]=useState(()=>10)
     console.log("login data=",login_data)
@@ -57,11 +57,11 @@ const Dashboard = (props) => {
 
     useEffect(()=>{
         //if onlineUser has data then setIsActive to start timer
-        if(onlineUser && onlineUser!=='opponent_not_found' && onlineUser.user1.start==="1"){
+        if(onlineUser && onlineUser!=='opponent_not_found' && onlineUser.user1.start==="1" && !online_match_finish){
             console.log("***************SET IS ACTIVE 1***************")
             setIsActive(true)
         }
-    },[onlineUser])
+    },[onlineUser,online_match_finish])
 
     useEffect(()=>{
         console.log("calling resttime=",loser.name,",",loser.out)
@@ -107,11 +107,7 @@ const Dashboard = (props) => {
                     }
                     else if(game_type==='humanvscomputer'){
                             startMatchComputer(login_data.id,levelno)
-                    }
-
-                
-
-                     
+                    }            
          
         } 
 
@@ -137,9 +133,10 @@ useEffect(() => {
     e.preventDefault()
     e.returnValue = ''
   }
-console.log("Dashboard=",onlineUser)
+  
+console.log("Dashboard=",onlineUser,",",online_match_finish)
 
-  if(onlineUser && onlineUser!=='opponent_not_found'){
+  if(onlineUser && onlineUser!=='opponent_not_found' && !online_match_finish){
         console.log("redirect")
         return <Redirect to='/playonline'/>
     }
@@ -191,6 +188,7 @@ const playOnline=()=>{
                                <h3 class="play_heading">Play Online </h3>
                                <p class="text-white m_p">PlayOnline</p>
                                <Link to="#" class="play_btn" onClick={()=>{
+                                   onlineMatchFinish(false)
                                    gameType('playonline')
                                    exitUser(user.data.id)
                                    setShowLevel(!showLevel)}

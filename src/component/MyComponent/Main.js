@@ -210,7 +210,7 @@ const towCharWordCase=()=>{
         char=char.toUpperCase()
       }
         setInputText(inputText+char);
-        console.log("setshow keyboard true 2")
+        console.log("KEYBOARD ON 2")
         setShowKeyboard(true)
         console.log("Time Reset@@@@@@@@@@@@@  6")
         setSeconds()

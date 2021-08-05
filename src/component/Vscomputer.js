@@ -29,7 +29,7 @@ const Vscomputer = () => {
   //console.log("Match===", level);
 
   const commonContext=useContext(CommonContext)
-  const {inputText,setIsActive,isActive,setSeconds}=commonContext
+  const {inputText,setIsActive,isActive,setSeconds,seconds}=commonContext
   const authContext=useContext(AuthContext)
   const {user,loading,login_data}=authContext
   const humanContext = useContext(HumanContext);
@@ -91,7 +91,7 @@ const Vscomputer = () => {
   } = useMainConsumerUpdate();
   const { round, play } = useCharacterConsumer();
   const { myTurn } = useCharacterConsumerUpdate();
-  const { seconds, loser } = useTimerConsumer();
+  const { loser } = useTimerConsumer();
   const { setLoser, resetTime } = useTimerConsumerUpdate();
   const [char, setChar] = useState(() => "");
   //const [showKeyboard,setShowKeyboard]=useState(()=>true)

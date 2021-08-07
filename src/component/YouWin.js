@@ -15,7 +15,7 @@ const YouWin = () => {
     const playOnlineContext=useContext(PlayOnlineContext)
     const {word_definition,resetState,winner_loser,saveWord,onlineUser,sendMatchRound,online_round_counter,setRoundComplete,round_complete,setApiHit,setCurrentStatus,setShowKeyboard,interval_id,get_word,clearAllInterval,opponent_click_next_round_button,user_click_next_round_button,showNextRoundButton,setShowNextRoundButton,setUserOpponentAgree,finalResultCounter,final_result_winner_counter,final_result_loser_counter,setwinnerLoser,getFinalResultOnline,final_result_data,changeMatchStatus}=playOnlineContext
     const humanContext=useContext(HumanContext);
-    const {setConcede,getHintWordList}=humanContext
+    const {setConcede}=humanContext
     const {data}=get_word || {}
     const {word,user_id,gamestatus,challenge,concede}=data || {}
 
@@ -86,6 +86,7 @@ const YouWin = () => {
                   
 
              setSeconds(120)
+             console.log("setisActive true")
              setIsActive(true)
             //setRoundComplete(true)
       
@@ -139,6 +140,7 @@ const YouWin = () => {
                 resetState(true)
             },[4000])
             setRoundComplete(true)
+            console.log("setisActive true")
             setIsActive(true)
             setSeconds(60)
             console.log("KEYBOARD ON 1")

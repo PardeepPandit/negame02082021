@@ -13,7 +13,7 @@ const CommonState=({children})=>{
   const initialState={
    inputText:null,
    isActive:false,
-   seconds:60
+   seconds:150
   };
  
   const [state,dispatch]=useReducer(commonReducer,initialState);

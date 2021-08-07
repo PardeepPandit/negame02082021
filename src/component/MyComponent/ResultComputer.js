@@ -17,7 +17,7 @@ export const ResultComputer= () => {
   const {setIsActive }=commonContext
 
   const humanContext=useContext(HumanContext)
-  const {getWordList,wordList,resultWord}=humanContext
+  const {winner_counter,loser_counter}=humanContext
   const {setLoser,resetTime}=useTimerConsumerUpdate();
   const {finalResult,roundList1,roundList2,roundList3,roundList4,roundList5,redirectTo,finish}=useMainConsumer();
   const {round}=useCharacterConsumer();
@@ -47,10 +47,10 @@ export const ResultComputer= () => {
   //console.log("final Result ********=====>",finalResult)
   return (
      <Fragment>
-                {finalResult.win===3 && finish ? 
+                {winner_counter===3 && finish ? 
                 <FinalResult title={"You Win*"}/> : 
                       <Fragment>
-                        {finalResult.lose===3 && finish ? <FinalResult title={"You Lost*"}/> :<Fragment><Result/></Fragment>}
+                        {loser_counter===3 && finish ? <FinalResult title={"You Lost*"}/> :<Fragment><Result/></Fragment>}
                       </Fragment>
                 }
                 

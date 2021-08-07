@@ -1,6 +1,12 @@
-import React,{ Fragment } from 'react'
+import React,{ Fragment, useContext } from 'react'
+import HumanContext from '../component/MyComponent/context/human/humanContext'
 
 export const Keyboard = ({onClick}) => {
+    
+/*     const humanContext=useContext(HumanContext)
+    const {turn}=humanContext */
+ 
+
     return (
         <Fragment>
             <ul className="top_ul">

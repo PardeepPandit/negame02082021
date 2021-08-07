@@ -7,6 +7,7 @@ import playOnlineContext from '../playonline/context/playOnlineContext'
 import useSound from 'use-sound';
 import HumanContext from './context/human/humanContext'
 import PlayOnlineContext from '../playonline/context/playOnlineContext'
+import { SET_SHOW_KEYBOARD, SET_TURN } from '../../type'
 const CharacterContext = React.createContext();
 const CharacterContextUpdate = React.createContext();
 
@@ -23,23 +24,22 @@ export function useCharacterConsumerUpdate() {
 export function CharacterProvider({ children }) {
   
 const commonContext=useContext(CommonContext)
-const {inputText,setInputText,setIsActive,setSeconds}=commonContext
+const {inputText,setInputText,setIsActive,isActive,setSeconds,seconds}=commonContext
 
 const playOnlineContext=useContext(PlayOnlineContext)
 const {game_type,onlineUser}=playOnlineContext
 
   const humanContext=useContext(HumanContext)
-  const {getWordList,wordList,resultWord,level_type,position}=humanContext
+  const {level_type,position,setShowKeyboard,play,setPlay,setTurn,round,current_winner_loser_HC}=humanContext
 
 
   const { setLoser, resetTime } = useTimerConsumerUpdate();
-  const {play,timeFlag,alpha}=useMainConsumer();
-  const {setPlay,setWordList,setResultWord,setAlpha,checkSound}=useMainConsumerUpdate()
+  const {timeFlag,alpha}=useMainConsumer();
+  const {setWordList,setResultWord,setAlpha,checkSound}=useMainConsumerUpdate()
   const {keyAudio}=useBackgroundMusicConsumer();
  
   var alphabets = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-  const [round, setRound] = useState(() => 1)
-  const { loser, isActive } = useTimerConsumer();
+  //const [round, setRound] = useState(() => 1)
   const [once, setOnce] = useState(() => { return false })
   const [audioA] = useSound('https://theneverendingwordgame.com/ne_game_api/public/admin/clip-one/assets/audio_files/a.mp3');
   const [audioB] = useSound('https://theneverendingwordgame.com/ne_game_api/public/admin/clip-one/assets/audio_files/b.mp3');
@@ -71,7 +71,7 @@ const {game_type,onlineUser}=playOnlineContext
 
   
   useEffect(() => {
-    //console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$=",isActive,",",round,",",game_type,",",onlineUser)
+    console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$=",isActive,",",round,",",game_type,",",onlineUser,",",inputText)
     if(inputText==='' && game_type!=='playonline' && !onlineUser){
       console.log("Calling getrandom char******************************** 1")
       let c = getRandomChar();
@@ -79,7 +79,7 @@ const {game_type,onlineUser}=playOnlineContext
     setInputText(c)
     }
     
-  }, [isActive,round])
+  }, [current_winner_loser_HC])
 
 
   
@@ -100,18 +100,21 @@ const {game_type,onlineUser}=playOnlineContext
       }
       console.log("Random Char=",char)
     }
-
+      setShowKeyboard(true)
     return char
   }
 
   useEffect(() => {
     console.log("Calling getrandom char******************************** 2")
+    
    setInputText(getRandomChar())
+    setTurn('human')
+  
   }, [])
-  /* const [inputText, setInputText] = useState(() => {
+ /*   const [inputText, setInputText] = useState(() => {
     console.log("initialstate")
     return getRandomChar()
-  }); */
+  });  */
 
   /* useEffect(() => {
     console.log("CHECK ReusLT WORD=",resultWord)
@@ -119,43 +122,7 @@ const {game_type,onlineUser}=playOnlineContext
 
 
  
-  const findChar=()=>{
 
-    wordList.sort((a,b) => a.length - b.length)
-    let filterarray=wordList.filter((item)=>{
-         return item.length>inputText.length
-    })
-     console.log("filter arry=",filterarray,",",inputText)
-
-      const guessword=filterarray.find((item)=>{
-          return item.substring(0,inputText.length).toUpperCase()===inputText.toUpperCase()
-      })
-
-    //test 1 start
-    /* wordList.sort((a,b) => a.length - b.length)
-    let filterarray=wordList.filter((item)=>{
-         return item.length>inputText.length && item.substring(0,inputText.length).toUpperCase()===inputText.toUpperCase()
-    })
-     console.log("filter arry=",filterarray,",",inputText)
-
-      const size=filterarray.length
-      console.log("Filter array size==",size)
-      const guessword = filterarray[Math.floor(Math.random() * size)]
-      console.log("Guess WOrd==",guessword) */
-      // test 1 end
-      if(!guessword){
-        //setResultWord({word:`word not77 possible with :${inputText}`})
-        //console.log('calling RESULT COMPONENT',inputText)
-       return 
-      }
-      else{
-          console.log("guessword found=",guessword,",inputText=",inputText)
-          //console.log("GUESSWORD=",guessword.word,",",inputText,",",inputText.length)
-          setOnce(false)
-          return guessword.charAt(inputText.length)
-      }
-     
-} 
 
  
   
@@ -215,7 +182,7 @@ if(currentChar.toUpperCase()==='Z') audioZ()
     //console.log("play 3=",play)
       setPlay(false)
       console.log("LOSER AND WINNER 4")
-      setLoser({ name: 'You', out: false })
+      //setLoser({ name: 'You', out: false })
 
         if(level_type==="medium" && position==='left'){
           setInputText(currentChar + inputText)
@@ -228,7 +195,7 @@ if(currentChar.toUpperCase()==='Z') audioZ()
         }
 
         console.log("Time Reset@@@@@@@@@@@@@  5")
-      timeFlag && setSeconds()
+     // timeFlag && setSeconds()
       setOnce(true)  
       
   }
@@ -237,14 +204,12 @@ if(currentChar.toUpperCase()==='Z') audioZ()
 
   return (
     <CharacterContext.Provider value={{  
-                                            round,
                                              once,
                                              play }}>
       <CharacterContextUpdate.Provider value={{ 
-                                                   setRound, 
                                                    setOnce, 
                                                    myTurn,
-                                                   findChar }}>
+                                                    }}>
         {children}
       </CharacterContextUpdate.Provider>
     </CharacterContext.Provider >

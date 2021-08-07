@@ -1,12 +1,14 @@
-import { useContext ,useState,useEffect} from "react"
+import { useContext ,useState,useEffect,Suspense} from "react"
 import React,{Fragment}  from 'react';
 import { NavLink,Link, Redirect } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
 import AuthContext from './MyComponent/context/auth/authContext'
 import AlertContext from './MyComponent/context/alert/alertContext'
 import MasterContext from './MyComponent/context/master/masterContext'
-import TopAdd from './MyComponent/Adds/TopAdd'
-import Footer from "./Footer";
+//import TopAdd from './MyComponent/Adds/TopAdd'
+//import Footer from "./Footer";
+const TopAdd=React.lazy(()=>import('./MyComponent/Adds/TopAdd'))
+const Footer=React.lazy(()=>import('./Footer'))
 
 function Login(props) {
 
@@ -71,7 +73,10 @@ else{
             <div className="signup-container">
                 <div className="container">
                     <div className="row">
-                        <TopAdd/>
+                        <Suspense fallback={<div>Loading...</div>}>
+                                <TopAdd/>
+                        </Suspense>
+                        
             <div className="col-lg-8">
                 <div className="login-wrapper">
                 <h2>Login</h2>                    
@@ -109,7 +114,7 @@ else{
                             {/* <li><a href="#" className="twitter"><i className="fa fa-twitter twitter-i"></i><span>Twitter</span></a></li> */}
                             <li><a href="/google" className="google"><span>Google</span></a></li>
                         </ul>
-                    <p>Don't have an account? <Link to="/register" className="linkButton"> Register</Link></p>
+                    <p>Don't have an account?* <Link to="/register" className="linkButton"> Register</Link></p>
                 </div>
 
 
@@ -127,7 +132,10 @@ else{
 </div>  
   
     </div>
-<Footer/>
+  <Suspense fallback={<div>Loading...</div>}>
+      <Footer/>
+  </Suspense>  
+
 
 </Fragment>
     )

@@ -21,16 +21,16 @@ const {inputText,setInputText,setIsActive,setSeconds }=commonContext
   const authContext=useContext(AuthContext)
   const {login_data}=authContext
   const {level}=login_data
-  console.log("Level in main=",level)
+  //console.log("Level in main=",level)
   const humanContext=useContext(HumanContext)
-  const {getWordList,wordList,loading,wordDefinition,resultWord,setResultWord}=humanContext
+  const {getRandomWordFromApi,random_word,loading,wordDefinition,resultWord,setResultWord}=humanContext
 
   const {clearTime,setResult,setLoser,resetTime} = useTimerConsumerUpdate();
   const {once,round}=useCharacterConsumer();
   const {setOnce,findChar}=useCharacterConsumerUpdate()
   const { result ,loser} = useTimerConsumer();
   const {play,finalResult}=useMainConsumer();
-  const {setWordList,setTimeFlag,setFinalResult,setRoundList1, setRoundList2, setRoundList3,setRoundList4, setRoundList5,setShowKeyboard}=useMainConsumerUpdate()
+  const {setWordList,setTimeFlag,setFinalResult,setShowKeyboard}=useMainConsumerUpdate()
 
   useEffect(() => {
     window.addEventListener('beforeunload', alertUser)
@@ -58,68 +58,15 @@ useEffect(()=>{
 useEffect(async() => {
   if(inputText.length===2 && play){ 
     console.log("before calling get word",inputText,",",inputText.length)
-
-    //{loser.out && 
-    //setLoading(true)
-      getWordList(inputText)
-     /*  if(wordList.length===0){
-        console.log("WROD LIST LENGTH iz ZEROOOOO=",wordList)
-        setResult('lose')
-          console.log("set LOser to True*")
-          setLoser(pre=>({...loser,out:true}));
-          setIsActive(false)
-          clearTimeout();
-      } */
-      /* const searchWord={
-        "word":`${inputText}`,
-        "limit":"0"
-      }
-      const config={
-        headers: {
-          'X-RapidAPI-Key' : '0689b1157bmsh9ca7f4b5701a660p1080c2jsn9e2fa49e7bcf'
-        }
-      }
-      const res =await axios.get(`https://wordsapiv1.p.rapidapi.com/words/?letterPattern=^${inputText.toLowerCase()}[a-zA-Z]*$`, config)
-        
-       
-      console.log("NEW API WORD+=",res.data.results.total)
-      if(res.data.status===400){
-            //console.log("Status:",res.data.status,"Error_message:",res.data.error_message)
-          setResult('lose')
-          console.log("set LOser to True*")
-          setLoser(pre=>({...loser,out:true}));
-          setIsActive(false)
-          clearTimeout();
-      }else if(res.data.results.total>0){
-        console.log("WORD_LIST=",res.data.results.data)
-          setWordList(res.data.results.data)
-          //turnControler(res.data.data,res.data.data.length);
-      }*/
-      //setLoading(false)
-       
-  //}
-  console.log("FIRST TIME CALLIGN TURN CONTROLER")
-   turnControler(wordList,wordList.length);
-
+    //getRandomWordFromApi(4)
     
 }
   
-}, [inputText,play])
+}, [play])
 
-useEffect(()=>{
-  console.log("HELOOOOOOO=",wordList.length)
-  //if two char word found in dictinary api
-   if(inputText.length>=2 && wordList.length===0)
-  {
-      setLoser({name:'You',out:true})
-      //setResultWord({word:inputText,definition:''})1
-      setFinalResult(pre=>({...pre,lose:finalResult.lose+1}))
-      
-  } 
-  //console.log("Final Result LOSE****=",finalResult.lose)
-},[wordList])
 
-useEffect(()=>{
+
+/* useEffect(()=>{
 //console.log("play and loading=",play,",",!loading,",",once,",",wordList.length)
   if(play && !loading)
   {
@@ -129,7 +76,7 @@ useEffect(()=>{
         console.log("CALING TURN CONTROLER@@@@@@@@@@@@")
         turnControler();
       }else{
-        if(once && wordList.length>0){
+        if(once && random_word.length>0){
           console.log("inside turn controler calling computer turn")
            if(inputText.length===2){
             let tmp=towCharWordCase()
@@ -164,7 +111,7 @@ useEffect(()=>{
     //console.log("useEffect main line 73")
   }
  
-},[wordList,inputText,play])
+},[random_word,inputText,play]) */
 
 
   
@@ -184,7 +131,7 @@ const callMyStopFun=()=>{
 ///////////////////////////////////////////
 
 const towCharWordCase=()=>{
-   let twocharword=wordList.find((item)=>{
+   let twocharword=random_word.find((item)=>{
     //console.log("search=",inputText," in ",item.word,",",item.word.substring(0,inputText.length))
     return (inputText.toUpperCase()===item.substring(0,inputText.length).toUpperCase())
   })
@@ -219,9 +166,6 @@ const towCharWordCase=()=>{
     
       //setOnce(false)
     });
-      
-     
-    
   }
   
 /////////////////////////////////////////////
@@ -231,15 +175,15 @@ const towCharWordCase=()=>{
     
     console.log("inside turn controler  1 check word exist",inputText)
     //setResultWord(inputText)
-    if((loser.name==='You' || loser.name==='Computer') && wordList.length>0){
+    if((loser.name==='You' || loser.name==='Computer') && random_word.length>0){
       
-      exact_word_found=wordList.find((item)=>{
+      exact_word_found=random_word.find((item)=>{
         //console.log("search=",inputText," in ",item.word,",",item.word.substring(0,inputText.length))
         return (item.toUpperCase()===inputText.toUpperCase())
       })
 
       if(!exact_word_found){
-      notfound=wordList.find((item)=>{
+      notfound=random_word.find((item)=>{
               //console.log("notfound=",inputText.toUpperCase(),"===",item.word.substring(0,inputText.length).toUpperCase(),",",inputText.toUpperCase()===item.word.substring(0,inputText.length).toUpperCase())
               return (((inputText.toUpperCase()===item.substring(0,inputText.length).toUpperCase())))
           
@@ -285,7 +229,7 @@ const towCharWordCase=()=>{
       } 
     }
     
-     if(once && wordList.length>0){
+     if(once && random_word.length>0){
         console.log("inside turn controler calling computer turn")
       computerTurn()
       //setLoser({name:"You",out:false})

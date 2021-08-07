@@ -25,7 +25,7 @@ const {inputText,isActive,setIsActive,seconds,setSeconds}=commonContext
 
 
 const humanContext=useContext(HumanContext)
-const {getHintWordList,wordDefinition,setTimeOut,timeout,hint_wordlist,resultWord}=humanContext
+const {wordDefinition,setTimeOut,hint_wordlist,resultWord,setCurrentWinnerLoserHC,getRandomWordFromApi}=humanContext
 
 
   //console.log("TimerContext rendring")
@@ -42,7 +42,7 @@ const {getHintWordList,wordDefinition,setTimeOut,timeout,hint_wordlist,resultWor
 
   var myVar;
   useEffect(() => {
-   // console.log("check is acative in  useEffect=",isActive,",",seconds)
+   //console.log("check is acative in  useEffect=",isActive,",",seconds)
     if(isActive)
     {
       //console.log("Now setisActive==",isActive)
@@ -54,7 +54,12 @@ const {getHintWordList,wordDefinition,setTimeOut,timeout,hint_wordlist,resultWor
             if(!onlineUser){
               //active only for play with computer
               console.log("InputText in Timer Context=",inputText)
-              setTimeOut(true)
+
+              if(inputText!=='' && inputText.length===1){
+                getRandomWordFromApi()
+              }
+              setCurrentWinnerLoserHC('loser')
+              //setTimeOut(true)
              /*  getHintWordList(InputText)
               wordDefinition()
               setFinalResult(pre=>({...pre,lose:finalResult.lose+1}))
@@ -83,19 +88,19 @@ const {getHintWordList,wordDefinition,setTimeOut,timeout,hint_wordlist,resultWor
     return () => clearTimeout(myVar); 
   }, [isActive,seconds]);
 
-useEffect(()=>{
+/* useEffect(()=>{
 
     console.log("TimeOut in useEffect timerContext=",timeout,",",inputText)
     if(timeout){
-      console.log("calling getWordList")
-      getHintWordList(inputText)
+      console.log("calling getRandomWordFromApi")
+      //getHintWordList(inputText)
        console.log("calling wordDefinition from TimerContext--->vscomputer")
      // wordDefinition()
       /*setFinalResult(pre=>({...pre,lose:finalResult.lose+1}))
-      setLoser({ name:'You', out: true })   */ 
+      setLoser({ name:'You', out: true })   *
     }
 
-},[timeout])
+},[timeout]) */
 
  /* useEffect(()=>{
      

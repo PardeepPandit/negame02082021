@@ -5,7 +5,7 @@ import {useMainConsumer,useMainConsumerUpdate} from './MainContext'
 import {Link} from 'react-router-dom'
 import HumanContext from './context/human/humanContext'
 import CommonContext from './context/common/commonContext'
-import { SET_POSITION } from '../../type'
+import { SET_CURRENT_WINNER_LOSER_HC, SET_POSITION } from '../../type'
 
 export const Result = () => {
    
@@ -14,13 +14,12 @@ export const Result = () => {
 
 
   const humanContext=useContext(HumanContext)
-  const {getWordList,wordList,resultWord,setConcede,getHintWordList,setTimeOut,timeout,setPosition}=humanContext
+  const {start_match_computer,resultWord,timeout,current_winner_loser_HC,resetStateHC,winner_counter,loser_counter,getFinalResultHC,sendMatchRoundHC,round,changeMatchStatusHC}=humanContext
 
   const {loser } = useTimerConsumer()
   const {finalResult,finish}=useMainConsumer();
   const {setLoser,resetTime}=useTimerConsumerUpdate();
-  const {setWordList,setFinalResult,setPlay,setTimeFlag,setCon,setFinish,setShowKeyboard}=useMainConsumerUpdate();
-  const {setRound}=useCharacterConsumerUpdate();
+  const {setWordList,setFinalResult,setTimeFlag,setCon,setFinish,setShowKeyboard}=useMainConsumerUpdate();
  //console.log("Resule component",resultWord.word,",",resultWord.definition)
 
  useEffect(()=>{
@@ -34,30 +33,49 @@ export const Result = () => {
  const onClick=()=>{
 
   console.log("ONLICK is called in Timer")
-  //setResultWord({word:'',definition:''})1
-  setPosition(null)
-  setConcede(false)
-  getHintWordList(false)
+  
+  sendMatchRoundHC(
+    {
+        id:start_match_computer.user1.id,
+        round:round,
+        status:current_winner_loser_HC==='winner'  ? "1" : "0",
+        points:current_winner_loser_HC==='winner' ? "5" : "0"
+    }
+)
+ /*  setInputText('')
+  setCurrentWinnerLoserHC(null)
   console.log("KEYBOARD ON 3")
   setShowKeyboard(true)
   setCon(false)
   setPlay(true)
   setTimeFlag(false)
-  setRound(pre=>pre+1)
   console.log("Time Reset@@@@@@@@@@@@@  7")
   setSeconds()
   console.log("***************SET IS ACTIVE 8***************")
-  setIsActive(true)
-  getWordList([])
+  setIsActive(true) */
   setInputText('')
-  console.log("LOSER AND WINNER 9")
-  setLoser({name:'You',out:false})
+  setTimeFlag(false)
+  setSeconds()
+  setIsActive(true)
+  resetStateHC()
+  
+  
 }
 
 const finishFun=()=>{
   console.log("KEYBOARD ON 4")
+  sendMatchRoundHC(
+    {
+        id:start_match_computer.user1.id,
+        round:round,
+        status:current_winner_loser_HC==='winner'  ? "1" : "0",
+        points:current_winner_loser_HC==='winner' ? "5" : "0"
+    }
+)
+  getFinalResultHC(start_match_computer.user1.match_id,start_match_computer.user1.user_id)
   setShowKeyboard(true)
   setFinish(true)
+  changeMatchStatusHC(start_match_computer.user1.match_id)
 }
 
 
@@ -79,22 +97,24 @@ return (
 </div>
 
   <div class="top-middl_lost text-center">
-    <h2 class="win-text">{loser.name ==='You' ?<Fragment><span className="lose-text">YOU LOST</span></Fragment>:<Fragment>
-      <ul className="star-list">
-    <li><img src="assets/img/star2.png" alt="" /></li>
-    <li><img src="assets/img/star2.png" alt="" /></li>
-    <li><img src="assets/img/star2.png" alt="" /></li>
-    </ul>
-      <span style={{color:"green"}}>Winner</span> </Fragment> }</h2>
+    <h2 class="win-text">{current_winner_loser_HC ==='loser' ?<Fragment><span className="lose-text">YOU LOST</span></Fragment>:
+    <Fragment>
+        <ul className="star-list">
+        <li><img src="assets/img/star2.png" alt="" /></li>
+        <li><img src="assets/img/star2.png" alt="" /></li>
+        <li><img src="assets/img/star2.png" alt="" /></li>
+        </ul>
+        <span style={{color:"green"}}>Winner</span> 
+      </Fragment> }</h2>
     
     <div class="clear"></div>
     </div>
     </div>
     </div>
    
-              <div class="row">
+            <div class="row">
                     <div class="col-md-8 offset-2">
-                        <h2 className="word"><span style={{color:'white'}}>{loser.name ==='You' ? "" : ""}</span></h2>
+                        <h2 className="word"><span style={{color:'white'}}>{current_winner_loser_HC ==='loser' ? "" : ""}</span></h2>
                         <h1><span style={{color:'white',fontSize:'50px'}}>{resultWord.word}</span></h1>
                         <h1><span style={{color:'white',fontSize:'50px'}}>{resultWord.definition}</span></h1>
                   </div>
@@ -105,7 +125,7 @@ return (
       <div class="col-md-12">
       <div className="new_mtch_btn">
              {/* <a href="#" style={{"font-size": "26px;"}}> New Match</a> */}
-             {(finalResult.win===3 || finalResult.lose===3) ?<Link to='#' className='play-again' onClick={finishFun}>Finish</Link>:<Link to='/main' className='play-again' onClick={onClick}>Next-Round**</Link>}
+             {(winner_counter===3 || loser_counter===3) ?<Link to='#' className='play-again' onClick={()=>finishFun()}>Finish</Link>:<Link to='/main' className='play-again' onClick={()=>onClick()}>Next-Round-HC</Link>}
              
             </div>
           </div>

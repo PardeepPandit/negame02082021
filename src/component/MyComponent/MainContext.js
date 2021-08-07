@@ -13,14 +13,14 @@ export function useMainConsumerUpdate() {
 }
 
 export function MainProvider({ children }) {
-    const [play,setPlay]=useState(()=>true)
+   // const [play,setPlay]=useState(()=>true)
     const [redirectTo,setRedirectTo]=useState(()=>false)
     const [timeFlag,setTimeFlag]=useState(()=>false)
     const [hintCheck,setHintCheck]=useState(()=>true)
     const [wordList, setWordList] = useState([])
     const [showKeyboard,setShowKeyboard]=useState(()=>true)
     //const [resultWord,setResultWord]=useState({word:'',definition:''})
-    const [finalResult,setFinalResult]=useState(()=>({win:0,lose:0}))
+    //const [finalResult,setFinalResult]=useState(()=>({win:0,lose:0}))
     const [roundList1, setRoundList1] = useState({r1:'1', r1_loser: null }) 
    const [roundList2, setRoundList2] = useState({r2:'2', r2_loser: null }) 
    const [roundList3, setRoundList3] = useState({r3:'3', r3_loser: null }) 
@@ -34,13 +34,13 @@ export function MainProvider({ children }) {
 
 
   return (
-    <MainContext.Provider value={{showKeyboard,play,timeFlag,wordList,hintCheck,finalResult,roundList1,
+    <MainContext.Provider value={{showKeyboard,timeFlag,wordList,hintCheck,roundList1,
       roundList2,
       roundList3,
       roundList4,
       roundList5,
       redirectTo,con,finish,initialState}}>
-      <MainContextUpdate.Provider value={{setPlay,setTimeFlag,setWordList,setHintCheck,setFinalResult,setRoundList1,
+      <MainContextUpdate.Provider value={{setTimeFlag,setWordList,setHintCheck,setRoundList1,
                                                    setRoundList2,
                                                    setRoundList3,
                                                    setRoundList4,

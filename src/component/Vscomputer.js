@@ -1,6 +1,4 @@
-import React, { useState, useEffect, Fragment, useContext } from "react";
-import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
-import { NavLink } from "react-router-dom";
+import React, { useState, useEffect, Fragment, useContext,Suspense } from "react";
 import {
   useTimerConsumer,
   useTimerConsumerUpdate,
@@ -20,8 +18,9 @@ import HumanContext from "./MyComponent/context/human/humanContext";
 import { __SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED } from "react-dom";
 import MediumLevelUI from "./MyComponent/LevelUI/MediumLevelUI";
 import Trophy from "./MyComponent/Trophy";
-import Keyboard from "./Keyboard";
+//import Keyboard from "./Keyboard";
 import CommonContext from '../component/MyComponent/context/common/commonContext'
+const Keyboard = React.lazy(() => import('./Keyboard'));
 
 
 
@@ -29,32 +28,35 @@ const Vscomputer = () => {
   //console.log("Match===", level);
 
   const commonContext=useContext(CommonContext)
-  const {inputText,setIsActive,isActive,setSeconds,seconds}=commonContext
+  const {inputText,setIsActive,isActive,setSeconds,seconds,setInputText}=commonContext
   const authContext=useContext(AuthContext)
   const {user,loading,login_data}=authContext
   const humanContext = useContext(HumanContext);
   //console.log("User in vscomputer=",user)
   const {
-    setInputText,
-    getWordList,
-    wordList,
-    getHint,
-    checkHintCount,
     hint,
+    random_word,
     wordDefinition,
     setResultWord,
     start_match_computer,
     hint_count,
     hint_used,
     setHintUsed,
-    getHintWordList,
     hint_wordlist,
     concede,
     setConcede,
     resultWord,
     timeout,
     level_type,
-    position
+    position,
+    setShowKeyboard,
+    show_keyboard,
+    checkWordExistApi,
+    round,
+    play,
+    setPlay,
+    setTurn,
+    setCurrentWinnerLoserHC
   } = humanContext;
 
 
@@ -83,13 +85,11 @@ const Vscomputer = () => {
     setRoundList3,
     setRoundList4,
     setRoundList5,
-    setPlay,
     setCon,
     checkSound,
     playSound,
-    setShowKeyboard,
   } = useMainConsumerUpdate();
-  const { round, play } = useCharacterConsumer();
+  //const { round, play } = useCharacterConsumer();
   const { myTurn } = useCharacterConsumerUpdate();
   const { loser } = useTimerConsumer();
   const { setLoser, resetTime } = useTimerConsumerUpdate();
@@ -102,7 +102,7 @@ const Vscomputer = () => {
     console.log("con=", con);
     //below if (con)=>if(concede) chainging con to concede
     if (con) {
-      console.log("LOSER AND WINNER 3");
+      //console.log("LOSER AND WINNER 3");
       setLoser({ name: "You", out: true });
       if (loser.name === "You") {
         //console.log("COUNTER INCREMENTED",finalResult.lose)
@@ -115,7 +115,7 @@ const Vscomputer = () => {
   }, [roundList1, roundList2, roundList3, roundList4, roundList5]);
 
   useEffect(() => {
-    console.log("CONCIDE===", loser.name, ",", loser.out);
+    //console.log("CONCIDE===", loser.name, ",", loser.out);
 
     if (round === 1) setRoundList1({ r1_loser: loser.name });
     if (round === 2) setRoundList2({ r2_loser: loser.name });
@@ -152,10 +152,10 @@ const Vscomputer = () => {
 
   useEffect(()=>{
 
-    
         if(concede){
-          console.log("calling getHintWordList from useEffect=",concede)
-          getHintWordList(inputText)
+          console.log("calling getHintWordList from useEffect=",concede,",",random_word)
+          //getHintWordList(inputText)
+          setCurrentWinnerLoserHC('loser')
         }
 
   },[concede])
@@ -173,56 +173,39 @@ const Vscomputer = () => {
 
   };
 
-  useEffect(() => {
-    console.log("Time Reset@@@@@@@@@@@@@  4")
-    setSeconds();
-  }, [play]);
+/*   useEffect(() => {
+    
+    if(play){
+      console.log("Time Reset@@@@@@@@@@@@@  4")
+      setSeconds();
+    }
+    
+  }, [play]); */
 
   const playFun = () => {
+    checkWordExistApi()
+    //setTurn('computer')
     //console.log("click on play 1",play)
     setResultWord();
-    // setShowKeyboard(true)
+    //setShowKeyboard(true)
     setTimeFlag(true);
+    setIsActive(false)
     //setPlay(pre=>!pre)
-    setPlay(true);
+    //setPlay(true);
     //console.log("click on play 2",play)
   };
 
   const onClick = (e) => {
+    console.log("KEYBOAD HIDE")
     setShowKeyboard(false);
-    setTimeFlag(false);
+    //setTimeFlag(false);
     console.log("Keyboard Target*******=",e.target)
     myTurn(e);
   };
-  const onChange = (e) => {
+/*   const onChange = (e) => {
     myTurn(e);
-  };
+  }; */
 
-  /*  const [modal, setModal] = useState(false);
-    
-      const toggle = () => setModal(!modal); */
-
- /*  useEffect(() => {
-    
-    if(hint_used){
-      console.log("I am caling get hint");
-      getHintWordList(inputText)
-     // getHint();
-    }
-    
-  }, [hint_used]); */
-
-
-/* useEffect(()=>
-  {
-    if(hint_wordlist.length>0){
-      console.log("Calling wordDefinition form useEffect=",hint_wordlist)
-          getHint()
-          wordDefinition()
-    }
-    
-
-  },[hint_wordlist]) */
 
   useEffect(()=>{
     console.log("Result word in useEffect=",concede,",",resultWord)
@@ -296,7 +279,7 @@ const Vscomputer = () => {
                     <input
                       type="text"
                       className="main-input"
-                      onChange={onChange}
+                      //onChange={onChange}
                       value={inputText}
                     ></input>
                   </div>
@@ -304,11 +287,14 @@ const Vscomputer = () => {
                 {/*  {loser.out && <div className="bg-white">{JSON.stringify(val)}</div>} */}
                 {level_type==="medium" && <MediumLevelUI />}
 
-                {showKeyboard ? (
+                {show_keyboard ? (
                   <div class="keypad">
                     <div class="keypad_in">
                       <div class="key_btn">
+
+                      <Suspense fallback={<div>Loading...</div>}>
                         <Keyboard onClick={onClick} />
+                        </Suspense>
 
                         <div className="play_btn_m">
                           <div class="btn_b k_pad">
@@ -340,8 +326,8 @@ const Vscomputer = () => {
                 ) : (
                   <Fragment>
                     <div className="play_btn_m game-buttons">
-                      <button onClick={playFun}>Play</button>
-                      <button onClick={deleteChar}>
+                      <button onClick={()=>playFun()}>Play</button>
+                      <button onClick={()=>deleteChar()}>
                       {/* <button onClick={()=>playFun()}>Play</button>
                       <button onClick={()=>deleteChar()}> */}
                         <img src="assets/img/backspace.svg" alt="" width="27" />

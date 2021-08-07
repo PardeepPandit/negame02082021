@@ -18,11 +18,12 @@ export const FinalResult = ({title}) => {
   const {setInputText,setIsActive }=commonContext
 
   const humanContext=useContext(HumanContext)
-  const {getWordList,wordList,resultWord,removeLocalData,setHintUsed,setConcede,getHintWordList,setTimeOut}=humanContext
+  const {getRandomWordFromApi,random_word,resultWord,removeLocalData,setHintUsed,setConcede,winner_counter,loser_counter,final_result_HC,changeMatchStatusHC}=humanContext
 
+  const {data}=final_result_HC || {}
     const {seconds, loser } = useTimerConsumer()
     const {setLoser,resetTime}=useTimerConsumerUpdate();
-    const {setRoundList1,setRoundList2,setRoundList3,setRoundList4,setRoundList5,setHintCheck,setFinalResult,setPlay,setRedirectTo,setCon,setFinish}=useMainConsumerUpdate();
+    const {setRoundList1,setRoundList2,setRoundList3,setRoundList4,setRoundList5,setHintCheck,setPlay,setRedirectTo,setCon,setFinish}=useMainConsumerUpdate();
     const {finalResult,roundList1,roundList2,roundList3,roundList4,roundList5,redirectTo}=useMainConsumer();
     const {round}=useCharacterConsumer();
     const {setRound,setRoundList}=useCharacterConsumerUpdate();
@@ -36,22 +37,19 @@ export const FinalResult = ({title}) => {
      
 
     const redirect = () => {
-        console.log("Rdirect function word list",wordList)
+        console.log("Rdirect function word list",random_word)
         setConcede(false)
-        getHintWordList(false)
         removeLocalData()
         setHintUsed(false)
-        setFinalResult({win:0,lose:0})
        setHintCheck(true)
        console.log("***************SET IS ACTIVE 5***************")
        setIsActive(false)
        setFinish(false)
-       setRound(1)
        setInputText(null)
       // setResultWord({word:'',definition:''})1
        //setCon(false)
        //setSeconds();
-       getWordList(null)
+      // getRandomWordFromApi(5)
        console.log("LOSER AND WINNER 5")
        setLoser({name:'You',out:false})  
         setRoundList1({r1:'1', r1_loser: null }) 
@@ -65,10 +63,6 @@ export const FinalResult = ({title}) => {
      }
    
 
-     var wincount=finalResult.win
-     var losecount=finalResult.lose
-     var sum=wincount+losecount
-
     return (
         <Fragment>
             <div class="mod_contany section_card section_card_ga text-center">
@@ -79,7 +73,7 @@ export const FinalResult = ({title}) => {
       <div class="col-md-8 offset-md-2">
         <div class="top-middl_lost text-center">
           <h2 style={{color:"White",fontSize:"4rem"}} className="bg-info">Final Result</h2>
-          <h2 class="word">{wincount>losecount ? <span style={{color:"cyan",fontSize:"4rem"}}>You Win</span> : "You Lost"}</h2>
+          <h2 class="word">{winner_counter > loser_counter ? <span style={{color:"cyan",fontSize:"4rem"}}>Winner</span> : "Forfeited"}</h2>
           <div class="clear"></div>
           </div>
           </div>
@@ -88,7 +82,13 @@ export const FinalResult = ({title}) => {
             <div class="col-md-10 offset-md-1">
               <div class="trofi">
 
-              {roundList1.r1_loser==='You' ? <img src="assets/img/red.png" alt="img"/> : <Fragment>{roundList1.r1_loser===null ? <img src="assets/img/blank.png" alt="img"/> : <img src="assets/img/green.png" alt="img"/>}</Fragment>}
+              {data && data.rounds.map((item)=>{
+                      return <Fragment key={item.id}> 
+                    {item.status==='0' ? <img src="assets/img/red.png" alt="img"/> :<img src="assets/img/green.png" alt="img"/>}
+                  </Fragment>})} 
+
+
+            {/*   {roundList1.r1_loser==='You' ? <img src="assets/img/red.png" alt="img"/> : <Fragment>{roundList1.r1_loser===null ? <img src="assets/img/blank.png" alt="img"/> : <img src="assets/img/green.png" alt="img"/>}</Fragment>}
 
               {roundList2.r2_loser==='You' ? <img src="assets/img/red.png" alt="img"/> : <Fragment>{roundList2.r2_loser===null ? <img src="assets/img/blank.png" alt="img"/> : <img src="assets/img/green.png" alt="img"/>}</Fragment>}
 
@@ -96,7 +96,7 @@ export const FinalResult = ({title}) => {
 
               {roundList4.r4_loser==='You' ? <img src="assets/img/red.png" alt="img"/> : <Fragment>{roundList4.r4_loser===null ? <img src="assets/img/blank.png" alt="img"/> : <img src="assets/img/green.png" alt="img"/>}</Fragment>}
 
-              {roundList5.r5_loser==='You' ? <img src="assets/img/red.png" alt="img"/> : <Fragment>{roundList5.r5_loser===null ? <img src="assets/img/blank.png" alt="img"/> : <img src="assets/img/green.png" alt="img"/>}</Fragment>}
+              {roundList5.r5_loser==='You' ? <img src="assets/img/red.png" alt="img"/> : <Fragment>{roundList5.r5_loser===null ? <img src="assets/img/blank.png" alt="img"/> : <img src="assets/img/green.png" alt="img"/>}</Fragment>} */}
 
                     <div class="clear"></div></div>
                     </div>

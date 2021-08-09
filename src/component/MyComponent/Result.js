@@ -14,7 +14,7 @@ export const Result = () => {
 
 
   const humanContext=useContext(HumanContext)
-  const {start_match_computer,resultWord,timeout,current_winner_loser_HC,resetStateHC,winner_counter,loser_counter,getFinalResultHC,sendMatchRoundHC,round,changeMatchStatusHC}=humanContext
+  const {random_word,start_match_computer,resultWord,timeout,current_winner_loser_HC,roundFinishResetHC,winner_counter,loser_counter,getFinalResultHC,sendMatchRoundHC,round,changeMatchStatusHC,match_round_details,setMasterHistory}=humanContext
 
   const {loser } = useTimerConsumer()
   const {finalResult,finish}=useMainConsumer();
@@ -30,6 +30,7 @@ export const Result = () => {
     console.log("Time out state=",timeout)
  },[timeout])
 
+
  const onClick=()=>{
 
   console.log("ONLICK is called in Timer")
@@ -42,22 +43,14 @@ export const Result = () => {
         points:current_winner_loser_HC==='winner' ? "5" : "0"
     }
 )
- /*  setInputText('')
-  setCurrentWinnerLoserHC(null)
-  console.log("KEYBOARD ON 3")
-  setShowKeyboard(true)
-  setCon(false)
-  setPlay(true)
-  setTimeFlag(false)
-  console.log("Time Reset@@@@@@@@@@@@@  7")
-  setSeconds()
-  console.log("***************SET IS ACTIVE 8***************")
-  setIsActive(true) */
-  setInputText('')
-  setTimeFlag(false)
-  setSeconds()
-  setIsActive(true)
-  resetStateHC()
+  setTimeout(()=>{
+    setInputText('')
+    setTimeFlag(false)
+    setSeconds()
+    setIsActive(true)
+    roundFinishResetHC()
+  },5000)
+
   
   
 }
@@ -72,10 +65,13 @@ const finishFun=()=>{
         points:current_winner_loser_HC==='winner' ? "5" : "0"
     }
 )
+setTimeout(()=>{
   getFinalResultHC(start_match_computer.user1.match_id,start_match_computer.user1.user_id)
-  setShowKeyboard(true)
-  setFinish(true)
-  changeMatchStatusHC(start_match_computer.user1.match_id)
+    setShowKeyboard(true)
+    setFinish(true)
+    changeMatchStatusHC(start_match_computer.user1.match_id)
+},5000)
+  
 }
 
 

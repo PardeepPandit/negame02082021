@@ -56,7 +56,8 @@ const Vscomputer = () => {
     play,
     setPlay,
     setTurn,
-    setCurrentWinnerLoserHC
+    setCurrentWinnerLoserHC,
+    getHint
   } = humanContext;
 
 
@@ -64,67 +65,9 @@ const Vscomputer = () => {
 
   const {image_path,user1}=start_match_computer
   const {image}=user1
-  const {
-    timeFlag,
-    hintCheck,
-    finalResult,
-    roundList1,
-    roundList2,
-    roundList3,
-    roundList4,
-    roundList5,
-    con,
-    showKeyboard,
-  } = useMainConsumer();
-  const {
-    setTimeFlag,
-    setHintCheck,
-    setFinalResult,
-    setRoundList1,
-    setRoundList2,
-    setRoundList3,
-    setRoundList4,
-    setRoundList5,
-    setCon,
-    checkSound,
-    playSound,
-  } = useMainConsumerUpdate();
-  //const { round, play } = useCharacterConsumer();
+
+  const {setTimeFlag} = useMainConsumerUpdate();
   const { myTurn } = useCharacterConsumerUpdate();
-  const { loser } = useTimerConsumer();
-  const { setLoser, resetTime } = useTimerConsumerUpdate();
-  const [char, setChar] = useState(() => "");
-  //const [showKeyboard,setShowKeyboard]=useState(()=>true)
-  const [concideFlag, setConcideFlag] = useState(() => false);
-  const [callHint, setCallHint] = useState(false);
-
-  useEffect(() => {
-    console.log("con=", con);
-    //below if (con)=>if(concede) chainging con to concede
-    if (con) {
-      //console.log("LOSER AND WINNER 3");
-      setLoser({ name: "You", out: true });
-      if (loser.name === "You") {
-        //console.log("COUNTER INCREMENTED",finalResult.lose)
-        setFinalResult((pre) => ({ ...pre, lose: finalResult.lose + 1 }));
-      }
-      if (loser.name === "Computer") {
-        setFinalResult((pre) => ({ ...pre, win: finalResult.win + 1 }));
-      }
-    }
-  }, [roundList1, roundList2, roundList3, roundList4, roundList5]);
-
-  useEffect(() => {
-    //console.log("CONCIDE===", loser.name, ",", loser.out);
-
-    if (round === 1) setRoundList1({ r1_loser: loser.name });
-    if (round === 2) setRoundList2({ r2_loser: loser.name });
-    if (round === 3) setRoundList3({ r3_loser: loser.name });
-    if (round === 4) setRoundList4({ r4_loser: loser.name });
-    if (round === 5) setRoundList5({ r5_loser: loser.name });
-  }, [loser, isActive, con]);
-
- 
 
   const deleteChar = () => {
     //console.log("deletechar========",inputText)
@@ -143,81 +86,29 @@ const Vscomputer = () => {
     //setPlay(true)
   };
 
-  useEffect(() => {
-    console.log("Final RESULT=", finalResult);
-    if (finalResult === 3) {
-      console.log("Final Result count", finalResult);
-    }
-  }, [finalResult]);
-
   useEffect(()=>{
 
         if(concede){
           console.log("calling getHintWordList from useEffect=",concede,",",random_word)
-          //getHintWordList(inputText)
+          getHint()
           setCurrentWinnerLoserHC('loser')
         }
-
   },[concede])
-
-  const onClickConcede =() => {
-    setCon(true);
-    //wordDefinition();
-    setPlay(false);
-    console.log("***************SET IS ACTIVE 4***************")
-    setIsActive(false);
-    console.log("LOSER AND WINNER 4");
-    setLoser({ name: "You", out: false });
-    console.log("Time Reset@@@@@@@@@@@@@  3")
-    setSeconds();
-
-  };
-
-/*   useEffect(() => {
-    
-    if(play){
-      console.log("Time Reset@@@@@@@@@@@@@  4")
-      setSeconds();
-    }
-    
-  }, [play]); */
 
   const playFun = () => {
     checkWordExistApi()
-    //setTurn('computer')
-    //console.log("click on play 1",play)
     setResultWord();
-    //setShowKeyboard(true)
     setTimeFlag(true);
     setIsActive(false)
-    //setPlay(pre=>!pre)
-    //setPlay(true);
-    //console.log("click on play 2",play)
   };
 
   const onClick = (e) => {
     console.log("KEYBOAD HIDE")
     setShowKeyboard(false);
-    //setTimeFlag(false);
     console.log("Keyboard Target*******=",e.target)
     myTurn(e);
   };
-/*   const onChange = (e) => {
-    myTurn(e);
-  }; */
 
-
-  useEffect(()=>{
-    console.log("Result word in useEffect=",concede,",",resultWord)
-          if(concede && resultWord && !timeout){
-        console.log("Calling onClicKConcede")
-          onClickConcede()
-      }
-      if(timeout){
-        setFinalResult(pre=>({...pre,lose:finalResult.lose+1}))
-        setLoser({ name:'You', out: true })
-      }
-  },[resultWord])
 
   return (
     <Fragment>

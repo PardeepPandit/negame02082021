@@ -67,7 +67,7 @@ import Challenge from './component/playonline/play_online_components/Challenge'
 import firebase from './firebase'
 import { get } from 'jquery';
 import CommonState from './component/MyComponent/context/common/CommonState';
-
+import NotFoundPage from './component/MyComponent/NotFoundPage'
 
 function App() {
 //console.log(process.env.NODE_ENV) // dev
@@ -153,7 +153,7 @@ useEffect(()=>{
             {/* ///////////////////////////Play-Online///////////////////////////////////// */}
             <PrivateRoute exact path='/playonline' component={PlayOnline}/>
             <Route exact path='/challenge' component={Challenge}/>
-            
+          <Route component={NotFoundPage}/>
           </Switch>
          
         </CharacterProvider>

@@ -56,7 +56,7 @@ useEffect(()=>{
 
 //Fetching Data API
 useEffect(async() => {
-  if(inputText.length===2 && play){ 
+  if(inputText!==null && inputText.length===2 && play){ 
     console.log("before calling get word",inputText,",",inputText.length)
     //getRandomWordFromApi(4)
     

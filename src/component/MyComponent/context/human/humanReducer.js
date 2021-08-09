@@ -22,16 +22,19 @@ import{
   WORD_EXIST,
   SET_CURRENT_WINNER_LOSER_HC,
   SET_WINNER_LOSER_COUNTER,
-  RESET_STATE_HC,
+  RESET_STATE_FOR_ROUND_FINSH_HC,
   RESET_STATE,
   SET_FINAL_RESULT_HC,
-  SET_FINAL_RESULT_DATA
+  SET_FINAL_RESULT_DATA,
+  RESET_STATE_FOR_MATCH_FINSH_HC,
+  SET_MATCH_ROUND_DETAILS,
+  SET_MASTER_HISTORY
   } from '../../../../type'; 
   
   //comment
   export default (state,action)=>{ 
     const {type,payload}=action
-    console.log("Human Reducer=",type)
+    console.log("Human Reducer=",type,",",payload)
     switch(type){
         case GET_RANDOM_WORD_SUCCESS:
             return{
@@ -165,7 +168,17 @@ import{
                                                                                             ...state,
                                                                                             final_result_HC:payload
                                                                                         }
-                                                                                    case RESET_STATE_HC:
+                                                                                        case SET_MATCH_ROUND_DETAILS:
+                                                                                            return{
+                                                                                                ...state,
+                                                                                                match_round_details:payload
+                                                                                            }
+                                                                                        case SET_MASTER_HISTORY:
+                                                                                            return{
+                                                                                                ...state,
+                                                                                                master_history_HC:[...state.master_history_HC,payload]
+                                                                                            }
+                                                                                    case RESET_STATE_FOR_ROUND_FINSH_HC:
                                                                                         return{
                                                                                             ...state,
                                                                                             random_word:null,
@@ -177,6 +190,35 @@ import{
                                                                                             play:true,
                                                                                             round:state.round+1
                                                                                         }
+                                                                                        case RESET_STATE_FOR_MATCH_FINSH_HC:
+                                                                                            return{
+                                                                                                ...state,
+                                                                                                random_word:null,
+                                                                                                hint:null,
+                                                                                                resultWord:{word:'',definition:''},
+                                                                                                hint_used:false,
+                                                                                                concede:false,
+                                                                                                timeout:false,
+                                                                                                level_type:null,
+                                                                                                position:null,
+                                                                                                start_match_computer:null,
+                                                                                                turn:'human',
+                                                                                                next_char:null,
+                                                                                                show_keyboard:true,
+                                                                                                round:1,
+                                                                                                play:true,
+                                                                                                word_exist:false,
+                                                                                                current_winner_loser_HC:null,
+                                                                                                winner_counter:0,
+                                                                                                loser_counter:0,
+                                                                                                result_history:[],
+                                                                                                final_result_HC:null,
+                                                                                                match_round_details:null,
+                                                                                                master_history_HC:[]
+
+
+                                                                                                
+                                                                                            }
 
       default:
       return state;

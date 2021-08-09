@@ -18,7 +18,7 @@ export const FinalResult = ({title}) => {
   const {setInputText,setIsActive }=commonContext
 
   const humanContext=useContext(HumanContext)
-  const {getRandomWordFromApi,random_word,resultWord,removeLocalData,setHintUsed,setConcede,winner_counter,loser_counter,final_result_HC,changeMatchStatusHC}=humanContext
+  const {getRandomWordFromApi,random_word,resultWord,removeLocalData,setHintUsed,setConcede,winner_counter,loser_counter,final_result_HC,changeMatchStatusHC,matchFinishResetHC}=humanContext
 
   const {data}=final_result_HC || {}
     const {seconds, loser } = useTimerConsumer()
@@ -34,10 +34,11 @@ export const FinalResult = ({title}) => {
     const [temp,setTemp]=useState(false)
 
     
-     
+     console.log("data=",data)
 
     const redirect = () => {
         console.log("Rdirect function word list",random_word)
+        matchFinishResetHC()
         setConcede(false)
         removeLocalData()
         setHintUsed(false)
@@ -46,20 +47,7 @@ export const FinalResult = ({title}) => {
        setIsActive(false)
        setFinish(false)
        setInputText(null)
-      // setResultWord({word:'',definition:''})1
-       //setCon(false)
-       //setSeconds();
-      // getRandomWordFromApi(5)
-       console.log("LOSER AND WINNER 5")
-       setLoser({name:'You',out:false})  
-        setRoundList1({r1:'1', r1_loser: null }) 
-        setRoundList2({r2:'1', r2_loser: null }) 
-        setRoundList3({r3:'1', r3_loser: null }) 
-        setRoundList4({r4:'1', r4_loser: null }) 
-        setRoundList5({r5:'1', r5_loser: null }) 
-       //setTemp(true)
-       //setRedirectTo(true)
-      /*  return history.push('/main') */
+
      }
    
 
@@ -87,17 +75,6 @@ export const FinalResult = ({title}) => {
                     {item.status==='0' ? <img src="assets/img/red.png" alt="img"/> :<img src="assets/img/green.png" alt="img"/>}
                   </Fragment>})} 
 
-
-            {/*   {roundList1.r1_loser==='You' ? <img src="assets/img/red.png" alt="img"/> : <Fragment>{roundList1.r1_loser===null ? <img src="assets/img/blank.png" alt="img"/> : <img src="assets/img/green.png" alt="img"/>}</Fragment>}
-
-              {roundList2.r2_loser==='You' ? <img src="assets/img/red.png" alt="img"/> : <Fragment>{roundList2.r2_loser===null ? <img src="assets/img/blank.png" alt="img"/> : <img src="assets/img/green.png" alt="img"/>}</Fragment>}
-
-              {roundList3.r3_loser==='You' ? <img src="assets/img/red.png" alt="img"/> : <Fragment>{roundList3.r3_loser===null ? <img src="assets/img/blank.png" alt="img"/> : <img src="assets/img/green.png" alt="img"/>}</Fragment>}
-
-              {roundList4.r4_loser==='You' ? <img src="assets/img/red.png" alt="img"/> : <Fragment>{roundList4.r4_loser===null ? <img src="assets/img/blank.png" alt="img"/> : <img src="assets/img/green.png" alt="img"/>}</Fragment>}
-
-              {roundList5.r5_loser==='You' ? <img src="assets/img/red.png" alt="img"/> : <Fragment>{roundList5.r5_loser===null ? <img src="assets/img/blank.png" alt="img"/> : <img src="assets/img/green.png" alt="img"/>}</Fragment>} */}
-
                     <div class="clear"></div></div>
                     </div>
                     </div>
@@ -106,24 +83,20 @@ export const FinalResult = ({title}) => {
                     <div class="col-md-8 offset-2">
                     <div class="row">
                       <div class="col-md-6">
-                        <div class="round1">
+                      <div class="round1">
                           <h2 class="text-white round-text">Round</h2>
-                          <p><strong class="text-white">Round 1</strong></p>
-                          <p><strong class="text-white">Round 2</strong></p>
-                          <p><strong class="text-white">Round 3</strong></p>
-                          <p><strong class="text-white">Round 4</strong></p>
-                          <p><strong class="text-white">Round 5</strong></p>
-                        </div>
+                          {data && data.rounds.map((item,index)=>(<Fragment key={item.id}> <p><strong class="text-white">Round {index+1}</strong></p></Fragment>))}
+
+                        </div> 
                       </div>
                         <div class="col-md-6">
-                            <div class="round1">
-                              <h2 class="text-white round-text">Status</h2>
-                              <p><strong class="text-white">{roundList1.r1_loser==='You' ? 'Lost' : <Fragment>{roundList1.r1_loser===null ? 'No Match' : "Win"}</Fragment>}</strong></p>
-                              <p><strong class="text-white">{roundList2.r2_loser==='You' ? 'Lost' : <Fragment>{roundList2.r2_loser===null ? 'No Match' : "Win"}</Fragment>}</strong></p>
-                              <p><strong class="text-white">{roundList3.r3_loser==='You' ? 'Lost' : <Fragment>{roundList3.r3_loser===null ? 'No Match' : "Win"}</Fragment>}</strong></p>
-                              <p><strong class="text-white">{roundList4.r4_loser==='You' ? 'Lost' : <Fragment>{roundList4.r4_loser===null ? 'No Match' : "Win"}</Fragment>}</strong></p>
-                              <p><strong class="text-white">{roundList5.r5_loser==='You' ? 'Lost' : <Fragment>{roundList5.r5_loser===null ? 'No Match' : "Win"}</Fragment>}</strong></p>
-                            </div>
+                        <div class="round1">
+                          <h2 class="text-white round-text">Round</h2>
+                          {data && data.rounds.map((item,index)=>(<Fragment key={item.id}>
+                                <p><strong class="text-white">{item.status==='0' ? 'Lost' : "Win"}</strong></p>
+                              </Fragment>))}
+
+                        </div> 
                           </div>
                         </div>
                         </div>

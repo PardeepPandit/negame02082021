@@ -55,7 +55,7 @@ const {wordDefinition,setTimeOut,hint_wordlist,resultWord,setCurrentWinnerLoserH
               //active only for play with computer
               console.log("InputText in Timer Context=",inputText)
 
-              if(inputText!=='' && inputText.length===1){
+              if(inputText!==null && inputText.length===1){
                 getRandomWordFromApi()
               }
               setCurrentWinnerLoserHC('loser')

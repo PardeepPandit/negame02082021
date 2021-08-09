@@ -28,8 +28,11 @@ import{
   WORD_EXIST,
   SET_CURRENT_WINNER_LOSER_HC,
   SET_WINNER_LOSER_COUNTER,
-  RESET_STATE_HC,
-  SET_FINAL_RESULT_HC
+  RESET_STATE_FOR_ROUND_FINSH_HC,
+  SET_FINAL_RESULT_HC,
+  RESET_STATE_FOR_MATCH_FINSH_HC,
+  SET_MATCH_ROUND_DETAILS,
+  SET_MASTER_HISTORY
 } from '../../../../type'; 
 
 
@@ -56,7 +59,10 @@ const HumanState=({children})=>{
         winner_counter:0,
         loser_counter:0,
         result_history:[],
-        final_result_HC:null
+        final_result_HC:null,
+        match_round_details:null,
+       master_history_HC:[]
+       //[{round:1,word:,complete_word:,round_respnse}],[]
   };
 
   const [state,dispatch]=useReducer(humanReducer,initialState);
@@ -88,7 +94,7 @@ useEffect(()=>{
 
  useEffect(()=>{
   console.log("CHECK POINT 1",state.turn)
-        if(state.turn==='computer' && inputText!=='' && inputText.length > 1 ){
+        if(state.turn==='computer' && inputText!==null && inputText.length > 1 ){
           console.log("calling checkwordApi ")
           //call checkWordExistApi to check computer's word
 
@@ -105,13 +111,55 @@ useEffect(()=>{
 useEffect(() => {
     
   if(state.hint_used){
-    console.log("I am calling get hint in humanstate");
-
-    //call getHintWordList methode to fetch list of word from word API
-    //getHintWordList(inputText)
-  }
+    console.log("calling get hint in humanstate");
+    //getHint()
+}
   
 }, [state.hint_used]);
+
+useEffect(()=>{
+  console.log("HINT=======",state.hint)
+  setResultWord(state.hint,'')
+},[state.hint])
+
+
+const getHint=async()=>{
+  setLoading()
+  const config={
+      headers: {
+        'X-RapidAPI-Key' : '0689b1157bmsh9ca7f4b5701a660p1080c2jsn9e2fa49e7bcf'
+      }
+    }
+    try {
+      const res= await axios.get(`https://wordsapiv1.p.rapidapi.com/words/?letterPattern=^${inputText.toLowerCase()}[a-zA-Z]*$&random=true`,config)
+  console.log(`Response code ${res.status} from getRandomWord=`,res.data.word)
+
+  if(res.status===200)
+  {
+
+    dispatch({
+      type:GET_HINT,
+      payload:res.data.word
+    }) 
+
+  
+     
+  }
+
+  } catch (error) {
+    console.log("Error in getRandomWordFromApi=",error)
+    if(error)
+    {
+
+      dispatch({
+        type:GET_HINT,
+        payload:'Word not exist**'
+      }) 
+      
+    } 
+  }  
+}
+
 
 
 
@@ -119,7 +167,7 @@ useEffect(()=>{
 
   if(state.random_word!==null){
       if(state.random_word!=='word not found'){
-        if(inputText!=='' && inputText.length===1 && seconds===0){
+        if(inputText!==null && inputText.length===1 && seconds===0){
           setResultWord(state.random_word)
         }
         else if(inputText!=='' && inputText.length > 1){
@@ -152,6 +200,19 @@ useEffect(()=>{
   }
 
 
+ const setMasterHistory=(details)=>{
+   dispatch({
+     type:SET_MASTER_HISTORY,
+     payload:details
+   })
+ }
+ useEffect(()=>{
+  if(state.match_round_details!==null){
+    console.log("Round DEtails=",state.match_round_details)
+    setMasterHistory({round:state.round,word:inputText,complete_word:state.random_word,round_details:state.match_round_details})
+  }
+},[state.match_round_details]) 
+
   const sendMatchRoundHC=async(formdata)=>{
 
     //console.log("Form data for match round=",formdata)
@@ -163,13 +224,18 @@ useEffect(()=>{
         }
     }
     const {id,round,status,points}=formdata
+
     console.log("Form data=",formdata)
     const body=formdata
     try {
 
         const res=await axios.post(process.env.REACT_APP_BASEURL+'/api/match/round',body,config)
         /* const res=await axios.post(process.env.REACT_APP_BASEURL+`/api/match/round?id=${id}&round=${round}&status=${status}&points=${points}`,config) */
-        //console.log("Response from match round",res.data)
+        console.log("Response from match round",res.data)
+        dispatch({
+          type:SET_MATCH_ROUND_DETAILS,
+          payload:res.data
+        })
     }
     catch(error){
         console.log("Match Round Error=",error)
@@ -259,16 +325,18 @@ const setCurrentWinnerLoserHC=(win_lose)=>{
 
 useEffect(()=>{
 
+  
   if(state.turn){
   console.log(`changing turn from ${state.turn}`)
-    
-    state.concede===true ? setResultWord(state.random_word) :setResultWord()
+    //state.concede===true ?  setResultWord(state.hint):setResultWord()
 
   state.turn==='human' ? setTurn('computer') : setTurn('human')
   }
   
 
 },[state.current_winner_loser_HC])
+
+
 
 
 
@@ -369,6 +437,7 @@ useEffect(()=>{
         
         console.log(`${state.turn}Response code ${res.status} form check word API=`,res.data)
 
+     
         if(res.status===200){
           dispatch({
             type:WORD_EXIST,
@@ -465,44 +534,7 @@ const setNextCharacter=(char)=>{
     return array;
   }
 
-  const getHint=()=>{
-    console.log("calling githint***",state.hint_wordlist)
-    if(state.hint_wordlist){
-    shuffle(state.hint_wordlist)
-      var temphint=''
-        console.log("Hint word list after shuffle=",state.hint_wordlist);
-        //setHintCheck(false)
-         var len=inputText.length
-         var substr=''
-          temphint=state.hint_wordlist.find((item)=>{ 
-             console.log("Hint=",item.substring(0,len),"===",inputText)
-              substr=item.toUpperCase().substring(0,len)
-              console.log(substr,"===",inputText.toUpperCase(),",",item,",",item.length,",",len)
-             return (substr===inputText.toUpperCase() && item.length>len)  
-            })
-            console.log("HINT========",temphint)
-          
-          if(temphint)
-          {
-            console.log("^^^^^^^^^^^^^^^^ 1")
-             dispatch({
-              type:GET_HINT,
-              payload:temphint
-            }) 
-          }
-        if(!temphint){
-          console.log("**************  2")
-          dispatch({
-            type:GET_HINT,
-            payload:'Word not exist**'
-          }) 
-        }
-      }else{
-        console.log("ELSE OF GETHINT")
-      }
-    // wordDefinition()
-      //console.log("Hint word====>",state.hint)  
-}
+ 
 
 
 
@@ -588,6 +620,7 @@ console.log("form data of startMatchComputer=",id,",",level)
  }
 
 const setResultWord=(word=inputText,def='')=>{
+  console.log("+++++++++++++++++++++++++++",word,",",def)
   dispatch({
     type:SET_WORD_DEFINITION,
     payload:{word:word,definition:def}
@@ -608,11 +641,19 @@ const setResultWord=(word=inputText,def='')=>{
     })
   }
 
-const resetStateHC=()=>{
+const roundFinishResetHC=()=>{
+
   dispatch({
-    type:RESET_STATE_HC,
+    type:RESET_STATE_FOR_ROUND_FINSH_HC,
   })
 }
+const matchFinishResetHC=()=>{
+
+  dispatch({
+    type:RESET_STATE_FOR_MATCH_FINSH_HC,
+  })
+}
+
   return (
     <HumanContext.Provider
     value={{
@@ -636,8 +677,9 @@ const resetStateHC=()=>{
         loser_counter:state.loser_counter,
         result_history:state.result_history,
         final_result_HC:state.final_result_HC,
+        match_round_details:state.match_round_details,
+        master_history_HC:state.master_history_HC,
         getRandomWordFromApi,
-        getHint,
         setResultWord,
         startMatchComputer,
         removeLocalData,
@@ -652,10 +694,13 @@ const resetStateHC=()=>{
         setShowKeyboard,
         setPlay,
         setCurrentWinnerLoserHC,
-        resetStateHC,
+        roundFinishResetHC,
         getFinalResultHC,
         sendMatchRoundHC,
-        changeMatchStatusHC
+        changeMatchStatusHC,
+        matchFinishResetHC,
+        setMasterHistory,
+        getHint
       }}>
       {children}
     </HumanContext.Provider>

@@ -30,7 +30,7 @@ const playOnlineContext=useContext(PlayOnlineContext)
 const {game_type,onlineUser}=playOnlineContext
 
   const humanContext=useContext(HumanContext)
-  const {level_type,position,setShowKeyboard,play,setPlay,setTurn,round,current_winner_loser_HC}=humanContext
+  const {level_type,position,setShowKeyboard,play,setPlay,setTurn,round,current_winner_loser_HC,start_match_computer}=humanContext
 
 
   const { setLoser, resetTime } = useTimerConsumerUpdate();
@@ -72,14 +72,14 @@ const {game_type,onlineUser}=playOnlineContext
   
   useEffect(() => {
     console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$=",isActive,",",round,",",game_type,",",onlineUser,",",inputText)
-    if(inputText==='' && game_type!=='playonline' && !onlineUser){
+    if((inputText==='' || inputText===null) && game_type!=='playonline' && !onlineUser){
       console.log("Calling getrandom char******************************** 1")
       let c = getRandomChar();
     //console.log("inside useEffect getrandomchar c=", c)
     setInputText(c)
     }
     
-  }, [current_winner_loser_HC])
+  }, [current_winner_loser_HC,start_match_computer])
 
 
   
@@ -111,6 +111,7 @@ const {game_type,onlineUser}=playOnlineContext
     setTurn('human')
   
   }, [])
+
  /*   const [inputText, setInputText] = useState(() => {
     console.log("initialstate")
     return getRandomChar()

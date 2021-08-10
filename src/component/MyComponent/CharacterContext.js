@@ -181,7 +181,7 @@ if(currentChar.toUpperCase()==='Z') audioZ()
     currentChar = currentChar.charAt(currentChar.length - 1)
     console.log("myturn inputtext=", currentChar,",Timeflag=",timeFlag)
     //console.log("play 3=",play)
-      setPlay(false)
+      //setPlay(false)
       console.log("LOSER AND WINNER 4")
       //setLoser({ name: 'You', out: false })
 

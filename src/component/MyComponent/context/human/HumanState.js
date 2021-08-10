@@ -41,11 +41,10 @@ const HumanState=({children})=>{
         random_word:null,
         hint:null,
         resultWord:{word:'',definition:''},
-        loading:false,
+        loading_HC:false,
         hint_count:null,
         hint_used:false,
         concede:false,
-        timeout:false,
         level_type:null,
         position:null,
         start_match_computer:JSON.parse(localStorage.getItem('start_match_computer')),
@@ -86,6 +85,10 @@ const HumanState=({children})=>{
 useEffect(()=>{
       if(state.next_char){
           setInputText(inputText+state.next_char.toUpperCase())
+          console.log("calling findNextChar")
+            setSeconds()
+            setIsActive(true)
+            setShowKeyboard(true)
       }
 },[state.next_char])
 
@@ -119,7 +122,7 @@ useEffect(() => {
 
 useEffect(()=>{
   console.log("HINT=======",state.hint)
-  setResultWord(state.hint,'')
+ // setResultWord(state.hint,'')
 },[state.hint])
 
 
@@ -132,18 +135,24 @@ const getHint=async()=>{
     }
     try {
       const res= await axios.get(`https://wordsapiv1.p.rapidapi.com/words/?letterPattern=^${inputText.toLowerCase()}[a-zA-Z]*$&random=true`,config)
-  console.log(`Response code ${res.status} from getRandomWord=`,res.data.word)
+  console.log(`Response code ${res.status} from getRandomWord=`,res.data)
 
   if(res.status===200)
   {
+    //console.log("Property exist=", res.data.hasOwnProperty('results'))
+      if(res.data.hasOwnProperty('results'))
+      {
+        console.log("Property exist=", res.data.hasOwnProperty('results'))
+        setResultWord(res.data.word,res.data.results[0].definition)
+      }
+      else{
+        setResultWord(res.data.word)
+      }
 
     dispatch({
       type:GET_HINT,
       payload:res.data.word
     }) 
-
-  
-     
   }
 
   } catch (error) {
@@ -168,10 +177,12 @@ useEffect(()=>{
   if(state.random_word!==null){
       if(state.random_word!=='word not found'){
         if(inputText!==null && inputText.length===1 && seconds===0){
-          setResultWord(state.random_word)
+          //setResultWord(state.random_word)
         }
         else if(inputText!=='' && inputText.length > 1){
-        setTimeout(()=>{
+          findNextChar()
+          setTurn('computer')
+      /*   setTimeout(()=>{
             //computer will find next character from random word
             console.log("calling findNextChar")
             setTurn('computer')
@@ -179,7 +190,7 @@ useEffect(()=>{
             setSeconds()
             setIsActive(true)
             setShowKeyboard(true)
-        },2000)
+        },2000) */
         
       }
       else if(state.random_word==='word not found'){
@@ -325,7 +336,6 @@ const setCurrentWinnerLoserHC=(win_lose)=>{
 
 useEffect(()=>{
 
-  
   if(state.turn){
   console.log(`changing turn from ${state.turn}`)
     //state.concede===true ?  setResultWord(state.hint):setResultWord()
@@ -357,6 +367,15 @@ useEffect(()=>{
       if(res.status===200)
       {
 
+        if(res.data.hasOwnProperty('results'))
+        {
+          console.log("Property exist=", res.data.hasOwnProperty('results'))
+          setResultWord(res.data.word,res.data.results[0].definition)
+        }
+        else{
+          setResultWord(res.data.word)
+        }
+
             dispatch({
               type:GET_RANDOM_WORD_SUCCESS,
               payload:res.data.word===undefined ? 'word not found' : res.data.word
@@ -374,16 +393,17 @@ useEffect(()=>{
         {
 
           setCurrentWinnerLoserHC('loser')
+          setResultWord()
             dispatch({
                 type:GET_RANDOM_WORD_FAIL,
             })
-          /* if(error.response.status===404)
+
+          /*  if(error.response.status===404)
           {
-            setCurrentWinnerLoserHC('loser')
             dispatch({
                 type:GET_RANDOM_WORD_FAIL,
             })
-          } */
+          }  */
         } 
       }  
   }
@@ -395,6 +415,7 @@ useEffect(()=>{
       if(state.word_exist)
       {
           if((state.word_exist===true || state.word_exist==='word not found') && inputText.length<=2){
+
               getRandomWordFromApi()
           }
           else if(state.word_exist===true && inputText.length > 3){
@@ -437,8 +458,17 @@ useEffect(()=>{
         
         console.log(`${state.turn}Response code ${res.status} form check word API=`,res.data)
 
-     
-        if(res.status===200){
+        if(res.status===200)
+        {
+              if(res.data.hasOwnProperty('results'))
+                {
+                  console.log("Property exist=", res.data.hasOwnProperty('results'))
+                  setResultWord(res.data.word,res.data.results[0].definition)
+                }
+                else{
+                  setResultWord(res.data.word)
+                }
+
           dispatch({
             type:WORD_EXIST,
             payload:true
@@ -619,8 +649,7 @@ console.log("form data of startMatchComputer=",id,",",level)
    })
  }
 
-const setResultWord=(word=inputText,def='')=>{
-  console.log("+++++++++++++++++++++++++++",word,",",def)
+const setResultWord=(word=inputText,def='Meaning not found')=>{
   dispatch({
     type:SET_WORD_DEFINITION,
     payload:{word:word,definition:def}
@@ -658,7 +687,7 @@ const matchFinishResetHC=()=>{
     <HumanContext.Provider
     value={{
         random_word:state.random_word,
-        loading:state.loading,
+        loading_HC:state.loading_HC,
         hint:state.hint,
         resultWord:state.resultWord,
         start_match_computer:state.start_match_computer,
@@ -700,7 +729,8 @@ const matchFinishResetHC=()=>{
         changeMatchStatusHC,
         matchFinishResetHC,
         setMasterHistory,
-        getHint
+        getHint,
+        setLoading
       }}>
       {children}
     </HumanContext.Provider>

@@ -18,7 +18,7 @@ const Dashboard = (props) => {
     //console.log("Home rendring")
 
     const commonContext =useContext(CommonContext)
-    const {setInputText,setIsActive,setSeconds}=commonContext
+    const {setInputText,setIsActive,setSeconds,setGameStatus,exitUser}=commonContext
 
     const authContext=useContext(AuthContext)
     const {user,login_data}=authContext
@@ -37,18 +37,22 @@ const Dashboard = (props) => {
 
 
     const playOnlineContext=useContext(PlayOnlineContext)
-    const {searchUserOnline,onlineUser,exitUser,gameType,game_type,online_match_finish,onlineMatchFinish}=playOnlineContext
+    const {searchUserOnline,onlineUser,gameType,game_type,online_match_finish,onlineMatchFinish}=playOnlineContext
     const [search,setSearch]=useState(false)
     const [sec,setSec]=useState(()=>10)
     console.log("login data=",login_data)
     
-    /* useEffect(()=>{
-        console.log("SPINNER in useEffect=",startMatch)
-        if(startMatch)
-        {
-            return <Spinner/>
-        }
-    },[startMatch]) */
+ /*    useEffect(()=>{
+
+        window.addEventListener("beforeunload", (ev) => 
+      {  
+          ev.preventDefault();
+          console.log("WINDOE CLOSED=",ev.returnValue)
+          window.localStorage.clear();
+          return ev.returnValue = 'Are you sure you want to close?';
+      }); 
+      
+      },[])  */
 
     useEffect(() => {
        console.log("show level=",showLevel)
@@ -122,7 +126,7 @@ const Dashboard = (props) => {
 
 
 
-useEffect(() => {
+ useEffect(() => {
     window.addEventListener('beforeunload', alertUser)
     return () => {
       window.removeEventListener('beforeunload', alertUser)
@@ -132,7 +136,7 @@ useEffect(() => {
   const alertUser = e => {
     e.preventDefault()
     e.returnValue = ''
-  }
+  } 
   
 console.log("Dashboard=",onlineUser,",",online_match_finish)
 
@@ -190,6 +194,7 @@ const playOnline=()=>{
                                <Link to="#" class="play_btn" onClick={()=>{
                                    onlineMatchFinish(false)
                                    gameType('playonline')
+                                   setGameStatus('human_vs_online')
                                    exitUser(user.data.id)
                                    setShowLevel(!showLevel)}
                                    } >Play</Link>
@@ -234,6 +239,7 @@ const playOnline=()=>{
                                    <button class="play_btn" onClick={()=>
                                     {
                                         gameType('humanvscomputer')
+                                        setGameStatus('human_vs_computer')
                                         setShowLevel(!showLevel)}
                                    }>Play</button>   
                                   {/*  <Link class="play_btn" to="/main" onClick={onClick}>Play</Link> */}

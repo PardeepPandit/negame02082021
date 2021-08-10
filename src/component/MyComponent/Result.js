@@ -14,26 +14,16 @@ export const Result = () => {
 
 
   const humanContext=useContext(HumanContext)
-  const {random_word,start_match_computer,resultWord,timeout,current_winner_loser_HC,roundFinishResetHC,winner_counter,loser_counter,getFinalResultHC,sendMatchRoundHC,round,changeMatchStatusHC,match_round_details,setMasterHistory}=humanContext
+  const {random_word,start_match_computer,resultWord,current_winner_loser_HC,roundFinishResetHC,winner_counter,loser_counter,getFinalResultHC,sendMatchRoundHC,round,changeMatchStatusHC,match_round_details,setMasterHistory,setLoading}=humanContext
 
   const {loser } = useTimerConsumer()
-  const {finalResult,finish}=useMainConsumer();
   const {setLoser,resetTime}=useTimerConsumerUpdate();
   const {setWordList,setFinalResult,setTimeFlag,setCon,setFinish,setShowKeyboard}=useMainConsumerUpdate();
  //console.log("Resule component",resultWord.word,",",resultWord.definition)
 
- useEffect(()=>{
-  console.log("finish set in useEffect",resultWord)
- },[finish])
- 
- useEffect(()=>{
-    console.log("Time out state=",timeout)
- },[timeout])
+ const nextRound=()=>{
 
-
- const onClick=()=>{
-
-  console.log("ONLICK is called in Timer")
+  console.log("nextRound() called in Timer")
   
   sendMatchRoundHC(
     {
@@ -43,16 +33,15 @@ export const Result = () => {
         points:current_winner_loser_HC==='winner' ? "5" : "0"
     }
 )
-  setTimeout(()=>{
-    setInputText('')
-    setTimeFlag(false)
-    setSeconds()
-    setIsActive(true)
-    roundFinishResetHC()
-  },5000)
-
-  
-  
+     setLoading()
+    
+    setTimeout(()=>{
+      setInputText(null)
+      setTimeFlag(false)
+      setSeconds()
+      setIsActive(true)
+      roundFinishResetHC()
+  },2000) 
 }
 
 const finishFun=()=>{
@@ -65,12 +54,13 @@ const finishFun=()=>{
         points:current_winner_loser_HC==='winner' ? "5" : "0"
     }
 )
+setLoading()
 setTimeout(()=>{
-  getFinalResultHC(start_match_computer.user1.match_id,start_match_computer.user1.user_id)
+    getFinalResultHC(start_match_computer.user1.match_id,start_match_computer.user1.user_id)
     setShowKeyboard(true)
     setFinish(true)
     changeMatchStatusHC(start_match_computer.user1.match_id)
-},5000)
+},2000)
   
 }
 
@@ -121,7 +111,7 @@ return (
       <div class="col-md-12">
       <div className="new_mtch_btn">
              {/* <a href="#" style={{"font-size": "26px;"}}> New Match</a> */}
-             {(winner_counter===3 || loser_counter===3) ?<Link to='#' className='play-again' onClick={()=>finishFun()}>Finish</Link>:<Link to='/main' className='play-again' onClick={()=>onClick()}>Next-Round-HC</Link>}
+             {(winner_counter===3 || loser_counter===3) ?<Link to='#' className='play-again' onClick={()=>finishFun()}>Finish</Link>:<Link to='/main' className='play-again' onClick={()=>nextRound()}>Next-Round-HC</Link>}
              
             </div>
           </div>

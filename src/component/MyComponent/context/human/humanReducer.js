@@ -12,7 +12,6 @@ import{
   SET_HINT_WORDLIST_SUCCESS,
   SET_HINT_WORDLIST_FAIL,
   SET_CONCEDE,
-  SET_TIMEOUT,
   SET_LEVEL_TYPE,
   SET_POSITION,
   SET_TURN,
@@ -41,19 +40,19 @@ import{
                 ...state,
                 random_word:payload,
                 hint:null,
-                loading:false
+                loading_HC:false
             }
             case GET_RANDOM_WORD_FAIL:
                 return{
                     ...state,
                     random_word:null,
                     hint:null,
-                    loading:false
+                    loading_HC:false
                 }
             case SET_LOADING:
                 return{
                     ...state,
-                    loading:true
+                    loading_HC:true
                 }
                 case GET_HINT:
                     return{
@@ -64,28 +63,27 @@ import{
                         console.log('SET_WORD_DEFINITION')
                         return{
                             ...state,
-                            resultWord:payload,
-                            loading:false
+                            resultWord:payload
                         }
                         case SET_START_MATCH_COMPUTER:
                             localStorage.setItem('start_match_computer',JSON.stringify(payload))
                             return{
                                 ...state,
                                 start_match_computer:payload,
-                                loading:false
+                                loading_HC:false
                             }
                             case REMOVE_LOCAL_DATA:
                                 localStorage.removeItem('start_match_computer')
                                 return{
                                     ...state,
                                     start_match_computer:null,
-                                    loading:false
+                                    loading_HC:false
                                 }
                                 case SET_HINT_COUNT:
                                     return{
                                         ...state,
                                         hint_count:payload,
-                                        loading:false
+                                        loading_HC:false
                                     }
                                     case SET_HINT_USED:
                                         return{
@@ -98,11 +96,6 @@ import{
                                                 ...state,
                                                 concede:payload
                                             }
-                                            case SET_TIMEOUT:
-                                                return{
-                                                    ...state,
-                                                    timeout:payload
-                                                }
                                                 case SET_LEVEL_TYPE:
                                                     return{
                                                         ...state,
@@ -128,6 +121,7 @@ import{
                                                                     return{
                                                                         ...state,
                                                                         show_keyboard:payload,
+                                                                        play:payload,
                                                                         next_char:null
                                                                     }
                                                                     case SET_PLAY:
@@ -166,7 +160,8 @@ import{
                                                                                     case SET_FINAL_RESULT_HC:
                                                                                         return{
                                                                                             ...state,
-                                                                                            final_result_HC:payload
+                                                                                            final_result_HC:payload,
+                                                                                            loading_HC:false
                                                                                         }
                                                                                         case SET_MATCH_ROUND_DETAILS:
                                                                                             return{
@@ -181,24 +176,26 @@ import{
                                                                                     case RESET_STATE_FOR_ROUND_FINSH_HC:
                                                                                         return{
                                                                                             ...state,
+                                                                                            loading_HC:false,
                                                                                             random_word:null,
                                                                                             resultWord:{word:'',definition:''},
                                                                                             next_char:null,
                                                                                             word_exist:false,
                                                                                             current_winner_loser_HC:null,
                                                                                             show_keyboard:true,
+                                                                                            concede:false,
                                                                                             play:true,
                                                                                             round:state.round+1
                                                                                         }
                                                                                         case RESET_STATE_FOR_MATCH_FINSH_HC:
                                                                                             return{
                                                                                                 ...state,
+                                                                                                loading_HC:false,
                                                                                                 random_word:null,
                                                                                                 hint:null,
                                                                                                 resultWord:{word:'',definition:''},
                                                                                                 hint_used:false,
                                                                                                 concede:false,
-                                                                                                timeout:false,
                                                                                                 level_type:null,
                                                                                                 position:null,
                                                                                                 start_match_computer:null,

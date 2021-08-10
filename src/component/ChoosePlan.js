@@ -42,7 +42,7 @@ const ChoosePlan = (props) => {
       }
     },[]) */
 
-  /*   useEffect(() => {
+    useEffect(() => {
         window.addEventListener("beforeunload", alertUser);
         return () => {
           window.removeEventListener("beforeunload", alertUser);
@@ -52,7 +52,7 @@ const ChoosePlan = (props) => {
       const alertUser = (e) => {
         e.preventDefault();
         e.returnValue = "";
-      }; */
+      }; 
    
      
     console.log("hello choose plan")

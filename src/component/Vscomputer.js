@@ -1,8 +1,5 @@
 import React, { useState, useEffect, Fragment, useContext,Suspense } from "react";
-import {
-  useTimerConsumer,
-  useTimerConsumerUpdate,
-} from "./MyComponent/TimerContext";
+
 import {
   useCharacterConsumer,
   useCharacterConsumerUpdate,
@@ -12,7 +9,7 @@ import {
   useMainConsumerUpdate,
 } from "./MyComponent/MainContext";
 import AuthContext from './MyComponent/context/auth/authContext'
-
+import Loading from '../component/MyComponent/Loading'
 import HumanContext from "./MyComponent/context/human/humanContext";
 
 import { __SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED } from "react-dom";
@@ -30,12 +27,13 @@ const Vscomputer = () => {
   const commonContext=useContext(CommonContext)
   const {inputText,setIsActive,isActive,setSeconds,seconds,setInputText}=commonContext
   const authContext=useContext(AuthContext)
-  const {user,loading,login_data}=authContext
+  const {user,login_data}=authContext
   const humanContext = useContext(HumanContext);
   //console.log("User in vscomputer=",user)
   const {
     hint,
     random_word,
+    loading_HC,
     wordDefinition,
     setResultWord,
     start_match_computer,
@@ -90,14 +88,17 @@ const Vscomputer = () => {
 
         if(concede){
           console.log("calling getHintWordList from useEffect=",concede,",",random_word)
+          setIsActive(false)
+          setPlay(false)
           getHint()
           setCurrentWinnerLoserHC('loser')
+          setConcede(false)
         }
   },[concede])
 
   const playFun = () => {
     checkWordExistApi()
-    setResultWord();
+    //setResultWord();
     setTimeFlag(true);
     setIsActive(false)
   };
@@ -109,7 +110,11 @@ const Vscomputer = () => {
     myTurn(e);
   };
 
-
+if(loading_HC){
+return <Loading/>
+}
+else
+  {
   return (
     <Fragment>
       <div class="section_card_ga section_card">
@@ -276,87 +281,14 @@ const Vscomputer = () => {
                     </div>
                   </div>
                 </div>
-
-               {/*  <div className="modal cus-modal fade" id="myModal">
-                  <div className="modal-dialog modal-md">
-                    <div className="modal-content">
-                      <div className="modal-header">
-                        <h4 className="modal-title">Chat</h4>
-                        <button
-                          type="button"
-                          className="close"
-                          data-dismiss="modal"
-                        >
-                          &times;
-                        </button>
-                      </div>
-
-                      <div className="modal-body cus-body">
-                        <div className="chat-container">
-                          <div className="chat-window">
-                            <div className="start-chat">
-                              <div className="received-msg">
-                                <div className="msg-align">
-                                  <p>Hi</p>
-                                </div>
-                              </div>
-
-                              <div className="received-msg outgoing-msg">
-                                <div className="msg-align-right">
-                                  <p>How r u?</p>
-                                </div>
-                              </div>
-
-                              <div className="received-msg">
-                                <div className="msg-align">
-                                  <p>I am fine</p>
-                                </div>
-                              </div>
-
-                              <div className="received-msg">
-                                <div className="msg-align">
-                                  <p>Lets play now</p>
-                                </div>
-                              </div>
-
-                              <div className="received-msg outgoing-msg">
-                                <div className="msg-align-right">
-                                  <p>Ok, lest play</p>
-                                </div>
-                              </div>
-                            </div>
-
-                            <div className="chatting-feild">
-                              <input type="text" placeholder="Chat..." />{" "}
-                              <button>
-                                <img src="assets/img/arrow.png" alt="" />
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div> 
-                  <div className="chat-wrapper">
-                  <span>1</span>
-                  <div
-                    className="chat-box"
-                    data-toggle="modal"
-                    data-target="#myModal"
-                  >
-                    <div className="chat-icon">
-                      <img src="assets/img/chat1.png" alt="" />
-                    </div>
-                  </div>
-                </div> */}
               </div>
             </div>
           </div>
         </div>
       </div>
     </Fragment>
-  );
+  )
+  }
 };
 
 export default Vscomputer;

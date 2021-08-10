@@ -22,8 +22,6 @@ export function TimerProvider({ children }) {
 const commonContext=useContext(CommonContext)
 const {inputText,isActive,setIsActive,seconds,setSeconds}=commonContext
 
-
-
 const humanContext=useContext(HumanContext)
 const {wordDefinition,setTimeOut,hint_wordlist,resultWord,setCurrentWinnerLoserHC,getRandomWordFromApi}=humanContext
 
@@ -55,15 +53,10 @@ const {wordDefinition,setTimeOut,hint_wordlist,resultWord,setCurrentWinnerLoserH
               //active only for play with computer
               console.log("InputText in Timer Context=",inputText)
 
-              if(inputText!==null && inputText.length===1){
+             /*  if(inputText!==null && inputText.length===1){
                 getRandomWordFromApi()
-              }
+              } */
               setCurrentWinnerLoserHC('loser')
-              //setTimeOut(true)
-             /*  getHintWordList(InputText)
-              wordDefinition()
-              setFinalResult(pre=>({...pre,lose:finalResult.lose+1}))
-              setLoser({ name:'You', out: true })*/ 
 
             }else{
               console.log("PLAY ONLINE TIME UP")
@@ -87,39 +80,6 @@ const {wordDefinition,setTimeOut,hint_wordlist,resultWord,setCurrentWinnerLoserH
     }
     return () => clearTimeout(myVar); 
   }, [isActive,seconds]);
-
-/* useEffect(()=>{
-
-    console.log("TimeOut in useEffect timerContext=",timeout,",",inputText)
-    if(timeout){
-      console.log("calling getRandomWordFromApi")
-      //getHintWordList(inputText)
-       console.log("calling wordDefinition from TimerContext--->vscomputer")
-     // wordDefinition()
-      /*setFinalResult(pre=>({...pre,lose:finalResult.lose+1}))
-      setLoser({ name:'You', out: true })   *
-    }
-
-},[timeout]) */
-
- /* useEffect(()=>{
-     
-    console.log("setting final result and loser in useEffect")
-      setFinalResult(pre=>({...pre,lose:finalResult.lose+1}))
-      setLoser({ name:'You', out: true })
-   
-    
-},[resultWord])   */
-
-
-//NOTE moving resetTime funtion in common context and make changes in this funtion when play human vs computer (i.e play parameter)
- /*  function resetTime(time=60){
-
-    if(play){
-      setSeconds(time)
-    }
-    
-  } */
 
   function clearTime(){
     console.log("clear time")

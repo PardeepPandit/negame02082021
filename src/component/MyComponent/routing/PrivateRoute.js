@@ -16,7 +16,7 @@ const PrivateRoute = ({ component: Component,...rest}) => {
   const authContext=useContext(AuthContext)
   const {isAuthenticated,loading}=authContext
   const humanContext =useContext(HumanContext)
-  const {current_winner_loser_HC}=humanContext
+  const {current_winner_loser_HC,loading_HC}=humanContext
 
   const playOnlineContext=useContext(PlayOnlineContext)
   const {winner_loser,onlineUser,round_complete,final_result_loser_counter,final_result_winner_counter,final_result_data}=playOnlineContext
@@ -31,7 +31,7 @@ const PrivateRoute = ({ component: Component,...rest}) => {
       !isAuthenticated && !loading ? 
       <Fragment><Redirect to='/login'/></Fragment> :
       
-      current_winner_loser_HC ? 
+      current_winner_loser_HC && !loading_HC ? 
         <ShowResult resultfor='computer'/> :
        winner_loser ? <ShowResult resultfor='online'/> :
        (final_result_winner_counter === 3 || final_result_loser_counter === 3) && !round_complete ?  <FinalResultOnline/> :

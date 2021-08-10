@@ -240,22 +240,7 @@ const setPopup=(true_false)=>{
     })
 }
 
-const exitUser=async(id)=>{
-    const config={
-        headers:{
-            'Context-type':'appplication/json',
-            'APPKEY' :'Py9YJXgBecbbqxjRVaHarcSnJyuzhxGqJTkY6xKZRfrdXFy72HPXvFRvfEjy'
-        }
-    }
-    try {
 
-        const res=await axios.get(process.env.REACT_APP_BASEURL+`/api/user/exit?user_id=${id}`,config)
-        console.log("Response from ExitUser",res.data)
-    }
-    catch(error){
-        console.log("Exit user Error=",error)
-    }
-}
 
 const setRoundComplete=(true_false)=>{
 
@@ -805,7 +790,6 @@ const setApiHit=(count)=>{
             setTurn,
             getWordDefinition,
             resetState,
-            exitUser,
             gameType,
             sendMatchRound,
             setRoundComplete,

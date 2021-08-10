@@ -68,12 +68,39 @@ import firebase from './firebase'
 import { get } from 'jquery';
 import CommonState from './component/MyComponent/context/common/CommonState';
 import NotFoundPage from './component/MyComponent/NotFoundPage'
+import CommonContext from './component/MyComponent/context/common/commonContext'
+function App(props) {
 
-function App() {
+  /* const commonContext=useContext(CommonContext)
+  const {human_vs_computer,human_vs_online,human_vs_friend,exitUser}=commonContext */
+
 //console.log(process.env.NODE_ENV) // dev
 //console.log(process.env.NODE_ENV === 'development') // false
 //console.log(process.env.NODE_ENV.length) // 4 (including a space at the end)
 const [token,setToken]=useState()
+/* const [finishStatus, setfinishStatus] = useState(false);
+
+const onBackButtonEvent = (e) => {
+    e.preventDefault();
+    if (!finishStatus) {
+        if (window.confirm("Do you want to go back ?")) {
+            setfinishStatus(true)
+            // your logic
+            //props.history.push("/login");
+        } else {
+            window.history.pushState(null, null, window.location.pathname);
+            setfinishStatus(false)
+        }
+    }
+}
+
+  useEffect(() => {
+    window.history.pushState(null, null, window.location.pathname);
+    window.addEventListener('popstate', onBackButtonEvent);
+    return () => {
+      window.removeEventListener('popstate', onBackButtonEvent);  
+    };
+  }, []); */
 
 useEffect(()=>{
   console.log("Firebase")
@@ -87,6 +114,32 @@ useEffect(()=>{
     setToken(token)
   }).catch((err)=>console.log("Error=",err))
 })
+
+/*  useEffect(()=>{
+
+  window.addEventListener("beforeunload", (ev) => 
+{  
+    ev.preventDefault();
+    console.log("WINDOE CLOSED=",ev.returnValue)
+    localStorage.setItem("Window Closed",JSON.stringify(ev.returnValue))
+    window.localStorage.clear();
+     if(human_vs_computer)
+    {
+      console.log("User Exit")
+      exitUser(JSON.parse(localStorage.getItem('login_data')).id)
+    } 
+    return ev.returnValue = 'Are you sure you want to close?';
+}); 
+
+},[])   */
+
+
+/* useEffect(()=>{
+  window.onpopstate=e=>{
+    alert("back button pressed")
+  }
+}) */
+
 
   return (
     <div>
@@ -102,7 +155,6 @@ useEffect(()=>{
       <TimerProvider>
         <CharacterProvider>
           <Alerts/>
-          
           <Switch>
             <Route exact path="/" component={Login} />
             <Route exact path="/facebook" component={ReactFacebookLogin} />

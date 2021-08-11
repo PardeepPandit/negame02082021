@@ -16,7 +16,7 @@ const {inputText}=commonContext
 
 
 const humanContext=useContext(HumanContext)
-const {setInputText,setPosition,position}=humanContext
+const {setInputText,setPosition,human_position}=humanContext
 
 
 
@@ -38,17 +38,17 @@ const insertLeft=()=>{
 }
 
 
-useEffect(()=>{
-    if(position){
+/* useEffect(()=>{
+    if(human_position){
         setActive(pre=>!pre)  
     }
                 
-},[position])
+},[human_position]) */
     return (
         <Fragment>
               <div >
-            <button style={active ? {backgroundColor:"white"} :{backgroundColor:"green"}} onClick={()=>setPosition("left")} >{"<<<<<<<"}</button>
-            <button style={active ? {backgroundColor:"green"} :{backgroundColor:"white"}}  onClick={()=>setPosition("right")} >{">>>>>>"}</button>
+            <button style={human_position===1 ? {backgroundColor:"white"} :{backgroundColor:"green"}} onClick={()=>setPosition(0)} >{"<<<<<<<"}</button>
+            <button style={human_position===1 ? {backgroundColor:"green"} :{backgroundColor:"white"}}  onClick={()=>setPosition(1)} >{">>>>>>"}</button>
             </div>
         </Fragment>
     )

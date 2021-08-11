@@ -11,7 +11,7 @@ import $ from 'jquery'
 import Spinner from '../component/MyComponent/Spinner';
 import Level from './Level'
 import CommonContext from './MyComponent/context/common/commonContext'
-import { SET_SECONDS } from '../type';
+import { SET_SECONDS, STATE_LIST } from '../type';
 
 
 const Dashboard = (props) => {
@@ -101,7 +101,7 @@ const Dashboard = (props) => {
 } */
          const onClick=(levelno,l_type)=>{
                     
-                    setLevelType(l_type)
+                     setLevelType(l_type)
                     checkHintCount(user.data.id)
                     setStartMatch(true) 
                     
@@ -278,14 +278,14 @@ const playOnline=()=>{
                             setLevelCheck(true)
                         }}>Medium</Link>}</li>
                     <li>{(levelNumber==='1,2,3' || levelNumber==='1,2,3,4')  ? 
-                    <Link to='/main' onClick={()=>onClick("3")}>Expert*</Link> :
+                    <Link to='#' onClick={()=>onClick("3",'expert')}>Expert*</Link> :
                      <Link to="#" onClick={()=>{
                         
                             setShowLevel(false)
                             setLevelCheck(true)
                         }}>Expert</Link>}</li>
                     <li>{(levelNumber==='1,2,3,4')  ?
-                     <Link to='/main' onClick={()=>onClick("4")}>Genius*</Link> :
+                     <Link to='#' onClick={()=>onClick("4")}>Genius*</Link> :
                      <Link onClick={()=>{
                         
                         setShowLevel(false)

@@ -12,7 +12,7 @@ import{
 
 const CommonState=({children})=>{
   const initialState={
-   inputText:null,
+   inputText:'demotext',
    isActive:false,
    seconds:150,
    human_vs_computer:false,

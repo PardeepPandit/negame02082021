@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Fragment, useContext,Suspense } from "react";
+import React, {useRef , useState, useEffect, Fragment, useContext,Suspense } from "react";
 
 import {
   useCharacterConsumer,
@@ -14,6 +14,7 @@ import HumanContext from "./MyComponent/context/human/humanContext";
 
 import { __SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED } from "react-dom";
 import MediumLevelUI from "./MyComponent/LevelUI/MediumLevelUI";
+import ExpertLevelUI from "./MyComponent/LevelUI/ExpertLevelUI";
 import Trophy from "./MyComponent/Trophy";
 //import Keyboard from "./Keyboard";
 import CommonContext from '../component/MyComponent/context/common/commonContext'
@@ -23,7 +24,11 @@ const Keyboard = React.lazy(() => import('./Keyboard'));
 
 const Vscomputer = () => {
   //console.log("Match===", level);
-
+  const inputRef=useRef()
+/* 
+  let element = document.getElementById('inputbox');
+  console.log("element=",element)
+ */
   const commonContext=useContext(CommonContext)
   const {inputText,setIsActive,isActive,setSeconds,seconds,setInputText}=commonContext
   const authContext=useContext(AuthContext)
@@ -46,7 +51,7 @@ const Vscomputer = () => {
     resultWord,
     timeout,
     level_type,
-    position,
+    human_position,
     setShowKeyboard,
     show_keyboard,
     checkWordExistApi,
@@ -72,10 +77,10 @@ const Vscomputer = () => {
     console.log("setshow keyboard true 1")
     setShowKeyboard(true);
     //setTimeFlag(false)
-    if(position==='left'){
+    if(human_position===0){
       setInputText(inputText.substring(1, inputText.length));
     }
-    else if(position==='right'){
+    else if(human_position===1){
       setInputText(inputText.substring(0, inputText.length - 1));
     }
     else{
@@ -109,7 +114,10 @@ const Vscomputer = () => {
     console.log("Keyboard Target*******=",e.target)
     myTurn(e);
   };
-
+  function uniKeyCode(event) {
+    var key = event.keyCode;
+    document.getElementById("demo2").innerHTML = "The Unicode KEY code is: " + key;
+  }
 if(loading_HC){
 return <Loading/>
 }
@@ -174,6 +182,8 @@ else
                     {/* <input type="text" className="main-input"  value={inputText} onChange={onChange}/> */}
                     <input
                       type="text"
+                      ref={inputRef}
+                      id='inputbox'
                       className="main-input"
                       //onChange={onChange}
                       value={inputText}
@@ -181,7 +191,8 @@ else
                   </div>
                 </div>
                 {/*  {loser.out && <div className="bg-white">{JSON.stringify(val)}</div>} */}
-                {level_type==="medium" && <MediumLevelUI />}
+                {level_type==="medium" && show_keyboard && <MediumLevelUI />}
+                {level_type==="expert" && show_keyboard && <ExpertLevelUI inputRef={inputRef}/>}
 
                 {show_keyboard ? (
                   <div class="keypad">

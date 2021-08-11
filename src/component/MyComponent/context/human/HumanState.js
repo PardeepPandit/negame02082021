@@ -32,7 +32,8 @@ import{
   SET_FINAL_RESULT_HC,
   RESET_STATE_FOR_MATCH_FINSH_HC,
   SET_MATCH_ROUND_DETAILS,
-  SET_MASTER_HISTORY
+  SET_MASTER_HISTORY,
+  SET_RANDOM_POSITION
 } from '../../../../type'; 
 
 
@@ -46,7 +47,7 @@ const HumanState=({children})=>{
         hint_used:false,
         concede:false,
         level_type:null,
-        position:null,
+        human_position:1,
         start_match_computer:JSON.parse(localStorage.getItem('start_match_computer')),
         turn:null,
         next_char:null,
@@ -60,7 +61,8 @@ const HumanState=({children})=>{
         result_history:[],
         final_result_HC:null,
         match_round_details:null,
-       master_history_HC:[]
+       master_history_HC:[],
+       computer_position:null
        //[{round:1,word:,complete_word:,round_respnse}],[]
   };
 
@@ -83,13 +85,22 @@ const HumanState=({children})=>{
 },[user])  
 
 useEffect(()=>{
-      if(state.next_char){
-          setInputText(inputText+state.next_char.toUpperCase())
-          console.log("calling findNextChar")
-            setSeconds()
-            setIsActive(true)
-            setShowKeyboard(true)
+    if(state.next_char){
+
+      if(state.level_type==='easy'){
+        setInputText(inputText+state.next_char.toUpperCase())
       }
+      if( state.level_type==='medium'){
+        
+        state.computer_position===0 ? setInputText(state.next_char.toUpperCase()+inputText) :setInputText(inputText+state.next_char.toUpperCase())
+        
+      }
+        
+      console.log("calling findNextChar")
+        setSeconds()
+        setIsActive(true)
+        setShowKeyboard(true)
+    }
 },[state.next_char])
 
 
@@ -360,8 +371,20 @@ useEffect(()=>{
         }
       }
    
+      let res=null
       try {
-          const res=await axios.get(`https://wordsapiv1.p.rapidapi.com/words/?letterPattern=^${inputText.toLowerCase()}[a-zA-Z]*$&random=true`,config)
+        if(state.level_type==='easy'){
+          res=await axios.get(`https://wordsapiv1.p.rapidapi.com/words/?letterPattern=^${inputText.toLowerCase()}[a-zA-Z]*$&random=true`,config)
+        }
+        else if(state.level_type==='medium'){
+          res=await axios.get(`https://wordsapiv1.p.rapidapi.com/words/?letterPattern=^[a-zA-Z]${inputText.toLowerCase()}[a-zA-Z]*$&random=true`,config)
+          setRandomPosition()
+        }
+        else if(state.level_type==='expert'){
+          res=await axios.get(`https://wordsapiv1.p.rapidapi.com/words/?letterPattern=^(|[a-zA-Z])%2Bq%2B(|[a-zA-Z])%2Bs%2B(|[a-zA-Z])*$&random=true`,config)
+          setRandomPosition()
+        }
+           
       console.log(`Response code ${res.status} from getRandomWord=`,res.data.word)
 
       if(res.status===200)
@@ -496,15 +519,30 @@ useEffect(()=>{
         const input_text_length=inputText.length
         const random_word_length=state.random_word.length
 
-        if(input_text_length<random_word_length)
+        if(input_text_length<random_word_length && state.level_type==='easy')
         {
           // setOnce(false)
          // console.log("check 101=",state.random_word,",",inputText,",",input_text_length,",",random_word_length)
           console.log("Next character for computer=",state.random_word.charAt(input_text_length))
-
+          
           setNextCharacter(state.random_word.charAt(input_text_length))
           
-        }    
+        }  
+        
+        if(input_text_length < random_word_length && state.level_type==='medium'){
+
+          if(state.computer_position===1){
+            console.log("Debug1=",inputText,",",state.random_word.indexOf(inputText.toLowerCase()))
+            console.log("NEXT CHAR1=",state.random_word.charAt(state.random_word.indexOf(inputText.toLowerCase())+inputText.length))
+            setNextCharacter(state.random_word.charAt(state.random_word.indexOf(inputText.toLowerCase())+inputText.length))
+          }
+          else if(state.computer_position===0){
+            console.log("Debug2=",inputText,",",state.random_word.indexOf(inputText.toLowerCase()))
+            console.log("NEXT CHAR2=",state.random_word.charAt(state.random_word.indexOf(inputText.toLowerCase())-1))
+            setNextCharacter(state.random_word.charAt(state.random_word.indexOf(inputText.toLowerCase())-1))
+          }
+            
+        }
   }
 } 
 
@@ -682,6 +720,15 @@ const matchFinishResetHC=()=>{
     type:RESET_STATE_FOR_MATCH_FINSH_HC,
   })
 }
+/////////////////////////////////////////////////////////////////////////////////
+
+
+const setRandomPosition=()=>{
+  dispatch({
+    type:SET_RANDOM_POSITION,
+    payload:Math.floor(Math.random() * 2)
+  })
+}
 
   return (
     <HumanContext.Provider
@@ -695,7 +742,7 @@ const matchFinishResetHC=()=>{
         hint_used:state.hint_used,
         concede:state.concede,
         level_type:state.level_type,
-        position:state.position,
+        human_position:state.human_position,
         turn:state.turn,
         show_keyboard:state.show_keyboard,
         round:state.round,
@@ -730,7 +777,8 @@ const matchFinishResetHC=()=>{
         matchFinishResetHC,
         setMasterHistory,
         getHint,
-        setLoading
+        setLoading,
+        setRandomPosition
       }}>
       {children}
     </HumanContext.Provider>

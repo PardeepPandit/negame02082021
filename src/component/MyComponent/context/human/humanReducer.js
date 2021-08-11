@@ -27,7 +27,8 @@ import{
   SET_FINAL_RESULT_DATA,
   RESET_STATE_FOR_MATCH_FINSH_HC,
   SET_MATCH_ROUND_DETAILS,
-  SET_MASTER_HISTORY
+  SET_MASTER_HISTORY,
+  SET_RANDOM_POSITION
   } from '../../../../type'; 
   
   //comment
@@ -104,7 +105,7 @@ import{
                                                     case SET_POSITION:
                                                         return{
                                                             ...state,
-                                                            position:payload
+                                                            human_position:payload
                                                         }
                                                         case SET_TURN:
                                                             return{
@@ -173,11 +174,17 @@ import{
                                                                                                 ...state,
                                                                                                 master_history_HC:[...state.master_history_HC,payload]
                                                                                             }
+                                                                                            case SET_RANDOM_POSITION:
+                                                                                                return{
+                                                                                                    ...state,
+                                                                                                    computer_position:payload
+                                                                                                }
                                                                                     case RESET_STATE_FOR_ROUND_FINSH_HC:
                                                                                         return{
                                                                                             ...state,
                                                                                             loading_HC:false,
                                                                                             random_word:null,
+                                                                                            human_position:1,
                                                                                             resultWord:{word:'',definition:''},
                                                                                             next_char:null,
                                                                                             word_exist:false,

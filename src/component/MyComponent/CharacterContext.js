@@ -30,7 +30,7 @@ const playOnlineContext=useContext(PlayOnlineContext)
 const {game_type,onlineUser}=playOnlineContext
 
   const humanContext=useContext(HumanContext)
-  const {level_type,position,setShowKeyboard,play,setPlay,setTurn,round,current_winner_loser_HC,start_match_computer}=humanContext
+  const {level_type,human_position,setShowKeyboard,play,setPlay,setTurn,round,current_winner_loser_HC,start_match_computer}=humanContext
 
 
   const { setLoser, resetTime } = useTimerConsumerUpdate();
@@ -182,13 +182,14 @@ if(currentChar.toUpperCase()==='Z') audioZ()
     console.log("myturn inputtext=", currentChar,",Timeflag=",timeFlag)
     //console.log("play 3=",play)
       //setPlay(false)
-      console.log("LOSER AND WINNER 4")
+      console.log("LOSER AND WINNER 4",level_type,",",human_position)
       //setLoser({ name: 'You', out: false })
 
-        if(level_type==="medium" && position==='left'){
+        if(level_type==="medium" && human_position===0){
+          console.log("InputText position change")
           setInputText(currentChar + inputText)
         }
-        else if(level_type==="medium" && position==='right'){
+        else if(level_type==="medium" && human_position===1){
           setInputText(inputText + currentChar); 
         }
         else{

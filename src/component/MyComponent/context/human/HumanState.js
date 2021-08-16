@@ -9,6 +9,7 @@ import{
   GET_RANDOM_WORD_FAIL,
   SET_LOADING,
   GET_HINT,
+  SET_TEMP_WORD,
   SET_INPUT_TEXT,
   SET_WORD_DEFINITION,
   SET_START_MATCH_COMPUTER,
@@ -20,7 +21,7 @@ import{
   SET_CONCEDE,
   SET_TIMEOUT,
   SET_LEVEL_TYPE,
-  SET_POSITION,
+  SET_HUMAN_POSITION,
   SET_TURN,
   SET_NEXT_CHAR,
   SET_SHOW_KEYBOARD,
@@ -33,7 +34,9 @@ import{
   RESET_STATE_FOR_MATCH_FINSH_HC,
   SET_MATCH_ROUND_DETAILS,
   SET_MASTER_HISTORY,
-  SET_RANDOM_POSITION
+  SET_RANDOM_POSITION,
+  SINGLE_SHIFT_COUNTER,
+  SET_BACKUP_INPUT_TEXT
 } from '../../../../type'; 
 
 
@@ -47,10 +50,12 @@ const HumanState=({children})=>{
         hint_used:false,
         concede:false,
         level_type:null,
-        human_position:1,
+        human_position:null,
+        single_shift_counter:null,
         start_match_computer:JSON.parse(localStorage.getItem('start_match_computer')),
         turn:null,
         next_char:null,
+        temp_word:null,
         show_keyboard:false,
         round:1,
         play:true,
@@ -61,20 +66,23 @@ const HumanState=({children})=>{
         result_history:[],
         final_result_HC:null,
         match_round_details:null,
-       master_history_HC:[],
-       computer_position:null
+        master_history_HC:[],
+        computer_position:null
        //[{round:1,word:,complete_word:,round_respnse}],[]
   };
 
+
+  
   const [state,dispatch]=useReducer(humanReducer,initialState);
 
   const authContext = useContext(AuthContext)
   const {user}=authContext
 
   const commonContext =useContext(CommmonContext)
-  const {inputText,setInputText,setSeconds,seconds,setIsActive}=commonContext
-
-  useEffect(()=>{
+  const {inputText,setInputText,setSeconds,setIsActive,backup_input_text}=commonContext
+console.log("Human state....",inputText)
+useEffect(()=>{
+  console.log("warning 1")
   console.log("calling checkhintcount from useEffect 1=",user && user.data.id)
   if(user && user.data.id)
   {
@@ -84,29 +92,55 @@ const HumanState=({children})=>{
 
 },[user])  
 
-useEffect(()=>{
-    if(state.next_char){
 
-      if(state.level_type==='easy'){
-        setInputText(inputText+state.next_char.toUpperCase())
-      }
-      if( state.level_type==='medium'){
-        
-        state.computer_position===0 ? setInputText(state.next_char.toUpperCase()+inputText) :setInputText(inputText+state.next_char.toUpperCase())
-        
-      }
-        
-      console.log("calling findNextChar")
-        setSeconds()
-        setIsActive(true)
-        setShowKeyboard(true)
+
+useEffect(()=>{
+  console.log("warning 2")
+  if(state.next_char){
+
+    if(state.level_type==='easy'){
+      setInputText(inputText+state.next_char.toUpperCase())
     }
+    if( state.level_type==='medium'){
+      
+      state.computer_position===0 ? setInputText(state.next_char.toUpperCase()+inputText) :setInputText(inputText+state.next_char.toUpperCase())
+      
+    }
+    
+    console.log("calling findNextChar")
+      setSeconds()
+      setIsActive(true)
+      setShowKeyboard(true)
+  }
 },[state.next_char])
 
+useEffect(()=>{
+  console.log("warning 3")
+  if(state.level_type==='medium'){
+    if((state.human_position===0 || state.human_position===1) && inputText!==null){
+        const index=inputText.indexOf('_')
+        if(index>-1){
+          setInputText(inputText.substr(0,index)+inputText.substr(index+1))
+        }
+      }
+  }
+  
 
+  if(state.level_type==='expert')
+  {
+    if(state.human_position===0)
+    {
+      setInputText(backup_input_text && '_'+backup_input_text.slice(0,backup_input_text.length))
+    }
+    if(state.human_position===1)
+    {
+      setInputText(backup_input_text && backup_input_text.slice(0,backup_input_text.length)+'_')  
+    }
+  }
+},[state.human_position]) 
 
-
- useEffect(()=>{
+useEffect(()=>{
+  console.log("warning 4")
   console.log("CHECK POINT 1",state.turn)
         if(state.turn==='computer' && inputText!==null && inputText.length > 1 ){
           console.log("calling checkwordApi ")
@@ -121,24 +155,93 @@ useEffect(()=>{
 },[inputText]) 
 
 
+useEffect(()=>{
+  console.log("warning 5")
+  if(state.random_word!==null){
+      if(state.random_word!=='word not found'){
+        
+    if(inputText!==null && inputText.length > 1){
+          findNextChar()
+          setTurn('computer')
+      }
+      else if(state.random_word==='word not found'){
+        setCurrentWinnerLoserHC('loser')
+      }
+      else{
+        console.log("OTHER CASE 1")
+      }
+    }
+  }
+},[state.random_word])
+
+useEffect(()=>{
+  console.log("warning 6")
+  if(state.match_round_details!==null){
+    console.log("Round DEtails=",state.match_round_details)
+    setMasterHistory({round:state.round,word:inputText,complete_word:state.random_word,round_details:state.match_round_details})
+  }
+},[state.match_round_details]) 
+
+useEffect(()=>{
+  console.log("warning 7")
+  if(state.turn){
+  console.log(`changing turn from ${state.turn}`)
+    //state.concede===true ?  setResultWord(state.hint):setResultWord()
+
+  state.turn==='human' ? setTurn('computer') : setTurn('human')
+  }
+  
+
+},[state.current_winner_loser_HC])
+
+useEffect(()=>{
+  console.log("warning 8")
+  console.log("WORD EXITS CHNGE USEEFFECT=",state.word_exist,",",inputText,",", state.turn)
+  if(state.word_exist)
+  {
+      if((state.word_exist===true || state.word_exist==='word not found') && inputText.length<=2){
+
+          getRandomWordFromApi()
+      }
+      else if(state.word_exist===true && inputText.length > 3){
+
+          state.turn==='human' ? setCurrentWinnerLoserHC('loser') :setCurrentWinnerLoserHC('winner')
+          
+        }
+      else if(state.word_exist==='word not found' && inputText.length > 3 && state.turn==='human'){
+        console.log("Word not found in check word API , now calling Random word API")
+        
+        dispatch({
+          type:GET_RANDOM_WORD_FAIL,
+
+        })
+         getRandomWordFromApi()
+            //setMyTurn(false)
+            //getRandomWordFromApi(2)
+      }
+      else{
+        console.log("OTHER REASON changing turn")
+        setTurn('human')
+
+      }
+}
+
+},[state.word_exist])
+
 
 useEffect(() => {
     
   if(state.hint_used){
     console.log("calling get hint in humanstate");
-    //getHint()
+    getHint()
 }
   
 }, [state.hint_used]);
 
-useEffect(()=>{
-  console.log("HINT=======",state.hint)
- // setResultWord(state.hint,'')
-},[state.hint])
-
+//////////////////////////////////////////////////////////////////////
 
 const getHint=async()=>{
-  setLoading()
+ // setLoading()
   const config={
       headers: {
         'X-RapidAPI-Key' : '0689b1157bmsh9ca7f4b5701a660p1080c2jsn9e2fa49e7bcf'
@@ -180,62 +283,23 @@ const getHint=async()=>{
   }  
 }
 
+const setPlay=(true_false)=>{
+  dispatch({
+    type:SET_PLAY,
+    payload:true_false
+  })
+}
 
 
-
-useEffect(()=>{
-
-  if(state.random_word!==null){
-      if(state.random_word!=='word not found'){
-        if(inputText!==null && inputText.length===1 && seconds===0){
-          //setResultWord(state.random_word)
-        }
-        else if(inputText!=='' && inputText.length > 1){
-          findNextChar()
-          setTurn('computer')
-      /*   setTimeout(()=>{
-            //computer will find next character from random word
-            console.log("calling findNextChar")
-            setTurn('computer')
-            findNextChar()
-            setSeconds()
-            setIsActive(true)
-            setShowKeyboard(true)
-        },2000) */
-        
-      }
-      else if(state.random_word==='word not found'){
-        setCurrentWinnerLoserHC('loser')
-      }
-      else{
-        console.log("OTHER CASE 1")
-      }
-    }
-  }
-},[state.random_word])
-
-  const setPlay=(true_false)=>{
-    dispatch({
-      type:SET_PLAY,
-      payload:true_false
-    })
-  }
-
-
- const setMasterHistory=(details)=>{
+const setMasterHistory=(details)=>{
    dispatch({
      type:SET_MASTER_HISTORY,
      payload:details
    })
  }
- useEffect(()=>{
-  if(state.match_round_details!==null){
-    console.log("Round DEtails=",state.match_round_details)
-    setMasterHistory({round:state.round,word:inputText,complete_word:state.random_word,round_details:state.match_round_details})
-  }
-},[state.match_round_details]) 
+ 
 
-  const sendMatchRoundHC=async(formdata)=>{
+const sendMatchRoundHC=async(formdata)=>{
 
     //console.log("Form data for match round=",formdata)
     
@@ -285,7 +349,7 @@ const changeMatchStatusHC=async(match_id)=>{
   }
 }
 
-  const getFinalResultHC=async(match_id,user_id)=>{
+const getFinalResultHC=async(match_id,user_id)=>{
     const config={
         headers:{
             'Context-type':'appplication/json',
@@ -307,14 +371,14 @@ const changeMatchStatusHC=async(match_id)=>{
 }
 
 
-  const setShowKeyboard=(true_false)=>{
+const setShowKeyboard=(true_false)=>{
       dispatch({
         type:SET_SHOW_KEYBOARD,
         payload:true_false
       })
   }
 
-  const setTurn=(true_false)=>{
+const setTurn=(true_false)=>{
     dispatch({
       type:SET_TURN,
       payload:true_false
@@ -329,9 +393,9 @@ const setLevelType=(type)=>{
 }
 
 // set position of character in inputText
-const setPosition=(position)=>{
+const setHumanPosition=(position)=>{
     dispatch({
-      type:SET_POSITION,
+      type:SET_HUMAN_POSITION,
       payload:position
     })
 }
@@ -345,26 +409,20 @@ const setCurrentWinnerLoserHC=(win_lose)=>{
 }
 
 
-useEffect(()=>{
+const frequencyCounter=()=>{
 
-  if(state.turn){
-  console.log(`changing turn from ${state.turn}`)
-    //state.concede===true ?  setResultWord(state.hint):setResultWord()
+    return inputText.split('').reduce((total, letter) => {
+      total[letter] ? total[letter]++ : total[letter] = 1;
+      return total;
+    }, {});
 
-  state.turn==='human' ? setTurn('computer') : setTurn('human')
-  }
-  
+}
 
-},[state.current_winner_loser_HC])
-
-
-
-
-
-  const getRandomWordFromApi=async()=>{
+const getRandomWordFromApi=async()=>{
 
     console.log(`getRandom word   starting with=`,inputText,",",state.turn)
     setLoading()
+    let dynamic_api=''
     const config={
         headers: {
           'X-RapidAPI-Key' : '0689b1157bmsh9ca7f4b5701a660p1080c2jsn9e2fa49e7bcf'
@@ -381,8 +439,28 @@ useEffect(()=>{
           setRandomPosition()
         }
         else if(state.level_type==='expert'){
-          res=await axios.get(`https://wordsapiv1.p.rapidapi.com/words/?letterPattern=^(|[a-zA-Z])%2Bq%2B(|[a-zA-Z])%2Bs%2B(|[a-zA-Z])*$&random=true`,config)
+
+          dynamic_api=''
+            Array.from(inputText.toLowerCase()).forEach((item)=>{
+              dynamic_api= dynamic_api+'%2B'+item+'%2B(|[a-zA-Z])'
+            })
+
+            console.log("Dynamic API=",dynamic_api)
+            console.log(`https://wordsapiv1.p.rapidapi.com/words/?letterPattern=^(|[a-zA-Z])${dynamic_api}*$&random=true`)
+          res=await axios.get(`https://wordsapiv1.p.rapidapi.com/words/?letterPattern=^(|[a-zA-Z])${dynamic_api}*$&random=true`,config)
           setRandomPosition()
+        }
+        else if(state.level_type==='genius'){
+
+          const calculate_frequency=frequencyCounter()
+          console.log("Frequecy=",calculate_frequency)
+          for(const[key,value] of Object.entries(calculate_frequency)){
+            
+            dynamic_api=dynamic_api+`(?=.*${key.toLowerCase()}{${value}})`
+            console.log('dynamic_api=',dynamic_api)
+          }
+          console.log(`https://wordsapiv1.p.rapidapi.com/words/?letterPattern=^(?=.*^(\\w%2B[^ ])$)(?=.*^${dynamic_api})&random=true&letters=5`)
+           res=await axios.get(`https://wordsapiv1.p.rapidapi.com/words/?letterPattern=^(?=.*^(\\w%2B[^ ])$)(?=.*^${dynamic_api})&random=true&letters=5`,config) 
         }
            
       console.log(`Response code ${res.status} from getRandomWord=`,res.data.word)
@@ -432,41 +510,7 @@ useEffect(()=>{
   }
 
 //////////////////////////////////////////////////////////////////
-useEffect(()=>{
 
-      console.log("WORD EXITS CHNGE USEEFFECT=",state.word_exist,",",inputText,",", state.turn)
-      if(state.word_exist)
-      {
-          if((state.word_exist===true || state.word_exist==='word not found') && inputText.length<=2){
-
-              getRandomWordFromApi()
-          }
-          else if(state.word_exist===true && inputText.length > 3){
-
-              state.turn==='human' ? setCurrentWinnerLoserHC('loser') :setCurrentWinnerLoserHC('winner')
-              
-            }
-          else if(state.word_exist==='word not found' && inputText.length > 3 && state.turn==='human'){
-            console.log("Word not found in check word API , now calling Random word API")
-            
-            dispatch({
-              type:GET_RANDOM_WORD_FAIL,
-
-            })
-             getRandomWordFromApi()
-                //setMyTurn(false)
-                //getRandomWordFromApi(2)
-          }
-          else{
-            console.log("OTHER REASON changing turn")
-            setTurn('human')
-
-          }
-    }
-
-},[state.word_exist])
-
-//////////////////////////////////////////////////////////////////////
 
   const checkWordExistApi=async()=>{
     console.log(`${state.turn} checks word=`,inputText.toLowerCase())
@@ -527,9 +571,8 @@ useEffect(()=>{
           
           setNextCharacter(state.random_word.charAt(input_text_length))
           
-        }  
-        
-        if(input_text_length < random_word_length && state.level_type==='medium'){
+        } 
+       else if(input_text_length < random_word_length && state.level_type==='medium'){
 
           if(state.computer_position===1){
             console.log("Debug1=",inputText,",",state.random_word.indexOf(inputText.toLowerCase()))
@@ -542,6 +585,67 @@ useEffect(()=>{
             setNextCharacter(state.random_word.charAt(state.random_word.indexOf(inputText.toLowerCase())-1))
           }
             
+        }
+        else if(input_text_length < random_word_length && state.level_type==='expert'){
+          
+           const random_word_len=state.random_word.length
+           let demo_array=new Array(random_word_len)
+           let random_number_set=Array.from(state.random_word).map((item,index)=>{
+            return index
+              })
+              let k=0;
+          for(let i=0;i<inputText.length;i++){
+
+            for(let j=k;j<random_word_len;j++){
+              
+              //console.log(inputText[i].toLowerCase(),",",state.random_word[j],",",inputText[i].toLowerCase()===state.random_word[j])
+              if(inputText[i].toLowerCase()===state.random_word[j]){
+                //console.log("ok")
+                  demo_array[j]=state.random_word[j]
+                  random_number_set[j]=''
+                  k=j+1 
+                  //console.log("check=",demo_array[j],",",j)
+                 
+                  break;
+              }
+              else if(Number.isInteger(random_number_set[j])){
+                random_number_set[j]=j 
+              }
+            }
+          }
+
+
+
+          random_number_set=random_number_set.filter((item,index)=>{
+            return item!==''
+          })
+
+          const index_no=random_number_set[Math.floor(Math.random() * random_number_set.length)]
+            console.log("TargetIndex=",index_no)
+            console.log("Next char=",state.random_word[index_no])
+
+            demo_array[index_no]=state.random_word[index_no]
+
+            console.log("random_word=",state.random_word)
+            console.log("demo_array=",demo_array)
+
+            demo_array.forEach((item,index)=>{
+                console.log("item=",index,",",item)
+            })
+             random_number_set.forEach((item,index)=>{
+              console.log("ramdon no.=",index,",",item)
+            })  
+            console.log("Next char=",state.random_word[index_no],",",demo_array,"*",demo_array.join(""))
+           // setNextCharacter(state.random_word[index_no])
+           setInputText(demo_array.join("").toUpperCase())
+           dispatch({
+             type:SET_TEMP_WORD,
+             payload:demo_array.join("").toUpperCase()
+           })
+           setSeconds()
+           setIsActive(true)
+           setShowKeyboard(true)
+
         }
   }
 } 
@@ -584,31 +688,9 @@ const setNextCharacter=(char)=>{
   }
 
 
-  function shuffle(array) {
-    var currentIndex = array.length,  randomIndex;
-  
-    // While there remain elements to shuffle...
-    while (0 !== currentIndex) {
-  
-      // Pick a remaining element...
-      randomIndex = Math.floor(Math.random() * currentIndex);
-      currentIndex--;
-  
-      // And swap it with the current element.
-      [array[currentIndex], array[randomIndex]] = [
-        array[randomIndex], array[currentIndex]];
-    }
-  
-    return array;
-  }
-
- 
-
-
-
 const setHintUsed=async(true_false,param='')=>{
 
-  setLoading()
+  //setLoading()
    
          const config={
           headers:{
@@ -649,8 +731,6 @@ const setHintUsed=async(true_false,param='')=>{
           payload:true_false
       })  
 }
-
-
 
 const startMatchComputer=async(id,level)=>{
   setLoading()
@@ -730,6 +810,56 @@ const setRandomPosition=()=>{
   })
 }
 
+const setSingleShiftCounter=(inc_dec)=>{
+ // console.log("counter value=",state.single_shift_counter,",",inputText.length)
+  if(inc_dec==='increment')
+  {
+
+
+    if(state.single_shift_counter===null){
+      dispatch({
+        type:SINGLE_SHIFT_COUNTER,
+        payload:state.single_shift_counter+1 
+      })
+    }
+    else if(state.single_shift_counter!==null && (state.single_shift_counter < backup_input_text.length)){
+      dispatch({
+        type:SINGLE_SHIFT_COUNTER,
+        payload:state.single_shift_counter+1 
+      })
+    }
+    else{
+      dispatch({
+        type:SINGLE_SHIFT_COUNTER,
+        payload:null
+      })
+    }
+  }
+  else if(inc_dec==='decrement'){
+  
+    if(state.single_shift_counter===0 || state.single_shift_counter===null){
+      dispatch({
+        type:SINGLE_SHIFT_COUNTER,
+        payload:null
+      })
+    }
+    else if(state.single_shift_counter!==null && (state.single_shift_counter >0)){
+      dispatch({
+        type:SINGLE_SHIFT_COUNTER,
+        payload:state.single_shift_counter-1 
+      })
+    }
+  }
+
+  if(inc_dec==='reset'){
+    dispatch({
+      type:SINGLE_SHIFT_COUNTER,
+      payload:null
+    })
+  }
+  
+}
+
   return (
     <HumanContext.Provider
     value={{
@@ -743,6 +873,7 @@ const setRandomPosition=()=>{
         concede:state.concede,
         level_type:state.level_type,
         human_position:state.human_position,
+        single_shift_counter:state.single_shift_counter,
         turn:state.turn,
         show_keyboard:state.show_keyboard,
         round:state.round,
@@ -755,6 +886,7 @@ const setRandomPosition=()=>{
         final_result_HC:state.final_result_HC,
         match_round_details:state.match_round_details,
         master_history_HC:state.master_history_HC,
+        temp_word:state.temp_word,
         getRandomWordFromApi,
         setResultWord,
         startMatchComputer,
@@ -763,7 +895,7 @@ const setRandomPosition=()=>{
         setHintUsed,
         setConcede,
         setLevelType,
-        setPosition,
+        setHumanPosition,
         checkWordExistApi,
         setTurn,
         findNextChar,
@@ -778,7 +910,8 @@ const setRandomPosition=()=>{
         setMasterHistory,
         getHint,
         setLoading,
-        setRandomPosition
+        setRandomPosition,
+        setSingleShiftCounter
       }}>
       {children}
     </HumanContext.Provider>

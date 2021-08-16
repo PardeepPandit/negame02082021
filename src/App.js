@@ -69,6 +69,7 @@ import { get } from 'jquery';
 import CommonState from './component/MyComponent/context/common/CommonState';
 import NotFoundPage from './component/MyComponent/NotFoundPage'
 import CommonContext from './component/MyComponent/context/common/commonContext'
+import { Fragment } from 'react';
 function App(props) {
 
   /* const commonContext=useContext(CommonContext)
@@ -139,8 +140,13 @@ useEffect(()=>{
     alert("back button pressed")
   }
 }) */
-
-
+/* let online = window.navigator.onLine
+console.log("Internet=",online)
+if(!online){
+  window.localStorage.clear()
+  return <Fragment>{<h1>Please check your internet connection</h1>}</Fragment>
+}
+else{ */
   return (
     <div>
       <CommonState>
@@ -220,7 +226,8 @@ useEffect(()=>{
     </PlayOnlineState>
     </CommonState>
     </div>
-  );
+  )
+           // }
 }
 
 export default App;

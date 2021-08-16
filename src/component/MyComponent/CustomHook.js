@@ -14,7 +14,7 @@ export function useBackgroundMusicUpdate(){
     return useContext(CustomHookUpdate)
 }
 
-export const CustomHookProvider=React.memo(({children})=>{
+export const CustomHookProvider=({children})=>{
     
   
     const {initialState}=useMainConsumer()
@@ -101,4 +101,4 @@ export const CustomHookProvider=React.memo(({children})=>{
         </CustomHook.Provider>
     )
 
-})
+}

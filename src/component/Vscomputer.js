@@ -1,4 +1,4 @@
-import React, {useRef , useState, useEffect, Fragment, useContext,Suspense } from "react";
+import React, { useState, useEffect, Fragment, useContext,Suspense } from "react";
 
 import {
   useCharacterConsumer,
@@ -24,13 +24,12 @@ const Keyboard = React.lazy(() => import('./Keyboard'));
 
 const Vscomputer = () => {
   //console.log("Match===", level);
-  const inputRef=useRef()
 /* 
   let element = document.getElementById('inputbox');
   console.log("element=",element)
  */
   const commonContext=useContext(CommonContext)
-  const {inputText,setIsActive,isActive,setSeconds,seconds,setInputText}=commonContext
+  const {inputText,setIsActive,isActive,setSeconds,seconds,setInputText,backup_input_text}=commonContext
   const authContext=useContext(AuthContext)
   const {user,login_data}=authContext
   const humanContext = useContext(HumanContext);
@@ -60,7 +59,9 @@ const Vscomputer = () => {
     setPlay,
     setTurn,
     setCurrentWinnerLoserHC,
-    getHint
+    getHint,
+    setSingleShiftCounter,
+    single_shift_counter
   } = humanContext;
 
 
@@ -72,6 +73,18 @@ const Vscomputer = () => {
   const {setTimeFlag} = useMainConsumerUpdate();
   const { myTurn } = useCharacterConsumerUpdate();
 
+  useEffect(()=>{
+    if(concede){
+      console.log("calling getHintWordList from useEffect=",concede,",",random_word)
+      setIsActive(false)
+      setPlay(false)
+      //level_type!=='expert' && getHint()
+      level_type==='expert' && inputText.length===1 && getHint()
+      setCurrentWinnerLoserHC('loser')
+      setConcede(false)
+    }
+},[concede])
+
   const deleteChar = () => {
     //console.log("deletechar========",inputText)
     console.log("setshow keyboard true 1")
@@ -80,28 +93,25 @@ const Vscomputer = () => {
     if(human_position===0){
       setInputText(inputText.substring(1, inputText.length));
     }
+    else if(single_shift_counter > 0){
+      setInputText(inputText.substring(0,single_shift_counter-1)+inputText.substring(single_shift_counter))
+    }
     else if(human_position===1){
       setInputText(inputText.substring(0, inputText.length - 1));
     }
     else{
       setInputText(inputText.substring(0, inputText.length - 1));
     }
-    //setPlay(true)
+   // setSingleShiftCounter('reset')
+  //setPlay(true)
   };
 
-  useEffect(()=>{
-
-        if(concede){
-          console.log("calling getHintWordList from useEffect=",concede,",",random_word)
-          setIsActive(false)
-          setPlay(false)
-          getHint()
-          setCurrentWinnerLoserHC('loser')
-          setConcede(false)
-        }
-  },[concede])
+  
 
   const playFun = () => {
+    setSingleShiftCounter('reset')
+    setInputText(backup_input_text)
+    setSingleShiftCounter('zero')
     checkWordExistApi()
     //setResultWord();
     setTimeFlag(true);
@@ -114,14 +124,11 @@ const Vscomputer = () => {
     console.log("Keyboard Target*******=",e.target)
     myTurn(e);
   };
-  function uniKeyCode(event) {
-    var key = event.keyCode;
-    document.getElementById("demo2").innerHTML = "The Unicode KEY code is: " + key;
-  }
+
 if(loading_HC){
 return <Loading/>
 }
-else
+else 
   {
   return (
     <Fragment>
@@ -182,7 +189,6 @@ else
                     {/* <input type="text" className="main-input"  value={inputText} onChange={onChange}/> */}
                     <input
                       type="text"
-                      ref={inputRef}
                       id='inputbox'
                       className="main-input"
                       //onChange={onChange}
@@ -192,7 +198,7 @@ else
                 </div>
                 {/*  {loser.out && <div className="bg-white">{JSON.stringify(val)}</div>} */}
                 {level_type==="medium" && show_keyboard && <MediumLevelUI />}
-                {level_type==="expert" && show_keyboard && <ExpertLevelUI inputRef={inputRef}/>}
+                {level_type==="expert" && show_keyboard && <ExpertLevelUI/>}
 
                 {show_keyboard ? (
                   <div class="keypad">

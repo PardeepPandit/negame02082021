@@ -10,7 +10,7 @@ import { SET_CURRENT_WINNER_LOSER_HC, SET_POSITION } from '../../type'
 export const Result = () => {
    
   const commonContext=useContext(CommonContext)
-  const {setInputText,inputText,setIsActive,setSeconds }=commonContext
+  const {setInputText,inputText,setIsActive,setSeconds,setBackUpInputText }=commonContext
 
 
   const humanContext=useContext(HumanContext)
@@ -37,6 +37,7 @@ export const Result = () => {
     
     setTimeout(()=>{
       setInputText(null)
+      setBackUpInputText(null)
       setTimeFlag(false)
       setSeconds()
       setIsActive(true)

@@ -112,19 +112,6 @@ const {game_type,onlineUser}=playOnlineContext
   
   }, [])
 
- /*   const [inputText, setInputText] = useState(() => {
-    console.log("initialstate")
-    return getRandomChar()
-  });  */
-
-  /* useEffect(() => {
-    console.log("CHECK ReusLT WORD=",resultWord)
-  }, [resultWord]) */
-
-
- 
-
-
  
   
   const myTurn = (e) => {
@@ -192,7 +179,30 @@ if(currentChar.toUpperCase()==='Z') audioZ()
         else if(level_type==="medium" && human_position===1){
           setInputText(inputText + currentChar); 
         }
-        else{
+        else if(level_type==='expert'){
+          if(inputText!==null &&  inputText.indexOf('_')>-1){
+            const first_part=inputText.substr(0, inputText.indexOf('_')) 
+            const second_pard=inputText.substr(inputText.indexOf('_')+1,inputText.length)
+            const final_part=first_part+currentChar+second_pard
+
+           console.log("first_part=", first_part)
+           console.log("second_pard=", second_pard)
+           console.log("final_part=", final_part)
+
+              setInputText(final_part)
+          }
+          else if(human_position===1){
+            setInputText(inputText + currentChar)
+          }
+          else if(human_position===0){
+            setInputText(currentChar + inputText)
+          }else{
+          
+          setInputText(inputText + currentChar); 
+        }
+        }
+        else if(level_type==='genius')
+        {
           setInputText(inputText + currentChar); 
         }
 

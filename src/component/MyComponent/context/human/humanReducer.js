@@ -3,39 +3,37 @@ import{
   GET_RANDOM_WORD_FAIL,
   GET_HINT,
    SET_LOADING,
-   SET_INPUT_TEXT,
   SET_START_MATCH_COMPUTER,
   SET_WORD_DEFINITION,
   REMOVE_LOCAL_DATA,
   SET_HINT_COUNT,
   SET_HINT_USED,
-  SET_HINT_WORDLIST_SUCCESS,
-  SET_HINT_WORDLIST_FAIL,
   SET_CONCEDE,
   SET_LEVEL_TYPE,
-  SET_POSITION,
+  SET_HUMAN_POSITION,
   SET_TURN,
   SET_NEXT_CHAR,
   SET_SHOW_KEYBOARD,
   SET_PLAY,
   WORD_EXIST,
   SET_CURRENT_WINNER_LOSER_HC,
-  SET_WINNER_LOSER_COUNTER,
   RESET_STATE_FOR_ROUND_FINSH_HC,
-  RESET_STATE,
   SET_FINAL_RESULT_HC,
-  SET_FINAL_RESULT_DATA,
   RESET_STATE_FOR_MATCH_FINSH_HC,
   SET_MATCH_ROUND_DETAILS,
   SET_MASTER_HISTORY,
-  SET_RANDOM_POSITION
+  SET_RANDOM_POSITION,
+  SET_TEMP_WORD,
+  SINGLE_SHIFT_COUNTER,
+  SET_BACKUP_INPUT_TEXT
   } from '../../../../type'; 
-  
-  //comment
-  export default (state,action)=>{ 
+
+export default (state,action)=>{ 
+
     const {type,payload}=action
     console.log("Human Reducer=",type,",",payload)
-    switch(type){
+    switch(type)
+    {
         case GET_RANDOM_WORD_SUCCESS:
             return{
                 ...state,
@@ -58,7 +56,8 @@ import{
                 case GET_HINT:
                     return{
                         ...state,
-                        hint:payload
+                        hint:payload,
+                        loading_HC:false
                     }
                     case SET_WORD_DEFINITION:
                         console.log('SET_WORD_DEFINITION')
@@ -66,164 +65,175 @@ import{
                             ...state,
                             resultWord:payload
                         }
-                        case SET_START_MATCH_COMPUTER:
-                            localStorage.setItem('start_match_computer',JSON.stringify(payload))
+                    case SET_START_MATCH_COMPUTER:
+                        localStorage.setItem('start_match_computer',JSON.stringify(payload))
+                        return{
+                            ...state,
+                            start_match_computer:payload,
+                            loading_HC:false
+                        }
+                        case REMOVE_LOCAL_DATA:
+                            localStorage.removeItem('start_match_computer')
                             return{
                                 ...state,
-                                start_match_computer:payload,
+                                start_match_computer:null,
                                 loading_HC:false
                             }
-                            case REMOVE_LOCAL_DATA:
-                                localStorage.removeItem('start_match_computer')
+                            case SET_HINT_COUNT:
                                 return{
                                     ...state,
-                                    start_match_computer:null,
+                                    hint_count:payload,
                                     loading_HC:false
                                 }
-                                case SET_HINT_COUNT:
+                                case SET_HINT_USED:
                                     return{
                                         ...state,
-                                        hint_count:payload,
+                                        hint_used:payload,
+                                        hint:null,
                                         loading_HC:false
                                     }
-                                    case SET_HINT_USED:
+                                    case SET_CONCEDE:
                                         return{
                                             ...state,
-                                            hint_used:payload,
-                                            hint:null
+                                            concede:payload
                                         }
-                                        case SET_CONCEDE:
+                                case SET_LEVEL_TYPE:
+                                    return{
+                                        ...state,
+                                        level_type:payload
+                                    }
+                                    case SET_HUMAN_POSITION:
+                                        return{
+                                            ...state,
+                                            human_position:payload,
+                                            single_shift_counter:null
+                                        }
+                                        case SET_TURN:
                                             return{
                                                 ...state,
-                                                concede:payload
+                                                turn:payload,
+                                                word_exist:false
                                             }
-                                                case SET_LEVEL_TYPE:
+                                            case SET_NEXT_CHAR:
+                                                return{
+                                                    ...state,
+                                                    next_char:payload
+                                                }
+                                                case SET_SHOW_KEYBOARD:
                                                     return{
                                                         ...state,
-                                                        level_type:payload
+                                                        show_keyboard:payload,
+                                                        play:payload,
+                                                        next_char:null
                                                     }
-                                                    case SET_POSITION:
+                                case SET_PLAY:
+                                    return{
+                                        ...state,
+                                        play:payload
+                                    }
+                                    case WORD_EXIST:
+                                        return{
+                                            ...state,
+                                            word_exist:payload
+                                        }
+                                        case SET_CURRENT_WINNER_LOSER_HC:
+                                            if(payload==='loser'){
+                                                    return{
+                                                        ...state,
+                                                        current_winner_loser_HC:payload,
+                                                        loser_counter:state.loser_counter+1,
+                                                        result_history:[...state.result_history,payload]
+                                                    } 
+                                                }
+                                                else if(payload==='winner'){
+                                                    return{
+                                                        ...state,
+                                                        current_winner_loser_HC:payload,
+                                                        winner_counter:state.winner_counter+1,
+                                                        result_history:[...state.result_history,payload]
+                                                    } 
+                                                }
+                                                else{
+                                                    return{
+                                                        ...state,
+                                                        current_winner_loser_HC:payload
+                                                    }
+                                                }
+                                            case SET_FINAL_RESULT_HC:
+                                                return{
+                                                    ...state,
+                                                    final_result_HC:payload,
+                                                    loading_HC:false
+                                                }
+                                                case SET_MATCH_ROUND_DETAILS:
+                                                    return{
+                                                        ...state,
+                                                        match_round_details:payload
+                                                    }
+                                                case SET_MASTER_HISTORY:
+                                                    return{
+                                                        ...state,
+                                                        master_history_HC:[...state.master_history_HC,payload]
+                                                    }
+                                                    case SET_RANDOM_POSITION:
                                                         return{
                                                             ...state,
-                                                            human_position:payload
+                                                            computer_position:payload
                                                         }
-                                                        case SET_TURN:
+                                                        case SET_TEMP_WORD:
                                                             return{
                                                                 ...state,
-                                                                turn:payload,
-                                                                word_exist:false
+                                                                temp_word:payload
                                                             }
-                                                            case SET_NEXT_CHAR:
-                                                                return{
-                                                                    ...state,
-                                                                    next_char:payload
-                                                                }
-                                                                case SET_SHOW_KEYBOARD:
-                                                                    return{
-                                                                        ...state,
-                                                                        show_keyboard:payload,
-                                                                        play:payload,
-                                                                        next_char:null
-                                                                    }
-                                                                    case SET_PLAY:
-                                                                        return{
-                                                                            ...state,
-                                                                            play:payload
-                                                                        }
-                                                                        case WORD_EXIST:
-                                                                            return{
-                                                                                ...state,
-                                                                                word_exist:payload
-                                                                            }
-                                                                            case SET_CURRENT_WINNER_LOSER_HC:
-                                                                                if(payload==='loser'){
-                                                                                        return{
-                                                                                            ...state,
-                                                                                            current_winner_loser_HC:payload,
-                                                                                            loser_counter:state.loser_counter+1,
-                                                                                            result_history:[...state.result_history,payload]
-                                                                                        } 
-                                                                                    }
-                                                                                    else if(payload==='winner'){
-                                                                                        return{
-                                                                                            ...state,
-                                                                                            current_winner_loser_HC:payload,
-                                                                                            winner_counter:state.winner_counter+1,
-                                                                                            result_history:[...state.result_history,payload]
-                                                                                        } 
-                                                                                    }
-                                                                                    else{
-                                                                                        return{
-                                                                                            ...state,
-                                                                                            current_winner_loser_HC:payload
-                                                                                        }
-                                                                                    }
-                                                                                    case SET_FINAL_RESULT_HC:
-                                                                                        return{
-                                                                                            ...state,
-                                                                                            final_result_HC:payload,
-                                                                                            loading_HC:false
-                                                                                        }
-                                                                                        case SET_MATCH_ROUND_DETAILS:
-                                                                                            return{
-                                                                                                ...state,
-                                                                                                match_round_details:payload
-                                                                                            }
-                                                                                        case SET_MASTER_HISTORY:
-                                                                                            return{
-                                                                                                ...state,
-                                                                                                master_history_HC:[...state.master_history_HC,payload]
-                                                                                            }
-                                                                                            case SET_RANDOM_POSITION:
-                                                                                                return{
-                                                                                                    ...state,
-                                                                                                    computer_position:payload
-                                                                                                }
-                                                                                    case RESET_STATE_FOR_ROUND_FINSH_HC:
-                                                                                        return{
-                                                                                            ...state,
-                                                                                            loading_HC:false,
-                                                                                            random_word:null,
-                                                                                            human_position:1,
-                                                                                            resultWord:{word:'',definition:''},
-                                                                                            next_char:null,
-                                                                                            word_exist:false,
-                                                                                            current_winner_loser_HC:null,
-                                                                                            show_keyboard:true,
-                                                                                            concede:false,
-                                                                                            play:true,
-                                                                                            round:state.round+1
-                                                                                        }
-                                                                                        case RESET_STATE_FOR_MATCH_FINSH_HC:
-                                                                                            return{
-                                                                                                ...state,
-                                                                                                loading_HC:false,
-                                                                                                random_word:null,
-                                                                                                hint:null,
-                                                                                                resultWord:{word:'',definition:''},
-                                                                                                hint_used:false,
-                                                                                                concede:false,
-                                                                                                level_type:null,
-                                                                                                position:null,
-                                                                                                start_match_computer:null,
-                                                                                                turn:'human',
-                                                                                                next_char:null,
-                                                                                                show_keyboard:true,
-                                                                                                round:1,
-                                                                                                play:true,
-                                                                                                word_exist:false,
-                                                                                                current_winner_loser_HC:null,
-                                                                                                winner_counter:0,
-                                                                                                loser_counter:0,
-                                                                                                result_history:[],
-                                                                                                final_result_HC:null,
-                                                                                                match_round_details:null,
-                                                                                                master_history_HC:[]
-
-
-                                                                                                
-                                                                                            }
-
+                                        case SINGLE_SHIFT_COUNTER:
+                                             return{
+                                                    ...state,
+                                                    single_shift_counter:payload,
+                                                    human_position:null
+                                                }
+                                            case RESET_STATE_FOR_ROUND_FINSH_HC:
+                                                return{
+                                                    ...state,
+                                                    loading_HC:false,
+                                                    random_word:null,
+                                                    human_position:null,
+                                                    resultWord:{word:'',definition:''},
+                                                    next_char:null,
+                                                    word_exist:false,
+                                                    current_winner_loser_HC:null,
+                                                    show_keyboard:true,
+                                                    concede:false,
+                                                    play:true,
+                                                    round:state.round+1,
+                                                    temp_word:null
+                                                }
+                                                case RESET_STATE_FOR_MATCH_FINSH_HC:
+                                                    return{
+                                                        ...state,
+                                                        loading_HC:false,
+                                                        random_word:null,
+                                                        hint:null,
+                                                        resultWord:{word:'',definition:''},
+                                                        hint_used:false,
+                                                        concede:false,
+                                                        level_type:null,
+                                                        position:null,
+                                                        start_match_computer:null,
+                                                        turn:'human',
+                                                        next_char:null,
+                                                        temp_word:null,
+                                                        show_keyboard:true,
+                                                        round:1,
+                                                        play:true,
+                                                        word_exist:false,
+                                                        current_winner_loser_HC:null,
+                                                        winner_counter:0,
+                                                        loser_counter:0,
+                                                        result_history:[],
+                                                        final_result_HC:null,
+                                                        match_round_details:null,
+                                                        master_history_HC:[]
+                                                        }
       default:
       return state;
     }

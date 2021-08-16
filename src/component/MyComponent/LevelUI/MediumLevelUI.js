@@ -16,39 +16,14 @@ const {inputText}=commonContext
 
 
 const humanContext=useContext(HumanContext)
-const {setInputText,setPosition,human_position}=humanContext
+const {setInputText,setHumanPosition,human_position}=humanContext
 
 
-
-const [active,setActive]=useState(()=>true)
-
-const insertRight=()=>{
-    console.log("InputText=",inputText)
-    let char=inputText.charAt(inputText.length-1)
-    console.log("char=",char)
-    setInputText(char+inputText.slice(0,inputText.length-1))
-    setActive(pre=>!pre)
-}
-const insertLeft=()=>{
-    console.log("InputText=",inputText)
-    let char=inputText.charAt(0)
-    console.log("char=",char)
-    setInputText(inputText.slice(1)+char)
-    setActive(pre=>!pre)
-}
-
-
-/* useEffect(()=>{
-    if(human_position){
-        setActive(pre=>!pre)  
-    }
-                
-},[human_position]) */
     return (
         <Fragment>
-              <div >
-            <button style={human_position===1 ? {backgroundColor:"white"} :{backgroundColor:"green"}} onClick={()=>setPosition(0)} >{"<<<<<<<"}</button>
-            <button style={human_position===1 ? {backgroundColor:"green"} :{backgroundColor:"white"}}  onClick={()=>setPosition(1)} >{">>>>>>"}</button>
+              <div style={{fontSize:'25px'}} >
+            <button style={human_position===1 ? {backgroundColor:"lightgray"} :{backgroundColor:"lightgreen"}} onClick={()=>setHumanPosition(0)} >{"<<<<<<<<"}</button>
+            <button style={human_position===1 ? {backgroundColor:"lightgreen"} :{backgroundColor:"lightgray"}}  onClick={()=>setHumanPosition(1)} >{">>>>>>>>"}</button>
             </div>
         </Fragment>
     )

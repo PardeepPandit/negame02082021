@@ -2,7 +2,8 @@ import{
      SET_INPUT_TEXT,
      SET_ISACTIVE,
      SET_SECONDS,
-     SET_GAME_STATUS
+     SET_GAME_STATUS,
+     SET_BACKUP_INPUT_TEXT
     } from '../../../../type'; 
     
     //comment
@@ -44,6 +45,11 @@ import{
                                 human_vs_frined:true
                               }
                             }
+                            case SET_BACKUP_INPUT_TEXT:
+                              return{
+                                  ...state,
+                                  backup_input_text:payload
+                              }
                             
         default:
         return state;

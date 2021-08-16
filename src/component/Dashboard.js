@@ -70,7 +70,7 @@ const Dashboard = (props) => {
     useEffect(()=>{
         console.log("calling resttime=",loser.name,",",loser.out)
         console.log("Time Reset@@@@@@@@@@@@@  2")
-        setSeconds()
+        setSeconds(120)
     },[loser])
 
 
@@ -262,7 +262,7 @@ const playOnline=()=>{
                 <div className="level-wrapper">
                 <span  onClick={()=>setShowLevel(!showLevel)}>X</span>
                 <h2>Select level</h2>
-                <ul className="level-list">
+                <ul className="level-list" >
                     <li>{(levelNumber==="1" || levelNumber==='1,2' || levelNumber==='1,2,3' || levelNumber==='1,2,3,4') ? 
                     <Link to='#' onClick={()=>onClick("1","easy")}>Easy*</Link> : 
                      <Link to="#" onClick={()=>{
@@ -285,8 +285,8 @@ const playOnline=()=>{
                             setLevelCheck(true)
                         }}>Expert</Link>}</li>
                     <li>{(levelNumber==='1,2,3,4')  ?
-                     <Link to='#' onClick={()=>onClick("4")}>Genius*</Link> :
-                     <Link onClick={()=>{
+                     <Link to='#' onClick={()=>onClick("4",'genius')}>Genius*</Link> :
+                     <Link to='#' onClick={()=>{
                         
                         setShowLevel(false)
                         setLevelCheck(true)

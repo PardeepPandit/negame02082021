@@ -179,7 +179,7 @@ export const YouLose = () => {
                                             <span>X</span>
                                         </div>
 
-                                        <h1 className="win-text lose-text">Forfeited</h1>
+                                        <h1 className="win-text lose-text">You Lost</h1>
                                       {/*   <h3>{word}</h3> */}
                                         <h3>word is complete after check</h3>
                                         <h3>Lost</h3>

@@ -27,14 +27,15 @@ const shiftCounter=(arg)=>{
        console.log("hello 2---")
        if(inputText!==null){
 
-       if(single_shift_counter>=1){
-          // console.log("check use Effect in ExpertUI",single_shift_counter,",*",inputText.length,",*",inputText.slice(0,inputText.length-single_shift_counter))
+       if(single_shift_counter>=1)
+       {
+           console.log("check use Effect in ExpertUI",single_shift_counter,",*",inputText.length,",*",inputText.slice(0,inputText.length-single_shift_counter))
             setInputText(backup_input_text && backup_input_text.slice(0,backup_input_text.length-single_shift_counter)+'_'+backup_input_text.slice(backup_input_text.length-single_shift_counter))
        }
-       if(single_shift_counter===0)
+       else if(single_shift_counter===0 || single_shift_counter===-1)
         {
             console.log("slicebackup=",backup_input_text)
-        setInputText(backup_input_text.slice(0)+'_')
+            setInputText(backup_input_text.slice(0)+'_')
         }
     }
 
@@ -45,16 +46,16 @@ return (
     <div style={{textAlign:'center' , color:'blue', backgroundColor:'yellow'}}>
     <h1 style={activeButton===4 ? {backgroundColor:"green"} : {backgroundColor:"white"}} onClick={()=>{
         setActiveButton(4)
-        setHumanPosition(0)}} >{"Left End"}</h1> 
+        setHumanPosition(1)}} >{"Left End"}</h1> 
     <h1 style={activeButton===3 ? {backgroundColor:"green"} : {backgroundColor:"white"}} onClick={()=>{
         setActiveButton(3)
-        shiftCounter('increment')}} >{"Shift Left"}</h1>
+        shiftCounter('increment')}} >{"Left Shift"}</h1>
     <h1 style={activeButton===2 ? {backgroundColor:"green"} : {backgroundColor:"white"}} onClick={()=>{
         setActiveButton(2)
-        shiftCounter('decrement')}} >{"Shift Right"}</h1> 
+        shiftCounter('decrement')}} >{"Right Shift"}</h1> 
     <h1 style={activeButton===1 ? {backgroundColor:"green"} : {backgroundColor:"white"}} onClick={()=>{
         setActiveButton(1)
-        setHumanPosition(1)}} >{"Right End"}</h1> 
+        setHumanPosition(0)}} >{"Right End"}</h1> 
     </div>
     </Fragment>
     )

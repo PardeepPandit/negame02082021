@@ -23,7 +23,7 @@ const commonContext=useContext(CommonContext)
 const {inputText,isActive,setIsActive,seconds,setSeconds}=commonContext
 
 const humanContext=useContext(HumanContext)
-const {wordDefinition,setTimeOut,hint_wordlist,resultWord,setCurrentWinnerLoserHC,getRandomWordFromApi}=humanContext
+const {wordDefinition,setTimeOut,hint_wordlist,resultWord,setCurrentWinnerLoserHC,getRandomWordFromApi,getWordFromRapidApiHC}=humanContext
 
 
   //console.log("TimerContext rendring")
@@ -50,14 +50,10 @@ const {wordDefinition,setTimeOut,hint_wordlist,resultWord,setCurrentWinnerLoserH
            else {
             console.log("LOSER AND WINNER 10")
             if(!onlineUser){
-              //active only for play with computer
+              //active only for Human vs computer
               console.log("InputText in Timer Context=",inputText)
-
-             /*  if(inputText!==null && inputText.length===1){
-                getRandomWordFromApi()
-              } */
               setCurrentWinnerLoserHC('loser')
-
+              getWordFromRapidApiHC()
             }else{
               console.log("PLAY ONLINE TIME UP")
               console.log("calling saveword API from TimerContext")

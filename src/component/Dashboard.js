@@ -11,6 +11,7 @@ import $ from 'jquery'
 import Spinner from '../component/MyComponent/Spinner';
 import Level from './Level'
 import CommonContext from './MyComponent/context/common/commonContext'
+import WordLengthUI from './MyComponent/LevelUI/WordLengthUI';
 import { SET_SECONDS, STATE_LIST } from '../type';
 
 
@@ -18,14 +19,14 @@ const Dashboard = (props) => {
     //console.log("Home rendring")
 
     const commonContext =useContext(CommonContext)
-    const {setInputText,setIsActive,setSeconds,setGameStatus,exitUser}=commonContext
+    const {setInputText,setIsActive,setSeconds,setGameStatus,exitUser,setGameLevel}=commonContext
 
     const authContext=useContext(AuthContext)
     const {user,login_data}=authContext
     const {level}=login_data
 
     const humanContext=useContext(HumanContext)
-    const {startMatchComputer,start_match_computer,loading,checkHintCount,setLevelType}=humanContext
+    const {startMatchComputer,start_match_computer,loading,checkHintCount,setWordLength}=humanContext
 
     const {isActive,loser}=useTimerConsumer();
     const {setLoser}=useTimerConsumerUpdate();
@@ -35,12 +36,12 @@ const Dashboard = (props) => {
     const [levelNumber,setLevelNumber]=useState(level)
     const [startMatch,setStartMatch]=useState(false)
 
-
     const playOnlineContext=useContext(PlayOnlineContext)
     const {searchUserOnline,onlineUser,gameType,game_type,online_match_finish,onlineMatchFinish}=playOnlineContext
     const [search,setSearch]=useState(false)
     const [sec,setSec]=useState(()=>10)
     console.log("login data=",login_data)
+    const [wordLengthPopUp,setWordLengthPopUp]=useState(false)
     
  /*    useEffect(()=>{
 
@@ -70,7 +71,7 @@ const Dashboard = (props) => {
     useEffect(()=>{
         console.log("calling resttime=",loser.name,",",loser.out)
         console.log("Time Reset@@@@@@@@@@@@@  2")
-        setSeconds(120)
+        setSeconds(60)
     },[loser])
 
 
@@ -101,7 +102,7 @@ const Dashboard = (props) => {
 } */
          const onClick=(levelno,l_type)=>{
                     
-                     setLevelType(l_type)
+                    setGameLevel(l_type)
                     checkHintCount(user.data.id)
                     setStartMatch(true) 
                     
@@ -110,6 +111,7 @@ const Dashboard = (props) => {
                             playOnline()
                     }
                     else if(game_type==='humanvscomputer'){
+                            
                             startMatchComputer(login_data.id,levelno)
                     }            
          
@@ -159,7 +161,7 @@ const playOnline=()=>{
   if(start_match_computer)
     {
         console.log("REDIRECTING TO MAIN=",start_match_computer,",",levelNumber)
-         return <Redirect to='/main' />
+         return <Redirect to='/human_vs_computer' />
     } 
 
 
@@ -285,7 +287,7 @@ const playOnline=()=>{
                             setLevelCheck(true)
                         }}>Expert</Link>}</li>
                     <li>{(levelNumber==='1,2,3,4')  ?
-                     <Link to='#' onClick={()=>onClick("4",'genius')}>Genius*</Link> :
+                     <Link to='#' onClick={()=>setWordLengthPopUp(true)}>Genius*</Link> :
                      <Link to='#' onClick={()=>{
                         
                         setShowLevel(false)
@@ -295,6 +297,8 @@ const playOnline=()=>{
                 </div>
             </div>
         </Fragment>}
+
+        {wordLengthPopUp && <WordLengthUI setWordLengthPopUp={setWordLengthPopUp} onClick={onClick} setWordLength={setWordLength}/>}
 
         {levelCheck &&  <Level onClick={onClick} levelCheck={levelCheck} setLevelCheck={setLevelCheck}/> }
     

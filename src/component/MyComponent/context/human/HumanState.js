@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React,{useReducer,useContext,useEffect} from 'react';
 import HumanContext from './humanContext';
 import humanReducer from './humanReducer';
@@ -20,7 +21,6 @@ import{
   SET_HINT_WORDLIST_FAIL,
   SET_CONCEDE,
   SET_TIMEOUT,
-  SET_LEVEL_TYPE,
   SET_HUMAN_POSITION,
   SET_TURN,
   SET_NEXT_CHAR,
@@ -36,7 +36,8 @@ import{
   SET_MASTER_HISTORY,
   SET_RANDOM_POSITION,
   SINGLE_SHIFT_COUNTER,
-  SET_BACKUP_INPUT_TEXT
+  SET_BACKUP_INPUT_TEXT,
+  SET_WORD_LENGTH
 } from '../../../../type'; 
 
 
@@ -49,7 +50,6 @@ const HumanState=({children})=>{
         hint_count:null,
         hint_used:false,
         concede:false,
-        level_type:null,
         human_position:null,
         single_shift_counter:null,
         start_match_computer:JSON.parse(localStorage.getItem('start_match_computer')),
@@ -67,7 +67,8 @@ const HumanState=({children})=>{
         final_result_HC:null,
         match_round_details:null,
         master_history_HC:[],
-        computer_position:null
+        computer_position:null,
+        word_length:5
        //[{round:1,word:,complete_word:,round_respnse}],[]
   };
 
@@ -79,7 +80,7 @@ const HumanState=({children})=>{
   const {user}=authContext
 
   const commonContext =useContext(CommmonContext)
-  const {inputText,setInputText,setSeconds,setIsActive,backup_input_text}=commonContext
+  const {inputText,setInputText,setSeconds,setIsActive,backup_input_text,inputText2,game_level}=commonContext
 console.log("Human state....",inputText)
 useEffect(()=>{
   console.log("warning 1")
@@ -98,25 +99,30 @@ useEffect(()=>{
   console.log("warning 2")
   if(state.next_char){
 
-    if(state.level_type==='easy'){
+    if(game_level==='easy'){
       setInputText(inputText+state.next_char.toUpperCase())
     }
-    if( state.level_type==='medium'){
+    if(game_level==='medium'){
       
       state.computer_position===0 ? setInputText(state.next_char.toUpperCase()+inputText) :setInputText(inputText+state.next_char.toUpperCase())
       
+    }
+    if(game_level==='genius'){
+
+      setInputText(inputText+state.next_char.toUpperCase())
     }
     
     console.log("calling findNextChar")
       setSeconds()
       setIsActive(true)
+      console.log("KEYBOARD ON 5")
       setShowKeyboard(true)
   }
 },[state.next_char])
 
 useEffect(()=>{
   console.log("warning 3")
-  if(state.level_type==='medium'){
+  if(game_level==='medium'){
     if((state.human_position===0 || state.human_position===1) && inputText!==null){
         const index=inputText.indexOf('_')
         if(index>-1){
@@ -124,15 +130,13 @@ useEffect(()=>{
         }
       }
   }
-  
-
-  if(state.level_type==='expert')
+  else if(game_level==='expert' || game_level==='genius')
   {
-    if(state.human_position===0)
+    if(state.human_position===1)
     {
       setInputText(backup_input_text && '_'+backup_input_text.slice(0,backup_input_text.length))
     }
-    if(state.human_position===1)
+    if(state.human_position===0)
     {
       setInputText(backup_input_text && backup_input_text.slice(0,backup_input_text.length)+'_')  
     }
@@ -147,9 +151,6 @@ useEffect(()=>{
           //call checkWordExistApi to check computer's word
 
             checkWordExistApi()
-
-            //setTurn('human')
-           // setShowKeyboard(true)
         }
       
 },[inputText]) 
@@ -162,6 +163,7 @@ useEffect(()=>{
         
     if(inputText!==null && inputText.length > 1){
           findNextChar()
+          console.log("Set Turn 2 computer")
           setTurn('computer')
       }
       else if(state.random_word==='word not found'){
@@ -182,45 +184,56 @@ useEffect(()=>{
   }
 },[state.match_round_details]) 
 
-useEffect(()=>{
+/* useEffect(()=>{
   console.log("warning 7")
   if(state.turn){
   console.log(`changing turn from ${state.turn}`)
     //state.concede===true ?  setResultWord(state.hint):setResultWord()
-
+    console.log("Set Turn 3 human or computer")
   state.turn==='human' ? setTurn('computer') : setTurn('human')
   }
-  
-
-},[state.current_winner_loser_HC])
+},[state.current_winner_loser_HC]) */
 
 useEffect(()=>{
   console.log("warning 8")
   console.log("WORD EXITS CHNGE USEEFFECT=",state.word_exist,",",inputText,",", state.turn)
   if(state.word_exist)
   {
-      if((state.word_exist===true || state.word_exist==='word not found') && inputText.length<=2){
+      if((state.word_exist===true || state.word_exist==='word not found') && inputText.length<=2)
+      {
 
           getRandomWordFromApi()
       }
-      else if(state.word_exist===true && inputText.length > 3){
+      else if(state.word_exist===true && inputText.length > 3)
+      {
 
-          state.turn==='human' ? setCurrentWinnerLoserHC('loser') :setCurrentWinnerLoserHC('winner')
-          
+          if(game_level==='easy' || game_level==='medium' || game_level==='expert')
+          {
+            state.turn==='human' ? setCurrentWinnerLoserHC('loser') :setCurrentWinnerLoserHC('winner')
+          }
+          else if(game_level==='genius' && inputText!==null && inputText.length===state.word_length){
+            setCurrentWinnerLoserHC('winner')
+          }else{
+            getRandomWordFromApi()
+          }  
         }
-      else if(state.word_exist==='word not found' && inputText.length > 3 && state.turn==='human'){
+      else if(state.word_exist==='word not found' && inputText!==null  && inputText.length > 3 && state.turn==='human')
+      {
         console.log("Word not found in check word API , now calling Random word API")
-        
+        if(game_level==='genius' && inputText.length===state.word_length){
+          setCurrentWinnerLoserHC('loser')
+        }
+        else{
+          getRandomWordFromApi()
+        }
         dispatch({
           type:GET_RANDOM_WORD_FAIL,
 
         })
-         getRandomWordFromApi()
-            //setMyTurn(false)
-            //getRandomWordFromApi(2)
+         
       }
       else{
-        console.log("OTHER REASON changing turn")
+        console.log("Set Turn 4 human")
         setTurn('human')
 
       }
@@ -233,7 +246,17 @@ useEffect(() => {
     
   if(state.hint_used){
     console.log("calling get hint in humanstate");
-    getHint()
+    if(inputText!==null && inputText.length===1)
+    {
+      getHint()
+    }
+    else{
+      dispatch({
+        type:GET_HINT,
+        payload:state.resultWord.word
+      }) 
+    }
+    
 }
   
 }, [state.hint_used]);
@@ -385,12 +408,6 @@ const setTurn=(true_false)=>{
     })
   }
   
-const setLevelType=(type)=>{
-  dispatch({
-    type:SET_LEVEL_TYPE,
-    payload:type
-  })
-}
 
 // set position of character in inputText
 const setHumanPosition=(position)=>{
@@ -418,6 +435,86 @@ const frequencyCounter=()=>{
 
 }
 
+
+const getWordFromRapidApiHC=async()=>{
+  let res=null
+  let dynamic_api=null
+  const config={
+    headers: {
+      'X-RapidAPI-Key' : '0689b1157bmsh9ca7f4b5701a660p1080c2jsn9e2fa49e7bcf'
+    }
+  }
+  try 
+    {
+      if(game_level==='easy')
+      {
+       
+        res=await axios.get(`https://wordsapiv1.p.rapidapi.com/words/?letterPattern=^${inputText.toLowerCase()}[a-zA-Z]*$&random=true`,config)
+        console.log("Response=",res.data)
+      }
+      else if(game_level==='medium')
+      {
+        res=await axios.get(`https://wordsapiv1.p.rapidapi.com/words/?letterPattern=^[a-zA-Z]${inputText.toLowerCase()}[a-zA-Z]*$&random=true`,config)
+      }
+      else if(game_level==='expert')
+      {
+        dynamic_api=dynamicAPI()
+        console.log("Dynamic API=",dynamic_api)
+        console.log(`https://wordsapiv1.p.rapidapi.com/words/?letterPattern=^(|[a-zA-Z])${dynamic_api}*$&random=true`)
+        res=await axios.get(`https://wordsapiv1.p.rapidapi.com/words/?letterPattern=^(|[a-zA-Z])${dynamic_api}*$&random=true`,config)
+      }
+      else if(game_level==='genius')
+      {
+        dynamic_api=dynamicAPI()
+        console.log(`https://wordsapiv1.p.rapidapi.com/words/?letterPattern=^(?=.*^(\\w%2B[^ ])$)(?=.*^${dynamic_api})&random=true&letters=${state.word_length}`)
+         res=await axios.get(`https://wordsapiv1.p.rapidapi.com/words/?letterPattern=^(?=.*^(\\w%2B[^ ])$)(?=.*^${dynamic_api})&random=true&letters=${state.word_length}`,config) 
+      }
+
+        if(res.status===200)
+        {
+
+          if(res.data.hasOwnProperty('results'))
+          {
+            setResultWord(res.data.word,res.data.results[0].definition)
+          }
+          else{
+            setResultWord(res.data.word)
+          }
+
+          return res
+      }
+    
+  }
+  catch (error)
+    {
+      console.log("Error in getWgetWordFromRapidApiHCrdHC=",error)
+    }
+  
+}
+
+function dynamicAPI(){
+
+  let str=''
+  if(game_level==='expert')
+  {
+    console.log("inputText=",inputText)
+     Array.from(inputText.toLowerCase()).forEach((item)=>{
+      str= str+'%2B'+item+'%2B(|[a-zA-Z])'
+    })
+    return str
+  }
+  else if(game_level==='genius')
+  {
+    const calculate_frequency=frequencyCounter()
+    console.log("Frequecy=",calculate_frequency)
+    for(const[key,value] of Object.entries(calculate_frequency)){
+      
+      str=str+`(?=.*${key.toLowerCase()}{${value}})`
+    }
+    return str
+  }
+}
+
 const getRandomWordFromApi=async()=>{
 
     console.log(`getRandom word   starting with=`,inputText,",",state.turn)
@@ -431,39 +528,31 @@ const getRandomWordFromApi=async()=>{
    
       let res=null
       try {
-        if(state.level_type==='easy'){
+        if(game_level==='easy')
+        {
           res=await axios.get(`https://wordsapiv1.p.rapidapi.com/words/?letterPattern=^${inputText.toLowerCase()}[a-zA-Z]*$&random=true`,config)
         }
-        else if(state.level_type==='medium'){
+        else if(game_level==='medium')
+        {
           res=await axios.get(`https://wordsapiv1.p.rapidapi.com/words/?letterPattern=^[a-zA-Z]${inputText.toLowerCase()}[a-zA-Z]*$&random=true`,config)
           setRandomPosition()
         }
-        else if(state.level_type==='expert'){
-
-          dynamic_api=''
-            Array.from(inputText.toLowerCase()).forEach((item)=>{
-              dynamic_api= dynamic_api+'%2B'+item+'%2B(|[a-zA-Z])'
-            })
-
-            console.log("Dynamic API=",dynamic_api)
-            console.log(`https://wordsapiv1.p.rapidapi.com/words/?letterPattern=^(|[a-zA-Z])${dynamic_api}*$&random=true`)
+        else if(game_level==='expert')
+        {
+          dynamic_api=dynamicAPI()
+          console.log("Dynamic API=",dynamic_api)
+          console.log(`https://wordsapiv1.p.rapidapi.com/words/?letterPattern=^(|[a-zA-Z])${dynamic_api}*$&random=true`)
           res=await axios.get(`https://wordsapiv1.p.rapidapi.com/words/?letterPattern=^(|[a-zA-Z])${dynamic_api}*$&random=true`,config)
           setRandomPosition()
         }
-        else if(state.level_type==='genius'){
-
-          const calculate_frequency=frequencyCounter()
-          console.log("Frequecy=",calculate_frequency)
-          for(const[key,value] of Object.entries(calculate_frequency)){
-            
-            dynamic_api=dynamic_api+`(?=.*${key.toLowerCase()}{${value}})`
-            console.log('dynamic_api=',dynamic_api)
-          }
-          console.log(`https://wordsapiv1.p.rapidapi.com/words/?letterPattern=^(?=.*^(\\w%2B[^ ])$)(?=.*^${dynamic_api})&random=true&letters=5`)
-           res=await axios.get(`https://wordsapiv1.p.rapidapi.com/words/?letterPattern=^(?=.*^(\\w%2B[^ ])$)(?=.*^${dynamic_api})&random=true&letters=5`,config) 
-        }
-           
-      console.log(`Response code ${res.status} from getRandomWord=`,res.data.word)
+        else if(game_level==='genius')
+        {
+          dynamic_api=dynamicAPI()
+          console.log(`https://wordsapiv1.p.rapidapi.com/words/?letterPattern=^(?=.*^(\\w%2B[^ ])$)(?=.*^${dynamic_api})&random=true&letters=${state.word_length}`)
+          res=await axios.get(`https://wordsapiv1.p.rapidapi.com/words/?letterPattern=^(?=.*^(\\w%2B[^ ])$)(?=.*^${dynamic_api})&random=true&letters=${state.word_length}`,config) 
+        } 
+      
+      console.log(`${game_level} Response code ${res.status} from getRandomWord=`,res.data.word)
 
       if(res.status===200)
       {
@@ -494,7 +583,7 @@ const getRandomWordFromApi=async()=>{
         {
 
           setCurrentWinnerLoserHC('loser')
-          setResultWord()
+          {game_level==='genius' ? setResultWord(inputText2,'No matching word found in dictionary with those letters'):setResultWord()} 
             dispatch({
                 type:GET_RANDOM_WORD_FAIL,
             })
@@ -519,9 +608,13 @@ const getRandomWordFromApi=async()=>{
         'X-RapidAPI-Key' : '0689b1157bmsh9ca7f4b5701a660p1080c2jsn9e2fa49e7bcf'
       }
     }
- 
+    let check_word=inputText
+    if(game_level==='genius' && inputText!==null && inputText.length===state.word_length){
+      check_word=inputText2
+    }
+    console.log("check_word=",check_word)
     try {
-        const res =await axios.get(`https://wordsapiv1.p.rapidapi.com/words/${inputText.toLowerCase()}`, config)
+        const res =await axios.get(`https://wordsapiv1.p.rapidapi.com/words/${check_word.toLowerCase()}`, config)
         
         console.log(`${state.turn}Response code ${res.status} form check word API=`,res.data)
 
@@ -536,6 +629,9 @@ const getRandomWordFromApi=async()=>{
                   setResultWord(res.data.word)
                 }
 
+             /*    if(game_level==='genius' && state.inputText!==null && state.inputText.length===state.word_length){
+                  setCurrentWinnerLoserHC('winner')
+              } */
           dispatch({
             type:WORD_EXIST,
             payload:true
@@ -543,15 +639,23 @@ const getRandomWordFromApi=async()=>{
         }       
     }
     catch(error){
-      console.log("Error form check word API=",error.response.status)
-
-      if(error.response.status===404)
+    /*   if(error)
       {
-          dispatch({
+            console.log("Error form check word API=",error.response)
+    
+          if(error.response.status===404)
+          {
+              dispatch({
+            type:WORD_EXIST,
+            payload:"word not found"
+            })
+          
+          } 
+      } */
+      dispatch({
         type:WORD_EXIST,
         payload:"word not found"
         })
-      }
       
     }
   }
@@ -563,16 +667,15 @@ const getRandomWordFromApi=async()=>{
         const input_text_length=inputText.length
         const random_word_length=state.random_word.length
 
-        if(input_text_length<random_word_length && state.level_type==='easy')
+        if(input_text_length<random_word_length && game_level==='easy')
         {
-          // setOnce(false)
          // console.log("check 101=",state.random_word,",",inputText,",",input_text_length,",",random_word_length)
           console.log("Next character for computer=",state.random_word.charAt(input_text_length))
           
           setNextCharacter(state.random_word.charAt(input_text_length))
           
         } 
-       else if(input_text_length < random_word_length && state.level_type==='medium'){
+       else if(input_text_length < random_word_length && game_level==='medium'){
 
           if(state.computer_position===1){
             console.log("Debug1=",inputText,",",state.random_word.indexOf(inputText.toLowerCase()))
@@ -586,7 +689,7 @@ const getRandomWordFromApi=async()=>{
           }
             
         }
-        else if(input_text_length < random_word_length && state.level_type==='expert'){
+        else if(input_text_length < random_word_length && game_level==='expert'){
           
            const random_word_len=state.random_word.length
            let demo_array=new Array(random_word_len)
@@ -644,12 +747,30 @@ const getRandomWordFromApi=async()=>{
            })
            setSeconds()
            setIsActive(true)
+           console.log("KEYBOARD ON 6")
            setShowKeyboard(true)
 
+        }
+        else if(input_text_length < random_word_length && game_level==='genius'){
+          nextCharGenius()
         }
   }
 } 
 
+
+function nextCharGenius(){
+
+  let randome_temp_str=state.random_word
+  inputText.split('').forEach((char)=>{
+    console.log("char=",char)
+            randome_temp_str=randome_temp_str.replace(char.toLowerCase(),'')
+            console.log("randome tmp=",randome_temp_str)
+  })
+
+  const next_char= randome_temp_str.charAt(Math.floor(Math.random()*randome_temp_str.length))
+  console.log("Next char genius=",randome_temp_str,",",next_char)
+  setNextCharacter(next_char)
+}
 
 const setNextCharacter=(char)=>{
     dispatch({
@@ -767,7 +888,7 @@ console.log("form data of startMatchComputer=",id,",",level)
    })
  }
 
-const setResultWord=(word=inputText,def='Meaning not found')=>{
+const setResultWord=(word=inputText,def='Definition Not Found!')=>{
   dispatch({
     type:SET_WORD_DEFINITION,
     payload:{word:word,definition:def}
@@ -814,8 +935,6 @@ const setSingleShiftCounter=(inc_dec)=>{
  // console.log("counter value=",state.single_shift_counter,",",inputText.length)
   if(inc_dec==='increment')
   {
-
-
     if(state.single_shift_counter===null){
       dispatch({
         type:SINGLE_SHIFT_COUNTER,
@@ -840,10 +959,10 @@ const setSingleShiftCounter=(inc_dec)=>{
     if(state.single_shift_counter===0 || state.single_shift_counter===null){
       dispatch({
         type:SINGLE_SHIFT_COUNTER,
-        payload:null
+        payload:-1
       })
     }
-    else if(state.single_shift_counter!==null && (state.single_shift_counter >0)){
+    else if(state.single_shift_counter >0){
       dispatch({
         type:SINGLE_SHIFT_COUNTER,
         payload:state.single_shift_counter-1 
@@ -860,6 +979,13 @@ const setSingleShiftCounter=(inc_dec)=>{
   
 }
 
+
+const setWordLength=(len)=>{
+    dispatch({
+      type:SET_WORD_LENGTH,
+      payload:len
+    })
+}
   return (
     <HumanContext.Provider
     value={{
@@ -871,7 +997,6 @@ const setSingleShiftCounter=(inc_dec)=>{
         hint_count:state.hint_count,
         hint_used:state.hint_used,
         concede:state.concede,
-        level_type:state.level_type,
         human_position:state.human_position,
         single_shift_counter:state.single_shift_counter,
         turn:state.turn,
@@ -887,6 +1012,7 @@ const setSingleShiftCounter=(inc_dec)=>{
         match_round_details:state.match_round_details,
         master_history_HC:state.master_history_HC,
         temp_word:state.temp_word,
+        word_length:state.word_length,
         getRandomWordFromApi,
         setResultWord,
         startMatchComputer,
@@ -894,7 +1020,6 @@ const setSingleShiftCounter=(inc_dec)=>{
         checkHintCount,
         setHintUsed,
         setConcede,
-        setLevelType,
         setHumanPosition,
         checkWordExistApi,
         setTurn,
@@ -911,7 +1036,9 @@ const setSingleShiftCounter=(inc_dec)=>{
         getHint,
         setLoading,
         setRandomPosition,
-        setSingleShiftCounter
+        setSingleShiftCounter,
+        setWordLength,
+        getWordFromRapidApiHC
       }}>
       {children}
     </HumanContext.Provider>

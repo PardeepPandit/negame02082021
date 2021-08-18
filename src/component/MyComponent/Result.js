@@ -5,12 +5,12 @@ import {useMainConsumer,useMainConsumerUpdate} from './MainContext'
 import {Link} from 'react-router-dom'
 import HumanContext from './context/human/humanContext'
 import CommonContext from './context/common/commonContext'
-import { SET_CURRENT_WINNER_LOSER_HC, SET_POSITION } from '../../type'
+import { SET_CURRENT_WINNER_LOSER_HC, SET_INPUT_TEXT2, SET_POSITION } from '../../type'
 
 export const Result = () => {
    
   const commonContext=useContext(CommonContext)
-  const {setInputText,inputText,setIsActive,setSeconds,setBackUpInputText }=commonContext
+  const {setInputText,inputText,setIsActive,setSeconds,setBackUpInputText,setInputText2 }=commonContext
 
 
   const humanContext=useContext(HumanContext)
@@ -37,6 +37,7 @@ export const Result = () => {
     
     setTimeout(()=>{
       setInputText(null)
+      setInputText2(null)
       setBackUpInputText(null)
       setTimeFlag(false)
       setSeconds()
@@ -58,6 +59,7 @@ const finishFun=()=>{
 setLoading()
 setTimeout(()=>{
     getFinalResultHC(start_match_computer.user1.match_id,start_match_computer.user1.user_id)
+    console.log("KEYBOARD ON 4")
     setShowKeyboard(true)
     setFinish(true)
     changeMatchStatusHC(start_match_computer.user1.match_id)
@@ -84,7 +86,7 @@ return (
 </div>
 
   <div class="top-middl_lost text-center">
-    <h2 class="win-text">{current_winner_loser_HC ==='loser' ?<Fragment><span className="lose-text">YOU LOST</span></Fragment>:
+    <h2 class="win-text">{current_winner_loser_HC ==='loser' ?<Fragment><span className="lose-text">You Lost</span></Fragment>:
     <Fragment>
         <ul className="star-list">
         <li><img src="assets/img/star2.png" alt="" /></li>
@@ -98,27 +100,23 @@ return (
     </div>
     </div>
     </div>
-   
-            <div class="row">
-                    <div class="col-md-8 offset-2">
-                        <h2 className="word"><span style={{color:'white'}}>{current_winner_loser_HC ==='loser' ? "" : ""}</span></h2>
-                        <h1><span style={{color:'white',fontSize:'50px'}}>{resultWord.word}</span></h1>
-                        <h1><span style={{color:'white',fontSize:'50px'}}>{resultWord.definition}</span></h1>
-                  </div>
-             </div>
-
-
+      <div class="row">
+          <div class="col-md-8 offset-2">
+            <h2 className="word"><span style={{color:'white'}}>{current_winner_loser_HC ==='loser' ? "" : ""}</span></h2>
+            <h1><span style={{color:'white',fontSize:'50px'}}>{resultWord.word}</span></h1>
+            <h1><span style={{color:'white',fontSize:'50px'}}>{resultWord.definition}</span></h1>
+          </div>
+      </div>
     <div class="row">
       <div class="col-md-12">
       <div className="new_mtch_btn">
              {/* <a href="#" style={{"font-size": "26px;"}}> New Match</a> */}
-             {(winner_counter===3 || loser_counter===3) ?<Link to='#' className='play-again' onClick={()=>finishFun()}>Finish</Link>:<Link to='/main' className='play-again' onClick={()=>nextRound()}>Next-Round-HC</Link>}
-             
-            </div>
-          </div>
-          </div>
+             {(winner_counter===3 || loser_counter===3) ?<Link to='#' className='play-again' onClick={()=>finishFun()}>Finish</Link>:<Link to='/human_vs_computer' className='play-again' onClick={()=>nextRound()}>Next-Round-HC</Link>}       
+      </div>
+      </div>
+    </div>
 
-          </div>
+  </div>
 
           </div>
           </div>

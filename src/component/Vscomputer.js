@@ -15,6 +15,7 @@ import HumanContext from "./MyComponent/context/human/humanContext";
 import { __SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED } from "react-dom";
 import MediumLevelUI from "./MyComponent/LevelUI/MediumLevelUI";
 import ExpertLevelUI from "./MyComponent/LevelUI/ExpertLevelUI";
+import GeniusLevelUI from "./MyComponent/LevelUI/GeniusLevelUI";
 import Trophy from "./MyComponent/Trophy";
 //import Keyboard from "./Keyboard";
 import CommonContext from '../component/MyComponent/context/common/commonContext'
@@ -29,9 +30,10 @@ const Vscomputer = () => {
   console.log("element=",element)
  */
   const commonContext=useContext(CommonContext)
-  const {inputText,setIsActive,isActive,setSeconds,seconds,setInputText,backup_input_text}=commonContext
+  const {inputText,setIsActive,isActive,setSeconds,seconds,setInputText,backup_input_text,inputText2,setInputText2,game_level}=commonContext
   const authContext=useContext(AuthContext)
   const {user,login_data}=authContext
+  const {level}=login_data
   const humanContext = useContext(HumanContext);
   //console.log("User in vscomputer=",user)
   const {
@@ -49,7 +51,6 @@ const Vscomputer = () => {
     setConcede,
     resultWord,
     timeout,
-    level_type,
     human_position,
     setShowKeyboard,
     show_keyboard,
@@ -61,7 +62,8 @@ const Vscomputer = () => {
     setCurrentWinnerLoserHC,
     getHint,
     setSingleShiftCounter,
-    single_shift_counter
+    single_shift_counter,
+    word_length
   } = humanContext;
 
 
@@ -78,8 +80,11 @@ const Vscomputer = () => {
       console.log("calling getHintWordList from useEffect=",concede,",",random_word)
       setIsActive(false)
       setPlay(false)
-      //level_type!=='expert' && getHint()
-      level_type==='expert' && inputText.length===1 && getHint()
+      //game_level!=='expert' && getHint()
+      game_level==='easy' && inputText.length===1 && getHint()
+      game_level==='medium' && inputText.length===1 && getHint()
+      game_level==='expert' && inputText.length===1 && getHint()
+      game_level==='genius' && inputText.length===1 && getHint()
       setCurrentWinnerLoserHC('loser')
       setConcede(false)
     }
@@ -87,28 +92,99 @@ const Vscomputer = () => {
 
   const deleteChar = () => {
     //console.log("deletechar========",inputText)
-    console.log("setshow keyboard true 1")
-    setShowKeyboard(true);
-    //setTimeFlag(false)
-    if(human_position===0){
-      setInputText(inputText.substring(1, inputText.length));
-    }
-    else if(single_shift_counter > 0){
-      setInputText(inputText.substring(0,single_shift_counter-1)+inputText.substring(single_shift_counter))
-    }
-    else if(human_position===1){
-      setInputText(inputText.substring(0, inputText.length - 1));
-    }
-    else{
-      setInputText(inputText.substring(0, inputText.length - 1));
-    }
-   // setSingleShiftCounter('reset')
-  //setPlay(true)
+
+      if(game_level==='easy')
+      {
+        setInputText(inputText.substring(0,inputText.length-1))
+      }
+      else if(game_level==='medium')
+      {
+
+        if(human_position===0 || human_position===null)
+        {
+          setInputText(inputText.substring(0, inputText.length-1));
+        }
+        else if(human_position===1){
+          setInputText(inputText.substring(1, inputText.length));
+        }
+      }
+      else if(game_level==='expert')
+      {
+        if((human_position===0 || human_position===null) && (single_shift_counter===null || single_shift_counter===-1))
+        {
+          setInputText(inputText.substring(0, inputText.length-1));
+        }
+        else if(human_position===1)
+        {
+          setInputText(inputText.substring(1, inputText.length));
+        }
+        else if(single_shift_counter > 0)
+        {
+          console.log("first half=",inputText.substring(0,single_shift_counter-1))
+          console.log("second hlaf=",inputText.substring(single_shift_counter))
+          console.log("final text=",inputText.substring(0,single_shift_counter-1)+inputText.substring(single_shift_counter))
+          setInputText(inputText.substring(0,single_shift_counter-1)+inputText.substring(single_shift_counter))
+        }
+        
+      }
+      else if(game_level==='genius' )
+      {
+        
+        if(inputText!==null && inputText.length===word_length )
+        {
+          setInputText2(inputText2.substring(0, inputText2.length - 1));
+        }
+        else
+        {
+          if((human_position===0 || human_position===null) && (single_shift_counter===null || single_shift_counter===-1))
+          {
+            setInputText(inputText.substring(0, inputText.length-1));
+          }
+          else if(human_position===1)
+          {
+            setInputText(inputText.substring(1, inputText.length));
+          }
+          else if(single_shift_counter > 0)
+          {
+            console.log("first half=",inputText.substring(0,single_shift_counter-1))
+            console.log("second hlaf=",inputText.substring(single_shift_counter))
+            console.log("final text=",inputText.substring(0,single_shift_counter-1)+inputText.substring(single_shift_counter))
+            setInputText(inputText.substring(0,single_shift_counter-1)+inputText.substring(single_shift_counter))
+          }
+        }
+        
+        
+      }
+
+      setSingleShiftCounter('reset')
+      console.log("KEYBOARD ON 2")
+      setShowKeyboard(true);
   };
 
   
 
   const playFun = () => {
+
+/*     if(game_level==='genius' && inputText!==null && inputText.length===word_length ){
+      const old_str=Array.from(inputText).sort()
+      const new_str=Array.from(inputText2).sort()
+      console.log("play button=",old_str.toString(),",",new_str.toString())
+      if(old_str.length===new_str.length && old_str.toString()===new_str.toString()){
+          setCurrentWinnerLoserHC('winner')
+      }
+      else{
+        setCurrentWinnerLoserHC('loser')
+      }
+    }
+    else{
+      setSingleShiftCounter('reset')
+    setInputText(backup_input_text)
+    setSingleShiftCounter('zero')
+    checkWordExistApi()
+    //setResultWord();
+    setTimeFlag(true);
+    setIsActive(false)
+    } */
     setSingleShiftCounter('reset')
     setInputText(backup_input_text)
     setSingleShiftCounter('zero')
@@ -120,7 +196,10 @@ const Vscomputer = () => {
 
   const onClick = (e) => {
     console.log("KEYBOAD HIDE")
-    setShowKeyboard(false);
+      if(inputText!==null && inputText.length!==word_length)
+      {
+        setShowKeyboard(false)
+      }
     console.log("Keyboard Target*******=",e.target)
     myTurn(e);
   };
@@ -154,8 +233,8 @@ else
                   />
                 </div>
                 <div class="ledt_img_mid">
-                  <span>Round {round} {" "} {level_type}</span>
-                  <Trophy round={round} />
+                  <h1 style={{backgroundColor:'greenyellow',borderRadius:'100%',padding:'10px' , display:'inline-block',color:'black'}}>Round {round} {" "} {game_level.toUpperCase()}</h1>
+                  <span style={{backgroundColor:'white'}}><Trophy round={round} /></span>
                 </div>
 
                 <div class="ledt_img">
@@ -178,18 +257,11 @@ else
                   </div>
                   <div class="clear"></div>
                 </div>
-
-                {/* <div class="btn_b">
-                                <div className="round">
-                                    <span ><b>ROUND {round} </b></span>
-                                    </div>
-                                </div> */}
                 <div class="btn_b2">
                   <div className="round_text">
                     {/* <input type="text" className="main-input"  value={inputText} onChange={onChange}/> */}
                     <input
                       type="text"
-                      id='inputbox'
                       className="main-input"
                       //onChange={onChange}
                       value={inputText}
@@ -197,8 +269,10 @@ else
                   </div>
                 </div>
                 {/*  {loser.out && <div className="bg-white">{JSON.stringify(val)}</div>} */}
-                {level_type==="medium" && show_keyboard && <MediumLevelUI />}
-                {level_type==="expert" && show_keyboard && <ExpertLevelUI/>}
+                {game_level==="medium" && show_keyboard && <MediumLevelUI />}
+                {game_level==="expert" && show_keyboard && <ExpertLevelUI/>}
+                {game_level==="genius" && show_keyboard && inputText!==null && inputText.length!==word_length &&<GeniusLevelUI/>}
+                {game_level==="genius" && show_keyboard && inputText!==null && inputText.length===word_length && <input type="text" className="main-input" value={inputText2}/>}
 
                 {show_keyboard ? (
                   <div class="keypad">
@@ -209,7 +283,19 @@ else
                         <Keyboard onClick={onClick} />
                         </Suspense>
 
-                        <div className="play_btn_m">
+                          {game_level==='genius' && inputText!==null && inputText.length===5 ? 
+                          <Fragment>
+                    <div className="play_btn_m game-buttons">
+                      <button onClick={()=>playFun()}>Play</button>
+                      <button onClick={()=>deleteChar()}>
+                      {/* <button onClick={()=>playFun()}>Play</button>
+                      <button onClick={()=>deleteChar()}> */}
+                        <img src="assets/img/backspace.svg" alt="" width="27" />
+                      </button>
+                    </div>
+                  </Fragment>:
+                  <Fragment>
+                                            <div className="play_btn_m">
                           <div class="btn_b k_pad">
                             <button
                               type="button"
@@ -233,6 +319,9 @@ else
                             <button onClick={()=>setConcede(true)}>Concede</button>
                           </div>
                         </div>
+                    </Fragment>}
+
+
                       </div>
                     </div>
                   </div>

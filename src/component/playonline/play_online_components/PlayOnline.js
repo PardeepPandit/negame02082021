@@ -190,7 +190,7 @@ const PlayOnline = () => {
     console.log("SET INPUT TEXT 7")
     setInputText(inputText.slice(0, inputText.length - 1));
     //show keyboard again to enter new character
-    console.log("KEYBOARD ON 7")
+    console.log("KEYBOARD ON 9")
     setShowKeyboard(true);
   };
 

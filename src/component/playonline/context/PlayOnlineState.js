@@ -168,7 +168,7 @@ useEffect(()=>{
 
         if((state.turn_change!==null && state.winner_loser==='winner') || (state.turn_change!==null && state.winner_loser!=='loser'))
         {
-            console.log("KEYBOARD ON 5")
+            console.log("KEYBOARD ON 7")
             setShowKeyboard(true);
             console.log("***************SET IS ACTIVE 10 ***************")
             setIsActive(true);
@@ -554,7 +554,7 @@ const getWord=(match_id,user_id,time)=>{
                 }
             //alert("changing turn and setShowkeyboard true")
             setTurn(true) 
-            console.log("KEYBOARD ON 6")
+            console.log("KEYBOARD ON 8")
             setShowKeyboard(true)
             setInputText(res.data.data.word)
             //console.log("Clear get word API 5")

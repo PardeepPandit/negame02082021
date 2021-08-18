@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 import{
     GET_RANDOM_WORD_SUCCESS,
   GET_RANDOM_WORD_FAIL,
@@ -9,7 +10,6 @@ import{
   SET_HINT_COUNT,
   SET_HINT_USED,
   SET_CONCEDE,
-  SET_LEVEL_TYPE,
   SET_HUMAN_POSITION,
   SET_TURN,
   SET_NEXT_CHAR,
@@ -25,7 +25,7 @@ import{
   SET_RANDOM_POSITION,
   SET_TEMP_WORD,
   SINGLE_SHIFT_COUNTER,
-  SET_BACKUP_INPUT_TEXT
+  SET_WORD_LENGTH
   } from '../../../../type'; 
 
 export default (state,action)=>{ 
@@ -41,25 +41,25 @@ export default (state,action)=>{
                 hint:null,
                 loading_HC:false
             }
-            case GET_RANDOM_WORD_FAIL:
-                return{
-                    ...state,
-                    random_word:null,
-                    hint:null,
-                    loading_HC:false
-                }
-            case SET_LOADING:
-                return{
-                    ...state,
-                    loading_HC:true
-                }
-                case GET_HINT:
-                    return{
-                        ...state,
-                        hint:payload,
-                        loading_HC:false
-                    }
-                    case SET_WORD_DEFINITION:
+        case GET_RANDOM_WORD_FAIL:
+            return{
+                ...state,
+                random_word:null,
+                hint:null,
+                loading_HC:false
+            }
+        case SET_LOADING:
+            return{
+                ...state,
+                loading_HC:true
+            }
+         case GET_HINT:
+            return{
+                ...state,
+                hint:payload,
+                loading_HC:false
+            }
+        case SET_WORD_DEFINITION:
                         console.log('SET_WORD_DEFINITION')
                         return{
                             ...state,
@@ -97,11 +97,6 @@ export default (state,action)=>{
                                             ...state,
                                             concede:payload
                                         }
-                                case SET_LEVEL_TYPE:
-                                    return{
-                                        ...state,
-                                        level_type:payload
-                                    }
                                     case SET_HUMAN_POSITION:
                                         return{
                                             ...state,
@@ -191,12 +186,18 @@ export default (state,action)=>{
                                                     single_shift_counter:payload,
                                                     human_position:null
                                                 }
+                                                case SET_WORD_LENGTH:
+                                                    return{
+                                                        ...state,
+                                                        word_length:payload
+                                                    }
                                             case RESET_STATE_FOR_ROUND_FINSH_HC:
                                                 return{
                                                     ...state,
                                                     loading_HC:false,
                                                     random_word:null,
                                                     human_position:null,
+                                                    turn:'human',
                                                     resultWord:{word:'',definition:''},
                                                     next_char:null,
                                                     word_exist:false,
@@ -205,7 +206,8 @@ export default (state,action)=>{
                                                     concede:false,
                                                     play:true,
                                                     round:state.round+1,
-                                                    temp_word:null
+                                                    temp_word:null,
+                                                    computer_position:null
                                                 }
                                                 case RESET_STATE_FOR_MATCH_FINSH_HC:
                                                     return{
@@ -216,7 +218,6 @@ export default (state,action)=>{
                                                         resultWord:{word:'',definition:''},
                                                         hint_used:false,
                                                         concede:false,
-                                                        level_type:null,
                                                         position:null,
                                                         start_match_computer:null,
                                                         turn:'human',

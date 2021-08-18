@@ -1,9 +1,11 @@
 import{
      SET_INPUT_TEXT,
+     SET_INPUT_TEXT2,
      SET_ISACTIVE,
      SET_SECONDS,
      SET_GAME_STATUS,
-     SET_BACKUP_INPUT_TEXT
+     SET_BACKUP_INPUT_TEXT,
+     SET_GAME_LEVEL
     } from '../../../../type'; 
     
     //comment
@@ -15,6 +17,11 @@ import{
                       return{
                           ...state,
                           inputText:payload,
+                      }
+                  case SET_INPUT_TEXT2:
+                      return{
+                          ...state,
+                          inputText2:payload,
                       }
                       case SET_ISACTIVE:
                         return{
@@ -50,6 +57,11 @@ import{
                                   ...state,
                                   backup_input_text:payload
                               }
+                              case SET_GAME_LEVEL:
+                                return{
+                                  ...state,
+                                  game_level:payload
+                                }
                             
         default:
         return state;

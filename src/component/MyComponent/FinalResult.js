@@ -61,7 +61,7 @@ export const FinalResult = ({title}) => {
       <div class="col-md-8 offset-md-2">
         <div class="top-middl_lost text-center">
           <h2 style={{color:"White",fontSize:"4rem"}} className="bg-info">Final Result</h2>
-          <h2 class="word">{winner_counter > loser_counter ? <span style={{color:"cyan",fontSize:"4rem"}}>Winner</span> : "Forfeited"}</h2>
+          <h2 class="word">{winner_counter > loser_counter ? <span style={{color:"cyan",fontSize:"4rem"}}>Winner</span> : "You Lost"}</h2>
           <div class="clear"></div>
           </div>
           </div>

@@ -7,7 +7,7 @@ import playOnlineContext from '../playonline/context/playOnlineContext'
 import useSound from 'use-sound';
 import HumanContext from './context/human/humanContext'
 import PlayOnlineContext from '../playonline/context/playOnlineContext'
-import { SET_SHOW_KEYBOARD, SET_TURN } from '../../type'
+import { SET_INPUT_TEXT2, SET_SHOW_KEYBOARD, SET_TURN } from '../../type'
 const CharacterContext = React.createContext();
 const CharacterContextUpdate = React.createContext();
 
@@ -24,13 +24,13 @@ export function useCharacterConsumerUpdate() {
 export function CharacterProvider({ children }) {
   
 const commonContext=useContext(CommonContext)
-const {inputText,setInputText,setIsActive,isActive,setSeconds,seconds}=commonContext
+const {inputText,setInputText,setIsActive,isActive,setSeconds,seconds,inputText2,setInputText2,game_level}=commonContext
 
 const playOnlineContext=useContext(PlayOnlineContext)
 const {game_type,onlineUser}=playOnlineContext
 
   const humanContext=useContext(HumanContext)
-  const {level_type,human_position,setShowKeyboard,play,setPlay,setTurn,round,current_winner_loser_HC,start_match_computer}=humanContext
+  const {human_position,setShowKeyboard,play,setPlay,setTurn,round,current_winner_loser_HC,start_match_computer,word_length}=humanContext
 
 
   const { setLoser, resetTime } = useTimerConsumerUpdate();
@@ -100,6 +100,7 @@ const {game_type,onlineUser}=playOnlineContext
       }
       console.log("Random Char=",char)
     }
+    console.log("KEYBOARD ON 3")
       setShowKeyboard(true)
     return char
   }
@@ -108,10 +109,35 @@ const {game_type,onlineUser}=playOnlineContext
     console.log("Calling getrandom char******************************** 2")
     
    setInputText(getRandomChar())
+   console.log("Set Turn 1 human")
     setTurn('human')
   
   }, [])
 
+  function setTextPositioning(currentChar){
+    if(inputText!==null &&  inputText.indexOf('_')>-1){
+            
+      const first_part=inputText.substr(0, inputText.indexOf('_')) 
+      const second_pard=inputText.substr(inputText.indexOf('_')+1,inputText.length)
+      const final_part=first_part+currentChar+second_pard
+
+     console.log("first_part=", first_part)
+     console.log("second_pard=", second_pard)
+     console.log("final_part=", final_part)
+
+        setInputText(final_part)
+    }
+    else if(human_position===1){
+      setInputText(inputText + currentChar)
+    }
+    else if(human_position===0){
+      setInputText(currentChar + inputText)
+    }
+    else
+    {
+    setInputText(inputText + currentChar); 
+    }
+  }
  
   
   const myTurn = (e) => {
@@ -166,49 +192,47 @@ if(currentChar.toUpperCase()==='Z') audioZ()
   
     //let currentChar = e
     currentChar = currentChar.charAt(currentChar.length - 1)
-    console.log("myturn inputtext=", currentChar,",Timeflag=",timeFlag)
+    console.log("myturn input Text=", currentChar,",Timeflag=",timeFlag)
     //console.log("play 3=",play)
       //setPlay(false)
-      console.log("LOSER AND WINNER 4",level_type,",",human_position)
       //setLoser({ name: 'You', out: false })
-
-        if(level_type==="medium" && human_position===0){
-          console.log("InputText position change")
-          setInputText(currentChar + inputText)
-        }
-        else if(level_type==="medium" && human_position===1){
-          setInputText(inputText + currentChar); 
-        }
-        else if(level_type==='expert'){
-          if(inputText!==null &&  inputText.indexOf('_')>-1){
-            const first_part=inputText.substr(0, inputText.indexOf('_')) 
-            const second_pard=inputText.substr(inputText.indexOf('_')+1,inputText.length)
-            const final_part=first_part+currentChar+second_pard
-
-           console.log("first_part=", first_part)
-           console.log("second_pard=", second_pard)
-           console.log("final_part=", final_part)
-
-              setInputText(final_part)
-          }
-          else if(human_position===1){
-            setInputText(inputText + currentChar)
-          }
-          else if(human_position===0){
-            setInputText(currentChar + inputText)
-          }else{
-          
-          setInputText(inputText + currentChar); 
-        }
-        }
-        else if(level_type==='genius')
+        if(game_level==='easy')
         {
-          setInputText(inputText + currentChar); 
+            setInputText(inputText+currentChar)
+        }
+        else if(game_level==="medium")
+        {
+            if(human_position===1)
+            {
+              setInputText(currentChar + inputText)
+            }
+            else if(human_position===0 || human_position===null)
+            {
+              setInputText(inputText + currentChar);
+            }
+          
+        }
+        else if(game_level==='expert')
+        {
+            setTextPositioning(currentChar) 
+        }
+        else if(game_level==='genius')
+        {
+         console.log(`${game_level} set text`) 
+          if(inputText.length===word_length){
+              console.log("Input box 2=",currentChar)
+            setInputText2(inputText2 ? inputText2+currentChar : currentChar); 
+          }
+          else
+          {
+            setTextPositioning(currentChar)
+          }
+          
         }
 
-        console.log("Time Reset@@@@@@@@@@@@@  5")
-     // timeFlag && setSeconds()
-      setOnce(true)  
+        //console.log("Time Reset@@@@@@@@@@@@@  5")
+        //timeFlag && setSeconds()
+     //  setOnce(true)  
       
   }
 
@@ -216,10 +240,8 @@ if(currentChar.toUpperCase()==='Z') audioZ()
 
   return (
     <CharacterContext.Provider value={{  
-                                             once,
                                              play }}>
       <CharacterContextUpdate.Provider value={{ 
-                                                   setOnce, 
                                                    myTurn,
                                                     }}>
         {children}

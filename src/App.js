@@ -176,7 +176,7 @@ else{ */
             <Route exact path='/showresult' component={ShowResult} />
             <Route exact path='/resultcomputer' component={ResultComputer} />
              {/* <Route exact path='/main' component={Main} />  */}
-             <PrivateRoute exact path='/main' component={Main} /> 
+             <PrivateRoute exact path='/human_vs_computer' component={Vscomputer} /> 
             <Route exact path="/playfrind" component={Playfrind} />
             <Route exact path="/word" component={Word} />
             <Route exact path="/Post" component={Post} />

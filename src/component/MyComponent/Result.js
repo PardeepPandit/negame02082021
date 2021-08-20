@@ -1,11 +1,8 @@
-import React, { Fragment ,useEffect,useContext} from 'react'
-import {useCharacterConsumer,useCharacterConsumerUpdate} from './CharacterContext'
-import { useTimerConsumer,useTimerConsumerUpdate } from './TimerContext'
-import {useMainConsumer,useMainConsumerUpdate} from './MainContext'
+import React, { Fragment ,useContext} from 'react'
+import {useMainConsumerUpdate} from './MainContext'
 import {Link} from 'react-router-dom'
 import HumanContext from './context/human/humanContext'
 import CommonContext from './context/common/commonContext'
-import { SET_CURRENT_WINNER_LOSER_HC, SET_INPUT_TEXT2, SET_POSITION } from '../../type'
 
 export const Result = () => {
    
@@ -14,11 +11,9 @@ export const Result = () => {
 
 
   const humanContext=useContext(HumanContext)
-  const {random_word,start_match_computer,resultWord,current_winner_loser_HC,roundFinishResetHC,winner_counter,loser_counter,getFinalResultHC,sendMatchRoundHC,round,changeMatchStatusHC,match_round_details,setMasterHistory,setLoading}=humanContext
+  const {random_word,start_match_computer,resultWord,current_winner_loser_HC,roundFinishResetHC,winner_counter,loser_counter,getFinalResultHC,sendMatchRoundHC,round,changeMatchStatusHC,setLoading,setShowKeyboard}=humanContext
 
-  const {loser } = useTimerConsumer()
-  const {setLoser,resetTime}=useTimerConsumerUpdate();
-  const {setWordList,setFinalResult,setTimeFlag,setCon,setFinish,setShowKeyboard}=useMainConsumerUpdate();
+  const {setFinish}=useMainConsumerUpdate();
  //console.log("Resule component",resultWord.word,",",resultWord.definition)
 
  const nextRound=()=>{
@@ -39,7 +34,6 @@ export const Result = () => {
       setInputText(null)
       setInputText2(null)
       setBackUpInputText(null)
-      setTimeFlag(false)
       setSeconds()
       setIsActive(true)
       roundFinishResetHC()

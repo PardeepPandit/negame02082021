@@ -1,13 +1,11 @@
-import {useEffect,useContext,useState} from 'react'
+import {useEffect,useState} from 'react'
 import './App.css';
 import { Route, Switch } from "react-router-dom";
 import React from 'bootstrap/dist/css/bootstrap.min.css';
 import Dashboard from './component/Dashboard';
 import Forgot from './component/Forgot';
 import Login from './component/Login';
-import Header from './component/Header';
 import Setting from './component/Setting';
-import Footer from './component/Footer';
 import Register from './component/Register';
 import Update from './component/Update';
 import ChoosePlan from './component/ChoosePlan';
@@ -26,7 +24,6 @@ import { CustomHookProvider } from './component/MyComponent/CustomHook';
 import { MainProvider } from './component/MyComponent/MainContext'
 import { TimerProvider } from './component/MyComponent/TimerContext'
 import { CharacterProvider } from './component/MyComponent/CharacterContext';
-import Main from './component/MyComponent/Main'
 import PrivateRoute from './component/MyComponent/routing/PrivateRoute'
 import ShowResult from './component/MyComponent/ShowResult'
 import ResultComputer from './component/MyComponent/ResultComputer'
@@ -65,43 +62,39 @@ import PlayOnline from './component/playonline/play_online_components/PlayOnline
 import PlayOnlineState from './component/playonline/context/PlayOnlineState';
 import Challenge from './component/playonline/play_online_components/Challenge'
 import firebase from './firebase'
-import { get } from 'jquery';
 import CommonState from './component/MyComponent/context/common/CommonState';
 import NotFoundPage from './component/MyComponent/NotFoundPage'
-import CommonContext from './component/MyComponent/context/common/commonContext'
-import { Fragment } from 'react';
+import axios from 'axios';
+
 function App(props) {
-
-  /* const commonContext=useContext(CommonContext)
-  const {human_vs_computer,human_vs_online,human_vs_friend,exitUser}=commonContext */
-
-//console.log(process.env.NODE_ENV) // dev
-//console.log(process.env.NODE_ENV === 'development') // false
-//console.log(process.env.NODE_ENV.length) // 4 (including a space at the end)
+  var counter = 1;
 const [token,setToken]=useState()
-/* const [finishStatus, setfinishStatus] = useState(false);
+ const [finishStatus, setfinishStatus] = useState(false);
 
-const onBackButtonEvent = (e) => {
+ console.log(window.innerHeight); 
+ const onBackButtonEvent = (e) => {
     e.preventDefault();
     if (!finishStatus) {
         if (window.confirm("Do you want to go back ?")) {
             setfinishStatus(true)
             // your logic
-            //props.history.push("/login");
+           
+            localStorage.removeItem('start_match_computer')
+            window.location.href='/dashboard'
         } else {
+          console.log("location pathname=",window.location.pathname)
             window.history.pushState(null, null, window.location.pathname);
             setfinishStatus(false)
         }
-    }
-}
+    }}
 
   useEffect(() => {
-    window.history.pushState(null, null, window.location.pathname);
+    //window.history.pushState(null, null, window.location.pathname);
     window.addEventListener('popstate', onBackButtonEvent);
     return () => {
       window.removeEventListener('popstate', onBackButtonEvent);  
     };
-  }, []); */
+  },[]);  
 
 useEffect(()=>{
   console.log("Firebase")
@@ -135,11 +128,13 @@ useEffect(()=>{
 },[])   */
 
 
-/* useEffect(()=>{
-  window.onpopstate=e=>{
-    alert("back button pressed")
-  }
-}) */
+/*  useEffect(()=>{
+ window.onpopstate=e=>{
+    //alert("back button pressed")
+    localStorage.removeItem('start_match_computer')
+    window.location.href='/dashboard'
+  } 
+})  */
 /* let online = window.navigator.onLine
 console.log("Internet=",online)
 if(!online){
@@ -165,7 +160,7 @@ else{ */
             <Route exact path="/" component={Login} />
             <Route exact path="/facebook" component={ReactFacebookLogin} />
             <Route exact path="/google" component={Google} />
-             <Route exact path="/dashboard" component={Dashboard} /> 
+             <Route exact path="/dashboard" component={Dashboard} />
              <PrivateRoute exact path='/paypal/:price' component={PayPal}/>
             <Route exact path="/register" component={Register} />
             <Route exact path="/forgot" component={Forgot} />

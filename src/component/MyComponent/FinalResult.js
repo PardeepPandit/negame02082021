@@ -23,10 +23,7 @@ export const FinalResult = ({title}) => {
   const {data}=final_result_HC || {}
     const {seconds, loser } = useTimerConsumer()
     const {setLoser,resetTime}=useTimerConsumerUpdate();
-    const {setRoundList1,setRoundList2,setRoundList3,setRoundList4,setRoundList5,setHintCheck,setPlay,setRedirectTo,setCon,setFinish}=useMainConsumerUpdate();
-    const {finalResult,roundList1,roundList2,roundList3,roundList4,roundList5,redirectTo}=useMainConsumer();
-    const {round}=useCharacterConsumer();
-    const {setRound,setRoundList}=useCharacterConsumerUpdate();
+    const {setHintCheck,setPlay,setRedirectTo,setCon,setFinish}=useMainConsumerUpdate();
     const history = useHistory()
     //const [finish,setFinish]=useState(false)
 

@@ -19,7 +19,7 @@ export const ResultComputer= () => {
   const humanContext=useContext(HumanContext)
   const {winner_counter,loser_counter}=humanContext
   const {setLoser,resetTime}=useTimerConsumerUpdate();
-  const {finalResult,roundList1,roundList2,roundList3,roundList4,roundList5,redirectTo,finish}=useMainConsumer();
+  const {redirectTo,finish}=useMainConsumer();
   const {round}=useCharacterConsumer();
   //const [finish,setFinish]=useState(false)
 

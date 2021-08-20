@@ -20,15 +20,12 @@ export function useTimerConsumerUpdate() {
 export function TimerProvider({ children }) {
 
 const commonContext=useContext(CommonContext)
-const {inputText,isActive,setIsActive,seconds,setSeconds}=commonContext
+const {inputText,isActive,setIsActive,seconds,setSeconds,human_vs_computer}=commonContext
 
 const humanContext=useContext(HumanContext)
-const {wordDefinition,setTimeOut,hint_wordlist,resultWord,setCurrentWinnerLoserHC,getRandomWordFromApi,getWordFromRapidApiHC}=humanContext
+const {wordDefinition,setTimeOut,resultWord,setCurrentWinnerLoserHC,setResultWord}=humanContext
 
 
-  //console.log("TimerContext rendring")
-  const {play,finalResult}=useMainConsumer()
-  const {setFinalResult}=useMainConsumerUpdate()
   const [result, setResult] = useState(() => 'win');
   const [loser, setLoser] = useState({ name: 'You', out: false });
   //const [seconds, setSeconds] = useState(60);
@@ -48,13 +45,15 @@ const {wordDefinition,setTimeOut,hint_wordlist,resultWord,setCurrentWinnerLoserH
             myVar = setTimeout(() => setSeconds(seconds - 1), 1000);
           }
            else {
-            console.log("LOSER AND WINNER 10")
-            if(!onlineUser){
-              //active only for Human vs computer
+            if(human_vs_computer)
+            {
               console.log("InputText in Timer Context=",inputText)
               setCurrentWinnerLoserHC('loser')
-              getWordFromRapidApiHC()
-            }else{
+              setResultWord(inputText,'Time Over')
+              //getWordFromRapidApiHC()
+            }
+            else
+            {
               console.log("PLAY ONLINE TIME UP")
               console.log("calling saveword API from TimerContext")
                saveWord({
@@ -69,7 +68,6 @@ const {wordDefinition,setTimeOut,hint_wordlist,resultWord,setCurrentWinnerLoserH
             resetState(true)
             //setwinnerLoser(null)
             setRoundComplete(false)
-            //setSeconds()
             } 
             
           }

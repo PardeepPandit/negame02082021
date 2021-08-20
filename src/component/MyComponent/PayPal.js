@@ -1,7 +1,4 @@
-import { param } from 'jquery'
 import React,{useRef,useEffect} from 'react'
-import ReactDOM from "react-dom"
-import { useParams } from 'react-router'
 
 export const PayPal = ({match}) => {
 

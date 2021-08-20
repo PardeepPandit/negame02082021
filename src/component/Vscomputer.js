@@ -1,27 +1,13 @@
-import React, { useState, useEffect, Fragment, useContext,Suspense } from "react";
-
-import {
-  useCharacterConsumer,
-  useCharacterConsumerUpdate,
-} from "./MyComponent/CharacterContext";
-import {
-  useMainConsumer,
-  useMainConsumerUpdate,
-} from "./MyComponent/MainContext";
+import React, {useEffect, Fragment, useContext,Suspense } from "react";
+import {useCharacterConsumerUpdate} from "./MyComponent/CharacterContext";
 import AuthContext from './MyComponent/context/auth/authContext'
 import Loading from '../component/MyComponent/Loading'
 import HumanContext from "./MyComponent/context/human/humanContext";
-
-import { __SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED } from "react-dom";
 import MediumLevelUI from "./MyComponent/LevelUI/MediumLevelUI";
-import ExpertLevelUI from "./MyComponent/LevelUI/ExpertLevelUI";
-import GeniusLevelUI from "./MyComponent/LevelUI/GeniusLevelUI";
+import ExpertAndGeniusLevelUI from "./MyComponent/LevelUI/ExpertAndGeniusLevelUI";
 import Trophy from "./MyComponent/Trophy";
-//import Keyboard from "./Keyboard";
 import CommonContext from '../component/MyComponent/context/common/commonContext'
 const Keyboard = React.lazy(() => import('./Keyboard'));
-
-
 
 const Vscomputer = () => {
   //console.log("Match===", level);
@@ -30,7 +16,7 @@ const Vscomputer = () => {
   console.log("element=",element)
  */
   const commonContext=useContext(CommonContext)
-  const {inputText,setIsActive,isActive,setSeconds,seconds,setInputText,backup_input_text,inputText2,setInputText2,game_level}=commonContext
+  const {inputText,setIsActive,seconds,setInputText,backup_input_text,inputText2,setInputText2,game_level}=commonContext
   const authContext=useContext(AuthContext)
   const {user,login_data}=authContext
   const {level}=login_data
@@ -40,25 +26,18 @@ const Vscomputer = () => {
     hint,
     random_word,
     loading_HC,
-    wordDefinition,
-    setResultWord,
     start_match_computer,
     hint_count,
     hint_used,
     setHintUsed,
-    hint_wordlist,
     concede,
     setConcede,
-    resultWord,
-    timeout,
     human_position,
     setShowKeyboard,
     show_keyboard,
     checkWordExistApi,
     round,
-    play,
     setPlay,
-    setTurn,
     setCurrentWinnerLoserHC,
     getHint,
     setSingleShiftCounter,
@@ -72,12 +51,11 @@ const Vscomputer = () => {
   const {image_path,user1}=start_match_computer
   const {image}=user1
 
-  const {setTimeFlag} = useMainConsumerUpdate();
   const { myTurn } = useCharacterConsumerUpdate();
 
   useEffect(()=>{
     if(concede){
-      console.log("calling getHintWordList from useEffect=",concede,",",random_word)
+      console.log("concede and randome_word=",concede,",",random_word)
       setIsActive(false)
       setPlay(false)
       //game_level!=='expert' && getHint()
@@ -152,45 +130,19 @@ const Vscomputer = () => {
             setInputText(inputText.substring(0,single_shift_counter-1)+inputText.substring(single_shift_counter))
           }
         }
-        
-        
       }
 
       setSingleShiftCounter('reset')
       console.log("KEYBOARD ON 2")
       setShowKeyboard(true);
-  };
-
-  
+  }; 
 
   const playFun = () => {
-
-/*     if(game_level==='genius' && inputText!==null && inputText.length===word_length ){
-      const old_str=Array.from(inputText).sort()
-      const new_str=Array.from(inputText2).sort()
-      console.log("play button=",old_str.toString(),",",new_str.toString())
-      if(old_str.length===new_str.length && old_str.toString()===new_str.toString()){
-          setCurrentWinnerLoserHC('winner')
-      }
-      else{
-        setCurrentWinnerLoserHC('loser')
-      }
-    }
-    else{
-      setSingleShiftCounter('reset')
-    setInputText(backup_input_text)
-    setSingleShiftCounter('zero')
-    checkWordExistApi()
-    //setResultWord();
-    setTimeFlag(true);
-    setIsActive(false)
-    } */
     setSingleShiftCounter('reset')
     setInputText(backup_input_text)
     setSingleShiftCounter('zero')
     checkWordExistApi()
     //setResultWord();
-    setTimeFlag(true);
     setIsActive(false)
   };
 
@@ -204,11 +156,12 @@ const Vscomputer = () => {
     myTurn(e);
   };
 
-if(loading_HC){
-return <Loading/>
+if(loading_HC)
+{
+  return <Loading/>
 }
 else 
-  {
+{
   return (
     <Fragment>
       <div class="section_card_ga section_card">
@@ -233,7 +186,7 @@ else
                   />
                 </div>
                 <div class="ledt_img_mid">
-                  <h1 style={{backgroundColor:'greenyellow',borderRadius:'100%',padding:'10px' , display:'inline-block',color:'black'}}>Round {round} {" "} {game_level.toUpperCase()}</h1>
+                  <h1 style={{backgroundColor:'greenyellow',borderRadius:'100%',padding:'10px' , display:'inline-block',color:'black'}}>Round {round} {" "} {game_level && game_level.toUpperCase()}</h1>
                   <span style={{backgroundColor:'white'}}><Trophy round={round} /></span>
                 </div>
 
@@ -270,12 +223,12 @@ else
                 </div>
                 {/*  {loser.out && <div className="bg-white">{JSON.stringify(val)}</div>} */}
                 {game_level==="medium" && show_keyboard && <MediumLevelUI />}
-                {game_level==="expert" && show_keyboard && <ExpertLevelUI/>}
-                {game_level==="genius" && show_keyboard && inputText!==null && inputText.length!==word_length &&<GeniusLevelUI/>}
+                {(game_level==="expert" || (game_level==="genius" && inputText!==null && inputText.length!==word_length)) && show_keyboard && <ExpertAndGeniusLevelUI/>}
+                {/* {game_level==="genius" && show_keyboard && inputText!==null && inputText.length!==word_length &&<GeniusLevelUI/>} */}
                 {game_level==="genius" && show_keyboard && inputText!==null && inputText.length===word_length && <input type="text" className="main-input" value={inputText2}/>}
 
                 {show_keyboard ? (
-                  <div class="keypad">
+                  <div class="keypad" >
                     <div class="keypad_in">
                       <div class="key_btn">
 
@@ -283,26 +236,22 @@ else
                         <Keyboard onClick={onClick} />
                         </Suspense>
 
-                          {game_level==='genius' && inputText!==null && inputText.length===5 ? 
+                          {game_level==='genius' && inputText!==null && inputText.length===word_length ? 
                           <Fragment>
                     <div className="play_btn_m game-buttons">
                       <button onClick={()=>playFun()}>Play</button>
                       <button onClick={()=>deleteChar()}>
-                      {/* <button onClick={()=>playFun()}>Play</button>
-                      <button onClick={()=>deleteChar()}> */}
                         <img src="assets/img/backspace.svg" alt="" width="27" />
                       </button>
                     </div>
                   </Fragment>:
                   <Fragment>
-                                            <div className="play_btn_m">
+                        <div className="play_btn_m">
                           <div class="btn_b k_pad">
                             <button
                               type="button"
                               className="hinnt_r"
                               id="hintDetail"
-                              //onClick={() => setCallHint(true)}
-                              //onClick={()=>checkHintCount(user.data.id)}
                               onClick={()=>setHintUsed(true,{
                                 user_id:user.data.id,
                                 hint_id:hint_id,
@@ -320,8 +269,6 @@ else
                           </div>
                         </div>
                     </Fragment>}
-
-
                       </div>
                     </div>
                   </div>
@@ -330,16 +277,11 @@ else
                     <div className="play_btn_m game-buttons">
                       <button onClick={()=>playFun()}>Play</button>
                       <button onClick={()=>deleteChar()}>
-                      {/* <button onClick={()=>playFun()}>Play</button>
-                      <button onClick={()=>deleteChar()}> */}
                         <img src="assets/img/backspace.svg" alt="" width="27" />
                       </button>
                     </div>
                   </Fragment>
                 )}
-                {/* ---------lost-lost-over------ */}
-
-                {/* ---------lost-lost-over------ */}
                 {/* ------hint------ */}
                 <div
                   className="modal fade"

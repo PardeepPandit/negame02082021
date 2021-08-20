@@ -27,7 +27,6 @@ export const Main =() => {
   
   return (
     <Fragment>
-      {/* {JSON.stringify(wordList)} */}
     <Vscomputer level={level}/>
     </Fragment>
 

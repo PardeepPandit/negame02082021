@@ -17,8 +17,6 @@ import{
   REMOVE_LOCAL_DATA,
   SET_HINT_COUNT,
   SET_HINT_USED,
-  SET_HINT_WORDLIST_SUCCESS,
-  SET_HINT_WORDLIST_FAIL,
   SET_CONCEDE,
   SET_TIMEOUT,
   SET_HUMAN_POSITION,
@@ -68,7 +66,7 @@ const HumanState=({children})=>{
         match_round_details:null,
         master_history_HC:[],
         computer_position:null,
-        word_length:5
+        word_length:null
        //[{round:1,word:,complete_word:,round_respnse}],[]
   };
 
@@ -102,18 +100,17 @@ useEffect(()=>{
     if(game_level==='easy'){
       setInputText(inputText+state.next_char.toUpperCase())
     }
-    if(game_level==='medium'){
+    else if(game_level==='medium'){
       
       state.computer_position===0 ? setInputText(state.next_char.toUpperCase()+inputText) :setInputText(inputText+state.next_char.toUpperCase())
       
     }
-    if(game_level==='genius'){
+    else if(game_level==='genius'){
 
       setInputText(inputText+state.next_char.toUpperCase())
     }
-    
     console.log("calling findNextChar")
-      setSeconds()
+     game_level==='expert' ? setSeconds(60) :setSeconds(120)
       setIsActive(true)
       console.log("KEYBOARD ON 5")
       setShowKeyboard(true)
@@ -123,11 +120,13 @@ useEffect(()=>{
 useEffect(()=>{
   console.log("warning 3")
   if(game_level==='medium'){
-    if((state.human_position===0 || state.human_position===1) && inputText!==null){
-        const index=inputText.indexOf('_')
-        if(index>-1){
-          setInputText(inputText.substr(0,index)+inputText.substr(index+1))
-        }
+      if(state.human_position===0)
+      {
+        setInputText(backup_input_text+'_')
+      }
+      else if(state.human_position===1)
+      {
+          setInputText('_'+backup_input_text)    
       }
   }
   else if(game_level==='expert' || game_level==='genius')
@@ -583,7 +582,7 @@ const getRandomWordFromApi=async()=>{
         {
 
           setCurrentWinnerLoserHC('loser')
-          {game_level==='genius' ? setResultWord(inputText2,'No matching word found in dictionary with those letters'):setResultWord()} 
+          {game_level==='genius' ? setResultWord(inputText,'No matching word found in dictionary with those letters'):setResultWord()} 
             dispatch({
                 type:GET_RANDOM_WORD_FAIL,
             })
@@ -741,14 +740,15 @@ const getRandomWordFromApi=async()=>{
             console.log("Next char=",state.random_word[index_no],",",demo_array,"*",demo_array.join(""))
            // setNextCharacter(state.random_word[index_no])
            setInputText(demo_array.join("").toUpperCase())
+           setNextCharacter(state.random_word[index_no])
            dispatch({
              type:SET_TEMP_WORD,
              payload:demo_array.join("").toUpperCase()
            })
-           setSeconds()
+           /*  setSeconds()
            setIsActive(true)
            console.log("KEYBOARD ON 6")
-           setShowKeyboard(true)
+           setShowKeyboard(true)  */
 
         }
         else if(input_text_length < random_word_length && game_level==='genius'){

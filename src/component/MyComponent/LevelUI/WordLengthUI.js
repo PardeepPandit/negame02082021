@@ -6,6 +6,7 @@ const WordLengthUI=({setWordLengthPopUp,onClick,setWordLength})=>{
         <Fragment>
         <div className="level-contaienr" id="challenge">
           <div className="level-wrapper">
+          <img src="assets/img/right-arrow.png" onClick={()=>setWordLengthPopUp(false)} alt="backbutton" style={{width:'180px'}}/>
             <h1 >Please Select Word Length</h1>
             <ul className="level-list">
               <li>
@@ -20,7 +21,7 @@ const WordLengthUI=({setWordLengthPopUp,onClick,setWordLength})=>{
             </ul>
             <button onClick={()=>{
                 onClick("4",'genius')
-                setWordLengthPopUp(false)}} style={{color:'black'}}>Submit</button>
+                setWordLengthPopUp(false)}} style={{color:'black' ,width:'200px',textAlign:'center'}}>Submit</button>
           </div>
         </div>
       </Fragment>

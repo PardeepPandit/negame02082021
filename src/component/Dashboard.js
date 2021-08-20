@@ -68,12 +68,6 @@ const Dashboard = (props) => {
         }
     },[onlineUser,online_match_finish])
 
-    useEffect(()=>{
-        console.log("calling resttime=",loser.name,",",loser.out)
-        console.log("Time Reset@@@@@@@@@@@@@  2")
-        setSeconds(60)
-    },[loser])
-
 
       useEffect(()=>{
        // console.log("start_match_computer useEffect=",start_match_computer)
@@ -137,7 +131,7 @@ const Dashboard = (props) => {
   }, [])
   const alertUser = e => {
     e.preventDefault()
-    e.returnValue = ''
+    e.returnValue = '' 
   } 
   
 console.log("Dashboard=",onlineUser,",",online_match_finish)
@@ -154,9 +148,6 @@ const playOnline=()=>{
     setSearch(true)
 }        
 
-    const newFun=()=>{
-        console.log("NEW FUN ***")
-    }
 
   if(start_match_computer)
     {
@@ -237,14 +228,12 @@ const playOnline=()=>{
                            <div class="left">
                                <h3 class="play_heading_n">VS Computer </h3>
                                <p class="text-white  m_p">Play With  Computer</p>
-                                 {/* <button class="play_btn" data-toggle="modal" data-target="#level" onClick={onClick}>Play</button>  */}
                                    <button class="play_btn" onClick={()=>
                                     {
                                         gameType('humanvscomputer')
                                         setGameStatus('human_vs_computer')
                                         setShowLevel(!showLevel)}
                                    }>Play</button>   
-                                  {/*  <Link class="play_btn" to="/main" onClick={onClick}>Play</Link> */}
                            </div>
                        </div>
                        <div class="col-md-4">
@@ -287,7 +276,9 @@ const playOnline=()=>{
                             setLevelCheck(true)
                         }}>Expert</Link>}</li>
                     <li>{(levelNumber==='1,2,3,4')  ?
-                     <Link to='#' onClick={()=>setWordLengthPopUp(true)}>Genius*</Link> :
+                     <Link to='#' onClick={()=>{
+                        setSeconds(120) 
+                        setWordLengthPopUp(true)}}>Genius*</Link> :
                      <Link to='#' onClick={()=>{
                         
                         setShowLevel(false)

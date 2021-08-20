@@ -44,16 +44,16 @@ const shiftCounter=(arg)=>{
 return (
     <Fragment>
     <div style={{textAlign:'center' , color:'blue', backgroundColor:'yellow'}}>
-    <h1 style={activeButton===4 ? {backgroundColor:"green"} : {backgroundColor:"white"}} onClick={()=>{
+    <h1 style={activeButton===4 ? {backgroundColor:"green", color:'white',fontSize:'40px',border:'2px 5px solid black'} : {backgroundColor:"white"}} onClick={()=>{
         setActiveButton(4)
         setHumanPosition(1)}} >{"Left End"}</h1> 
-    <h1 style={activeButton===3 ? {backgroundColor:"green"} : {backgroundColor:"white"}} onClick={()=>{
+    <h1 style={activeButton===3 ? {backgroundColor:"green", color:'white',fontSize:'40px',border:'2px solid black'} : {backgroundColor:"white"}} onClick={()=>{
         setActiveButton(3)
         shiftCounter('increment')}} >{"Left Shift"}</h1>
-    <h1 style={activeButton===2 ? {backgroundColor:"green"} : {backgroundColor:"white"}} onClick={()=>{
+    <h1 style={activeButton===2 ? {backgroundColor:"green", color:'white',fontSize:'40px',border:'2px solid black'} : {backgroundColor:"white"}} onClick={()=>{
         setActiveButton(2)
         shiftCounter('decrement')}} >{"Right Shift"}</h1> 
-    <h1 style={activeButton===1 ? {backgroundColor:"green"} : {backgroundColor:"white"}} onClick={()=>{
+    <h1 style={activeButton===1 ? {backgroundColor:"green" , color:'white',fontSize:'40px',border:'2px solid black'} : {backgroundColor:"white"}} onClick={()=>{
         setActiveButton(1)
         setHumanPosition(0)}} >{"Right End"}</h1> 
     </div>

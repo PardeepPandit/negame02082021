@@ -7,7 +7,6 @@ import playOnlineContext from '../playonline/context/playOnlineContext'
 import useSound from 'use-sound';
 import HumanContext from './context/human/humanContext'
 import PlayOnlineContext from '../playonline/context/playOnlineContext'
-import { SET_INPUT_TEXT2, SET_SHOW_KEYBOARD, SET_TURN } from '../../type'
 const CharacterContext = React.createContext();
 const CharacterContextUpdate = React.createContext();
 
@@ -32,15 +31,11 @@ const {game_type,onlineUser}=playOnlineContext
   const humanContext=useContext(HumanContext)
   const {human_position,setShowKeyboard,play,setPlay,setTurn,round,current_winner_loser_HC,start_match_computer,word_length}=humanContext
 
-
-  const { setLoser, resetTime } = useTimerConsumerUpdate();
-  const {timeFlag,alpha}=useMainConsumer();
-  const {setWordList,setResultWord,setAlpha,checkSound}=useMainConsumerUpdate()
   const {keyAudio}=useBackgroundMusicConsumer();
  
   var alphabets = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-  //const [round, setRound] = useState(() => 1)
-  const [once, setOnce] = useState(() => { return false })
+
+
   const [audioA] = useSound('https://theneverendingwordgame.com/ne_game_api/public/admin/clip-one/assets/audio_files/a.mp3');
   const [audioB] = useSound('https://theneverendingwordgame.com/ne_game_api/public/admin/clip-one/assets/audio_files/b.mp3');
   const [audioC] = useSound('https://theneverendingwordgame.com/ne_game_api/public/admin/clip-one/assets/audio_files/c.mp3');
@@ -115,7 +110,7 @@ const {game_type,onlineUser}=playOnlineContext
   }, [])
 
   function setTextPositioning(currentChar){
-    if(inputText!==null &&  inputText.indexOf('_')>-1){
+    if(inputText!==null &&  inputText.indexOf('_') > -1){
             
       const first_part=inputText.substr(0, inputText.indexOf('_')) 
       const second_pard=inputText.substr(inputText.indexOf('_')+1,inputText.length)
@@ -160,57 +155,55 @@ const {game_type,onlineUser}=playOnlineContext
       currentChar=e.target.value 
     }
 
-    if(keyAudio){
+if(keyAudio)
+{
       if(currentChar.toUpperCase()==='A') audioA()
-if(currentChar.toUpperCase()==='B') audioB()
-if(currentChar.toUpperCase()==='C') audioC()
-if(currentChar.toUpperCase()==='D') audioD()
-if(currentChar.toUpperCase()==='E') audioE()
-if(currentChar.toUpperCase()==='F') audioF()
-if(currentChar.toUpperCase()==='G') audioG()
-if(currentChar.toUpperCase()==='H') audioH()
-if(currentChar.toUpperCase()==='I') audioI()
-if(currentChar.toUpperCase()==='J') audioJ()
-if(currentChar.toUpperCase()==='K') audioK()
-if(currentChar.toUpperCase()==='L') audioL()
-if(currentChar.toUpperCase()==='M') audioM()
-if(currentChar.toUpperCase()==='N') audioN()
-if(currentChar.toUpperCase()==='O') audioO()
-if(currentChar.toUpperCase()==='P') audioP()
-if(currentChar.toUpperCase()==='Q') audioQ()
-if(currentChar.toUpperCase()==='R') audioR()
-if(currentChar.toUpperCase()==='S') audioS()
-if(currentChar.toUpperCase()==='T') audioT()
-if(currentChar.toUpperCase()==='U') audioU()
-if(currentChar.toUpperCase()==='V') audioV()
-if(currentChar.toUpperCase()==='W') audioW()
-if(currentChar.toUpperCase()==='X') audioX()
-if(currentChar.toUpperCase()==='Y') audioY()
-if(currentChar.toUpperCase()==='Z') audioZ()
+      if(currentChar.toUpperCase()==='B') audioB()
+      if(currentChar.toUpperCase()==='C') audioC()
+      if(currentChar.toUpperCase()==='D') audioD()
+      if(currentChar.toUpperCase()==='E') audioE()
+      if(currentChar.toUpperCase()==='F') audioF()
+      if(currentChar.toUpperCase()==='G') audioG()
+      if(currentChar.toUpperCase()==='H') audioH()
+      if(currentChar.toUpperCase()==='I') audioI()
+      if(currentChar.toUpperCase()==='J') audioJ()
+      if(currentChar.toUpperCase()==='K') audioK()
+      if(currentChar.toUpperCase()==='L') audioL()
+      if(currentChar.toUpperCase()==='M') audioM()
+      if(currentChar.toUpperCase()==='N') audioN()
+      if(currentChar.toUpperCase()==='O') audioO()
+      if(currentChar.toUpperCase()==='P') audioP()
+      if(currentChar.toUpperCase()==='Q') audioQ()
+      if(currentChar.toUpperCase()==='R') audioR()
+      if(currentChar.toUpperCase()==='S') audioS()
+      if(currentChar.toUpperCase()==='T') audioT()
+      if(currentChar.toUpperCase()==='U') audioU()
+      if(currentChar.toUpperCase()==='V') audioV()
+      if(currentChar.toUpperCase()==='W') audioW()
+      if(currentChar.toUpperCase()==='X') audioX()
+      if(currentChar.toUpperCase()==='Y') audioY()
+      if(currentChar.toUpperCase()==='Z') audioZ()
     }
 
   
     //let currentChar = e
     currentChar = currentChar.charAt(currentChar.length - 1)
-    console.log("myturn input Text=", currentChar,",Timeflag=",timeFlag)
-    //console.log("play 3=",play)
-      //setPlay(false)
-      //setLoser({ name: 'You', out: false })
+    console.log("myturn input Text=", currentChar)
         if(game_level==='easy')
         {
             setInputText(inputText+currentChar)
         }
         else if(game_level==="medium")
         {
-            if(human_position===1)
+            /* if(human_position===1)
             {
               setInputText(currentChar + inputText)
             }
             else if(human_position===0 || human_position===null)
             {
               setInputText(inputText + currentChar);
-            }
-          
+            } */
+            setTextPositioning(currentChar)
         }
         else if(game_level==='expert')
         {
@@ -219,7 +212,8 @@ if(currentChar.toUpperCase()==='Z') audioZ()
         else if(game_level==='genius')
         {
          console.log(`${game_level} set text`) 
-          if(inputText.length===word_length){
+          if(inputText.length===word_length)
+          {
               console.log("Input box 2=",currentChar)
             setInputText2(inputText2 ? inputText2+currentChar : currentChar); 
           }
@@ -228,12 +222,7 @@ if(currentChar.toUpperCase()==='Z') audioZ()
             setTextPositioning(currentChar)
           }
           
-        }
-
-        //console.log("Time Reset@@@@@@@@@@@@@  5")
-        //timeFlag && setSeconds()
-     //  setOnce(true)  
-      
+        } 
   }
 
 

@@ -20,7 +20,7 @@ export function useTimerConsumerUpdate() {
 export function TimerProvider({ children }) {
 
 const commonContext=useContext(CommonContext)
-const {inputText,isActive,setIsActive,seconds,setSeconds,human_vs_computer}=commonContext
+const {inputText,isActive,setIsActive,seconds,setSeconds,human_vs_computer,game_level}=commonContext
 
 const humanContext=useContext(HumanContext)
 const {wordDefinition,setTimeOut,resultWord,setCurrentWinnerLoserHC,setResultWord}=humanContext
@@ -47,7 +47,8 @@ const {wordDefinition,setTimeOut,resultWord,setCurrentWinnerLoserHC,setResultWor
            else {
             if(human_vs_computer)
             {
-              console.log("InputText in Timer Context=",inputText)
+              console.log("InputText in Timer Context=",inputText);
+              
               setCurrentWinnerLoserHC('loser')
               setResultWord(inputText,'Time Over')
               //getWordFromRapidApiHC()

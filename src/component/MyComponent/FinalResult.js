@@ -1,49 +1,30 @@
 
-import React, { Fragment,useState,useEffect,useContext} from 'react'
-import {Redirect,useHistory} from 'react-router-dom'
+import React, { Fragment,useContext} from 'react'
 import {Link} from 'react-router-dom'
-import { useTimerConsumer,useTimerConsumerUpdate } from './TimerContext'
-import {useCharacterConsumer,useCharacterConsumerUpdate} from './CharacterContext'
-import {useMainConsumer,useMainConsumerUpdate} from './MainContext'
+import {useMainConsumerUpdate} from './MainContext'
 import HumanContext from './context/human/humanContext'
 import CommonContext from './context/common/commonContext'
-
-
-import { SET_HINT_USED } from '../../type'
-
 
 export const FinalResult = ({title}) => {
 
   const commonContext=useContext(CommonContext)
-  const {setInputText,setIsActive }=commonContext
+  const {resetCommonState}=commonContext
 
   const humanContext=useContext(HumanContext)
-  const {getRandomWordFromApi,random_word,resultWord,removeLocalData,setHintUsed,setConcede,winner_counter,loser_counter,final_result_HC,changeMatchStatusHC,matchFinishResetHC}=humanContext
+  const {getRandomWordFromApi,random_word,resultWord,removeLocalData,winner_counter,loser_counter,final_result_HC,changeMatchStatusHC,resetHumanState}=humanContext
 
   const {data}=final_result_HC || {}
-    const {seconds, loser } = useTimerConsumer()
-    const {setLoser,resetTime}=useTimerConsumerUpdate();
-    const {setHintCheck,setPlay,setRedirectTo,setCon,setFinish}=useMainConsumerUpdate();
-    const history = useHistory()
-    //const [finish,setFinish]=useState(false)
+    const {setHintCheck,setFinish}=useMainConsumerUpdate();
 
-
-    const [temp,setTemp]=useState(false)
-
-    
      console.log("data=",data)
 
     const redirect = () => {
         console.log("Rdirect function word list",random_word)
-        matchFinishResetHC()
-        setConcede(false)
+        resetCommonState()
+        resetHumanState()
         removeLocalData()
-        setHintUsed(false)
        setHintCheck(true)
-       console.log("***************SET IS ACTIVE 5***************")
-       setIsActive(false)
        setFinish(false)
-       setInputText(null)
 
      }
    
@@ -103,7 +84,7 @@ export const FinalResult = ({title}) => {
             <div className="new_mtch_btn">
                    {/* <a href="#" style={{"font-size": "26px;"}}> New Match</a> */}
                    {/* <button className='btn btn-info next_r' onClick={redirect}>Next Match</button> */}
-                    <Link to='/dashboard' className='play-again' onClick={redirect}>Next Match</Link>
+                    <Link to='/dashboard' className='play-again' onClick={()=>redirect()}>Next Match</Link>
                   </div>
                 </div>
                 </div>

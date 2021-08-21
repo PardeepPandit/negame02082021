@@ -19,7 +19,7 @@ import{
   SET_CURRENT_WINNER_LOSER_HC,
   RESET_STATE_FOR_ROUND_FINSH_HC,
   SET_FINAL_RESULT_HC,
-  RESET_STATE_FOR_MATCH_FINSH_HC,
+  RESET_HUMAN_STATE,
   SET_MATCH_ROUND_DETAILS,
   SET_MASTER_HISTORY,
   SET_RANDOM_POSITION,
@@ -209,7 +209,7 @@ export default (state,action)=>{
                                                     temp_word:null,
                                                     computer_position:null
                                                 }
-                                                case RESET_STATE_FOR_MATCH_FINSH_HC:
+                                                case RESET_HUMAN_STATE:
                                                     return{
                                                         ...state,
                                                         loading_HC:false,

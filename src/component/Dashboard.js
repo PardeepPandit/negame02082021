@@ -105,7 +105,8 @@ const Dashboard = (props) => {
                             playOnline()
                     }
                     else if(game_type==='humanvscomputer'){
-                            
+
+                            (l_type==='easy' || l_type==='medium' || l_type==='expert') ? setSeconds(60) : setSeconds(120)
                             startMatchComputer(login_data.id,levelno)
                     }            
          

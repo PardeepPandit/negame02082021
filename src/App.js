@@ -9,7 +9,7 @@ import Setting from './component/Setting';
 import Register from './component/Register';
 import Update from './component/Update';
 import ChoosePlan from './component/ChoosePlan';
-import Vscomputer from './component/Vscomputer';
+import HumanVsComputer from './component/HumanVsComputer';
 import Playfrind from './component/Playfrind';
 import Word from './component/Word';
 import Post from './component/Post';
@@ -69,7 +69,7 @@ import axios from 'axios';
 function App(props) {
   var counter = 1;
 const [token,setToken]=useState()
- const [finishStatus, setfinishStatus] = useState(false);
+ /* const [finishStatus, setfinishStatus] = useState(false);
 
  console.log(window.innerHeight); 
  const onBackButtonEvent = (e) => {
@@ -94,7 +94,7 @@ const [token,setToken]=useState()
     return () => {
       window.removeEventListener('popstate', onBackButtonEvent);  
     };
-  },[]);  
+  },[]);   */
 
 useEffect(()=>{
   console.log("Firebase")
@@ -144,7 +144,7 @@ if(!online){
 else{ */
   return (
     <div>
-      <CommonState>
+     <CommonState>
       <PlayOnlineState>
       <MasterState>
       <AlertState>
@@ -171,7 +171,7 @@ else{ */
             <Route exact path='/showresult' component={ShowResult} />
             <Route exact path='/resultcomputer' component={ResultComputer} />
              {/* <Route exact path='/main' component={Main} />  */}
-             <PrivateRoute exact path='/human_vs_computer' component={Vscomputer} /> 
+             <PrivateRoute exact path='/human_vs_computer' component={HumanVsComputer} /> 
             <Route exact path="/playfrind" component={Playfrind} />
             <Route exact path="/word" component={Word} />
             <Route exact path="/Post" component={Post} />

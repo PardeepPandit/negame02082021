@@ -1,5 +1,5 @@
 import React, { Fragment,useContext,useEffect } from 'react';
-import tick from './tick3.gif';
+import tick from './tick7.gif';
 import MasterContext from './context/master/masterContext'
 
 
@@ -12,7 +12,7 @@ const masterContext=useContext(MasterContext)
       useEffect(()=>{
         setTimeout(()=>{
             togglePopup()
-        },1000)
+        },2000)
           
       },[])
      

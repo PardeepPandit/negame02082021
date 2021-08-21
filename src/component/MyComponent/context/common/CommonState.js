@@ -9,7 +9,8 @@ import{
     SET_SECONDS,
     SET_GAME_STATUS,
     SET_BACKUP_INPUT_TEXT,
-    SET_GAME_LEVEL
+    SET_GAME_LEVEL,
+    RESET_COMMONSTATE
 } from '../../../../type'; 
 
 
@@ -115,6 +116,13 @@ const setIsActive=(true_false)=>{
     payload:true_false
   })
 }
+
+const resetCommonState=()=>{
+  dispatch({
+    type:RESET_COMMONSTATE,
+  })
+}
+
   return (
     <CommonContext.Provider
     value={{
@@ -134,7 +142,8 @@ const setIsActive=(true_false)=>{
     setGameStatus,
     exitUser,
     setBackUpInputText,
-    setGameLevel
+    setGameLevel,
+    resetCommonState
       }}>
       {children}
     </CommonContext.Provider>

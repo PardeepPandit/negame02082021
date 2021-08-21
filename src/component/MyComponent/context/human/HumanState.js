@@ -29,7 +29,7 @@ import{
   SET_WINNER_LOSER_COUNTER,
   RESET_STATE_FOR_ROUND_FINSH_HC,
   SET_FINAL_RESULT_HC,
-  RESET_STATE_FOR_MATCH_FINSH_HC,
+  RESET_HUMAN_STATE,
   SET_MATCH_ROUND_DETAILS,
   SET_MASTER_HISTORY,
   SET_RANDOM_POSITION,
@@ -78,7 +78,7 @@ const HumanState=({children})=>{
   const {user}=authContext
 
   const commonContext =useContext(CommmonContext)
-  const {inputText,setInputText,setSeconds,setIsActive,backup_input_text,inputText2,game_level}=commonContext
+  const {inputText,setInputText,setSeconds,setIsActive,backup_input_text,inputText2,game_level,setInputText2}=commonContext
 console.log("Human state....",inputText)
 useEffect(()=>{
   console.log("warning 1")
@@ -109,8 +109,8 @@ useEffect(()=>{
 
       setInputText(inputText+state.next_char.toUpperCase())
     }
-    console.log("calling findNextChar")
-     game_level==='expert' ? setSeconds(60) :setSeconds(120)
+    console.log("calling findNextChar");
+    (game_level==='easy' || game_level==='medium' || game_level==='expert') ? setSeconds(60) :setSeconds(120)
       setIsActive(true)
       console.log("KEYBOARD ON 5")
       setShowKeyboard(true)
@@ -119,7 +119,8 @@ useEffect(()=>{
 
 useEffect(()=>{
   console.log("warning 3")
-  if(game_level==='medium'){
+  if(game_level==='medium')
+  {
       if(state.human_position===0)
       {
         setInputText(backup_input_text+'_')
@@ -183,7 +184,7 @@ useEffect(()=>{
   }
 },[state.match_round_details]) 
 
-/* useEffect(()=>{
+/*  useEffect(()=>{
   console.log("warning 7")
   if(state.turn){
   console.log(`changing turn from ${state.turn}`)
@@ -191,7 +192,7 @@ useEffect(()=>{
     console.log("Set Turn 3 human or computer")
   state.turn==='human' ? setTurn('computer') : setTurn('human')
   }
-},[state.current_winner_loser_HC]) */
+},[state.current_winner_loser_HC])  */
 
 useEffect(()=>{
   console.log("warning 8")
@@ -243,7 +244,8 @@ useEffect(()=>{
 
 useEffect(() => {
     
-  if(state.hint_used){
+  if(state.hint_used)
+  {
     console.log("calling get hint in humanstate");
     if(inputText!==null && inputText.length===1)
     {
@@ -254,9 +256,8 @@ useEffect(() => {
         type:GET_HINT,
         payload:state.resultWord.word
       }) 
-    }
-    
-}
+    }    
+  }
   
 }, [state.hint_used]);
 
@@ -915,10 +916,10 @@ const roundFinishResetHC=()=>{
     type:RESET_STATE_FOR_ROUND_FINSH_HC,
   })
 }
-const matchFinishResetHC=()=>{
+const resetHumanState=()=>{
 
   dispatch({
-    type:RESET_STATE_FOR_MATCH_FINSH_HC,
+    type:RESET_HUMAN_STATE,
   })
 }
 /////////////////////////////////////////////////////////////////////////////////
@@ -969,8 +970,7 @@ const setSingleShiftCounter=(inc_dec)=>{
       })
     }
   }
-
-  if(inc_dec==='reset'){
+else{
     dispatch({
       type:SINGLE_SHIFT_COUNTER,
       payload:null
@@ -986,6 +986,76 @@ const setWordLength=(len)=>{
       payload:len
     })
 }
+
+
+const deleteChar = () => {
+  //console.log("deletechar========",inputText)
+
+    if(game_level==='easy')
+    {
+      setInputText(inputText.substring(0,inputText.length-1))
+    }
+    else if(game_level==='medium')
+    {
+
+      if(state.human_position===0 || state.human_position===null)
+      {
+        setInputText(inputText.substring(0, inputText.length-1));
+      }
+      else if(state.human_position===1){
+        setInputText(inputText.substring(1, inputText.length));
+      }
+    }
+    else if(game_level==='expert')
+    {
+      if((state.human_position===0 || state.human_position===null) && (state.single_shift_counter===null || state.single_shift_counter===-1))
+      {
+        setInputText(inputText.substring(0, inputText.length-1));
+      }
+      else if(state.human_position===1)
+      {
+        setInputText(inputText.substring(1, inputText.length));
+      }
+      else if(state.single_shift_counter > 0)
+      {
+        console.log("first half=",inputText.substring(0,state.single_shift_counter-1))
+        console.log("second hlaf=",inputText.substring(state.single_shift_counter))
+        console.log("final text=",inputText.substring(0,state.single_shift_counter-1)+inputText.substring(state.single_shift_counter))
+        setInputText(inputText.substring(0,state.single_shift_counter-1)+inputText.substring(state.single_shift_counter))
+      }
+      
+    }
+    else if(game_level==='genius' )
+    {
+      
+      if(inputText!==null && inputText.length===state.word_length )
+      {
+        setInputText2(inputText2.substring(0, inputText2.length - 1));
+      }
+      else
+      {
+        if((state.human_position===0 || state.human_position===null) && (state.single_shift_counter===null || state.single_shift_counter===-1))
+        {
+          setInputText(inputText.substring(0, inputText.length-1));
+        }
+        else if(state.human_position===1)
+        {
+          setInputText(inputText.substring(1, inputText.length));
+        }
+        else if(state.single_shift_counter > 0)
+        {
+          console.log("first half=",inputText.substring(0,state.single_shift_counter-1))
+          console.log("second hlaf=",inputText.substring(state.single_shift_counter))
+          console.log("final text=",inputText.substring(0,state.single_shift_counter-1)+inputText.substring(state.single_shift_counter))
+          setInputText(inputText.substring(0,state.single_shift_counter-1)+inputText.substring(state.single_shift_counter))
+        }
+      }
+    }
+
+    setSingleShiftCounter('reset')
+    console.log("KEYBOARD ON 2")
+    setShowKeyboard(true);
+}; 
   return (
     <HumanContext.Provider
     value={{
@@ -1031,14 +1101,15 @@ const setWordLength=(len)=>{
         getFinalResultHC,
         sendMatchRoundHC,
         changeMatchStatusHC,
-        matchFinishResetHC,
+        resetHumanState,
         setMasterHistory,
         getHint,
         setLoading,
         setRandomPosition,
         setSingleShiftCounter,
         setWordLength,
-        getWordFromRapidApiHC
+        getWordFromRapidApiHC,
+        deleteChar
       }}>
       {children}
     </HumanContext.Provider>

@@ -1,22 +1,22 @@
 import React, {useEffect, Fragment, useContext,Suspense } from "react";
 import {useCharacterConsumerUpdate} from "./MyComponent/CharacterContext";
 import AuthContext from './MyComponent/context/auth/authContext'
-import Loading from '../component/MyComponent/Loading'
+import Loading from './MyComponent/Loading'
 import HumanContext from "./MyComponent/context/human/humanContext";
 import MediumLevelUI from "./MyComponent/LevelUI/MediumLevelUI";
 import ExpertAndGeniusLevelUI from "./MyComponent/LevelUI/ExpertAndGeniusLevelUI";
 import Trophy from "./MyComponent/Trophy";
-import CommonContext from '../component/MyComponent/context/common/commonContext'
+import CommonContext from './MyComponent/context/common/commonContext'
 const Keyboard = React.lazy(() => import('./Keyboard'));
 
-const Vscomputer = () => {
+const HumanVsComputer = () => {
   //console.log("Match===", level);
 /* 
   let element = document.getElementById('inputbox');
   console.log("element=",element)
  */
   const commonContext=useContext(CommonContext)
-  const {inputText,setIsActive,seconds,setInputText,backup_input_text,inputText2,setInputText2,game_level}=commonContext
+  const {inputText,setIsActive,seconds,setInputText,backup_input_text,inputText2,game_level}=commonContext
   const authContext=useContext(AuthContext)
   const {user,login_data}=authContext
   const {level}=login_data
@@ -42,7 +42,8 @@ const Vscomputer = () => {
     getHint,
     setSingleShiftCounter,
     single_shift_counter,
-    word_length
+    word_length,
+    deleteChar
   } = humanContext;
 
 
@@ -68,7 +69,7 @@ const Vscomputer = () => {
     }
 },[concede])
 
-  const deleteChar = () => {
+  /* const deleteChar = () => {
     //console.log("deletechar========",inputText)
 
       if(game_level==='easy')
@@ -135,12 +136,11 @@ const Vscomputer = () => {
       setSingleShiftCounter('reset')
       console.log("KEYBOARD ON 2")
       setShowKeyboard(true);
-  }; 
+  };  */
 
   const playFun = () => {
     setSingleShiftCounter('reset')
     setInputText(backup_input_text)
-    setSingleShiftCounter('zero')
     checkWordExistApi()
     //setResultWord();
     setIsActive(false)
@@ -339,4 +339,4 @@ else
   }
 };
 
-export default Vscomputer;
+export default HumanVsComputer;

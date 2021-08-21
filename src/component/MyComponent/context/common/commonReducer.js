@@ -5,7 +5,8 @@ import{
      SET_SECONDS,
      SET_GAME_STATUS,
      SET_BACKUP_INPUT_TEXT,
-     SET_GAME_LEVEL
+     SET_GAME_LEVEL,
+     RESET_COMMONSTATE
     } from '../../../../type'; 
     
     //comment
@@ -46,10 +47,18 @@ import{
                                 human_vs_online:true,
                               }
                             }
-                            else{
+                            else if(payload==='human_vs_frined'){
                               return{
                                 ...state,
                                 human_vs_frined:true
+                              }
+                            }
+                            else{
+                              return{
+                                ...state,
+                                human_vs_frined:false,
+                                human_vs_computer:false,
+                                human_vs_online:false
                               }
                             }
                             case SET_BACKUP_INPUT_TEXT:
@@ -62,6 +71,17 @@ import{
                                   ...state,
                                   game_level:payload
                                 }
+                                case RESET_COMMONSTATE:
+                                  return{
+                                    inputText:null,
+                                    inputText2:null,
+                                    isActive:false,
+                                    seconds:60,
+                                    human_vs_computer:false,
+                                    human_vs_frined:false,
+                                    human_vs_online:false,
+                                    game_level:null
+                                  }
                             
         default:
         return state;

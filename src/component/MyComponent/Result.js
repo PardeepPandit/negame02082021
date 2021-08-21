@@ -7,7 +7,7 @@ import CommonContext from './context/common/commonContext'
 export const Result = () => {
    
   const commonContext=useContext(CommonContext)
-  const {setInputText,inputText,setIsActive,setSeconds,setBackUpInputText,setInputText2 }=commonContext
+  const {setInputText,inputText,setIsActive,setSeconds,setBackUpInputText,setInputText2,game_level }=commonContext
 
 
   const humanContext=useContext(HumanContext)
@@ -18,8 +18,8 @@ export const Result = () => {
 
  const nextRound=()=>{
 
-  console.log("nextRound() called in Timer")
-  
+  console.log("nextRound() called in Timer");
+  (game_level==='easy' || game_level==='medium' || game_level==='expert') ? setSeconds(60) : setSeconds(120)
   sendMatchRoundHC(
     {
         id:start_match_computer.user1.id,
@@ -31,10 +31,9 @@ export const Result = () => {
      setLoading()
     
     setTimeout(()=>{
-      setInputText(null)
-      setInputText2(null)
-      setBackUpInputText(null)
-      setSeconds()
+      setInputText(null);
+      setInputText2(null);
+      setBackUpInputText(null);
       setIsActive(true)
       roundFinishResetHC()
   },2000) 

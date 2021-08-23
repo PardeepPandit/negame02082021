@@ -1,14 +1,10 @@
 
-import React, { Fragment,useState,useEffect,useContext} from 'react'
+import React, { Fragment,useContext} from 'react'
 
 import {Link} from 'react-router-dom'
-import { RESET_STATE, SET_ROUND_COMPLETE, SET_ROUND_RESULT, SET_SECONDS } from '../../../type'
 
 import CommonContext from  '../../MyComponent/context/common/commonContext'
 import PlayOnlineContext from '../context/playOnlineContext'
-
-
-
 
 
 export const FinalResultOnline = ({title}) => {
@@ -17,7 +13,7 @@ export const FinalResultOnline = ({title}) => {
   const {setInputText,setIsActive,setSeconds }=commonContext
 
   const playOnlineContext=useContext(PlayOnlineContext)
-  const {online_round_counter,round_result,final_result_winner_counter,final_result_loser_counter,final_result_data,setRoundComplete,resetState,searchUserOnline,setRoundResult,finalResultCounter,onlineMatchFinish}=playOnlineContext
+  const {final_result_winner_counter,final_result_data,resetState,setRoundResult,finalResultCounter,onlineMatchFinish}=playOnlineContext
 
     const {data}=final_result_data || {}
 

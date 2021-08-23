@@ -689,35 +689,34 @@ const getRandomWordFromApi=async()=>{
           }
             
         }
-        else if(input_text_length < random_word_length && game_level==='expert'){
-          
+        else if(input_text_length < random_word_length && game_level==='expert')
+        {  
            const random_word_len=state.random_word.length
            let demo_array=new Array(random_word_len)
            let random_number_set=Array.from(state.random_word).map((item,index)=>{
             return index
               })
+          
               let k=0;
-          for(let i=0;i<inputText.length;i++){
-
-            for(let j=k;j<random_word_len;j++){
-              
+          for(let i=0;i<inputText.length;i++)
+          {
+            for(let j=k;j<random_word_len;j++)
+            {
               //console.log(inputText[i].toLowerCase(),",",state.random_word[j],",",inputText[i].toLowerCase()===state.random_word[j])
-              if(inputText[i].toLowerCase()===state.random_word[j]){
-                //console.log("ok")
+              if(inputText[i].toLowerCase()===state.random_word[j])
+              {
+                
                   demo_array[j]=state.random_word[j]
                   random_number_set[j]=''
                   k=j+1 
-                  //console.log("check=",demo_array[j],",",j)
-                 
                   break;
               }
-              else if(Number.isInteger(random_number_set[j])){
+              else if(Number.isInteger(random_number_set[j]))
+              {
                 random_number_set[j]=j 
               }
             }
           }
-
-
 
           random_number_set=random_number_set.filter((item,index)=>{
             return item!==''
@@ -752,7 +751,8 @@ const getRandomWordFromApi=async()=>{
            setShowKeyboard(true)  */
 
         }
-        else if(input_text_length < random_word_length && game_level==='genius'){
+        else if(input_text_length < random_word_length && game_level==='genius')
+        {
           nextCharGenius()
         }
   }
@@ -784,7 +784,6 @@ const setNextCharacter=(char)=>{
 
   const checkHintCount=async(id)=>{
     
-    console.log("CheckHintCount called=")
     setLoading()
     const config={
       headers:{

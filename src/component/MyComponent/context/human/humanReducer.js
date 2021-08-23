@@ -220,6 +220,7 @@ export default (state,action)=>{
                                                         concede:false,
                                                         position:null,
                                                         start_match_computer:null,
+                                                        word_length:null,
                                                         turn:'human',
                                                         next_char:null,
                                                         temp_word:null,

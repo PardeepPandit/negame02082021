@@ -1,4 +1,4 @@
-import React, {useEffect, Fragment, useContext,Suspense } from "react";
+import React, {useEffect, Fragment, useContext,Suspense, useState } from "react";
 import {useCharacterConsumerUpdate} from "./MyComponent/CharacterContext";
 import AuthContext from './MyComponent/context/auth/authContext'
 import Loading from './MyComponent/Loading'
@@ -7,6 +7,7 @@ import MediumLevelUI from "./MyComponent/LevelUI/MediumLevelUI";
 import ExpertAndGeniusLevelUI from "./MyComponent/LevelUI/ExpertAndGeniusLevelUI";
 import Trophy from "./MyComponent/Trophy";
 import CommonContext from './MyComponent/context/common/commonContext'
+import ChallengePopUpHC from './MyComponent/context/human/ChallengePopUpHC'
 const Keyboard = React.lazy(() => import('./Keyboard'));
 
 const HumanVsComputer = () => {
@@ -16,7 +17,7 @@ const HumanVsComputer = () => {
   console.log("element=",element)
  */
   const commonContext=useContext(CommonContext)
-  const {inputText,setIsActive,seconds,setInputText,backup_input_text,inputText2,game_level}=commonContext
+  const {inputText,setIsActive,seconds,setInputText,backup_input_text,inputText2,game_level,setSeonds}=commonContext
   const authContext=useContext(AuthContext)
   const {user,login_data}=authContext
   const {level}=login_data
@@ -43,7 +44,8 @@ const HumanVsComputer = () => {
     setSingleShiftCounter,
     single_shift_counter,
     word_length,
-    deleteChar
+    deleteChar,
+    setWordLength
   } = humanContext;
 
 
@@ -51,7 +53,7 @@ const HumanVsComputer = () => {
 
   const {image_path,user1}=start_match_computer
   const {image}=user1
-
+  const [challenge,setChallenge]=useState(()=>false)
   const { myTurn } = useCharacterConsumerUpdate();
 
   useEffect(()=>{
@@ -156,9 +158,29 @@ const HumanVsComputer = () => {
     myTurn(e);
   };
 
+  const compareChallengedString=()=>{
+      let old_str=Array.from(inputText).sort().join('').toString()
+      let new_str=Array.from(inputText2).sort().join('').toString()
+   //   console.log("compare=",old_str,",",new_str)
+      if(old_str===new_str)
+      {
+        console.log("Congratulations you win")
+        setCurrentWinnerLoserHC('winner')
+      }
+      if(old_str!==new_str){
+        console.log("Please try again")
+        alert("please enter correct word")
+      }
+  }
+console.log("challenge=",challenge)
 if(loading_HC)
 {
   return <Loading/>
+}
+else if(inputText!==null && word_length===inputText.length && !challenge)
+{
+  //setIsActive(false)
+  return <ChallengePopUpHC setChallenge={setChallenge} />
 }
 else 
 {
@@ -225,7 +247,8 @@ else
                 {game_level==="medium" && show_keyboard && <MediumLevelUI />}
                 {(game_level==="expert" || (game_level==="genius" && inputText!==null && inputText.length!==word_length)) && show_keyboard && <ExpertAndGeniusLevelUI/>}
                 {/* {game_level==="genius" && show_keyboard && inputText!==null && inputText.length!==word_length &&<GeniusLevelUI/>} */}
-                {game_level==="genius" && show_keyboard && inputText!==null && inputText.length===word_length && <input type="text" className="main-input" value={inputText2}/>}
+           
+                 {game_level==="genius" && show_keyboard && inputText!==null && inputText.length===word_length && challenge && <input type="text" className="main-input" value={inputText2}/>}  
 
                 {show_keyboard ? (
                   <div class="keypad" >
@@ -239,7 +262,7 @@ else
                           {game_level==='genius' && inputText!==null && inputText.length===word_length ? 
                           <Fragment>
                     <div className="play_btn_m game-buttons">
-                      <button onClick={()=>playFun()}>Play</button>
+                      <button onClick={()=>compareChallengedString()}>Check</button>
                       <button onClick={()=>deleteChar()}>
                         <img src="assets/img/backspace.svg" alt="" width="27" />
                       </button>

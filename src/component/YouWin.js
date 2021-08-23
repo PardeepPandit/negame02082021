@@ -1,9 +1,7 @@
-import React, { Fragment,useContext,useEffect,useState } from 'react';
+// eslint-disable-next-line react-hooks/exhaustive-deps
+import React, { Fragment,useContext,useEffect} from 'react';
 import {Link} from 'react-router-dom'
 import PlayOnlineContext from './playonline/context/playOnlineContext'
-import {useTimerConsumer,useTimerConsumerUpdate} from './MyComponent/TimerContext'
-import humanContext from './MyComponent/context/human/humanContext';
-import HumanContext from './MyComponent/context/human/humanContext';
 import CommonContext from './MyComponent/context/common/commonContext'
 
 
@@ -13,11 +11,10 @@ const YouWin = () => {
     const {setSeconds,seconds,setIsActive}=commonContext
 
     const playOnlineContext=useContext(PlayOnlineContext)
-    const {word_definition,resetState,winner_loser,saveWord,onlineUser,sendMatchRound,online_round_counter,setRoundComplete,round_complete,setApiHit,setCurrentStatus,setShowKeyboard,interval_id,get_word,clearAllInterval,opponent_click_next_round_button,user_click_next_round_button,showNextRoundButton,setShowNextRoundButton,setUserOpponentAgree,finalResultCounter,final_result_winner_counter,final_result_loser_counter,setwinnerLoser,getFinalResultOnline,final_result_data,changeMatchStatus}=playOnlineContext
-    const humanContext=useContext(HumanContext);
-    const {setConcede}=humanContext
+    const {word_definition,resetState,winner_loser,saveWord,onlineUser,sendMatchRound,online_round_counter,setRoundComplete,setShowKeyboard,get_word,clearAllInterval,opponent_click_next_round_button,user_click_next_round_button,showNextRoundButton,setShowNextRoundButton,setUserOpponentAgree,finalResultCounter,final_result_winner_counter,final_result_loser_counter,setwinnerLoser,getFinalResultOnline,changeMatchStatus}=playOnlineContext
+ 
     const {data}=get_word || {}
-    const {word,user_id,gamestatus,challenge,concede}=data || {}
+    const {user_id,gamestatus,challenge,concede}=data || {}
 
     useEffect(()=>{
         if(showNextRoundButton===true && (final_result_winner_counter!==3 && final_result_loser_counter!==3)){
@@ -54,7 +51,7 @@ const YouWin = () => {
             )
 
                     if(onlineUser.user1.user_id!==user_id && gamestatus==='101' && challenge==='0' && concede==='0'){
-                            console.log("calling save word API in response of 101 ")
+                        console.log("calling save word API in response of 101 ")
                         saveWord({
                             match_id:onlineUser.user1.match_id,
                             gamestatus:'0',
@@ -63,7 +60,6 @@ const YouWin = () => {
                             challenge:"0",
                             word:""
                         },6)
-                       
                     }
                     else{
                         console.log("calling save word API form you Win on winner popup")
@@ -91,6 +87,7 @@ const YouWin = () => {
             //setRoundComplete(true)
       
      }
+     
     },[winner_loser])
     
     useEffect(()=>{

@@ -1,7 +1,5 @@
-import Reac,{Fragment,useContext} from 'react';
-import { Link } from 'react-router-dom';
+import React,{Fragment,useContext} from 'react';
 import PlayOnlineContext from '../context/playOnlineContext';
-import { useTimerConsumerUpdate } from '../../MyComponent/TimerContext';
 import CommonContext from '../../MyComponent/context/common/commonContext'
 
 
@@ -13,7 +11,6 @@ const ChallengePopup = () => {
 
     const playOnlineContext=useContext(PlayOnlineContext)
     const {setPopup}=playOnlineContext
-    const {resetTime}=useTimerConsumerUpdate();
 
     return (
 

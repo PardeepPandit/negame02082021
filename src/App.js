@@ -10,12 +10,9 @@ import Register from './component/Register';
 import Update from './component/Update';
 import ChoosePlan from './component/ChoosePlan';
 import HumanVsComputer from './component/HumanVsComputer';
-import Playfrind from './component/Playfrind';
 import Word from './component/Word';
 import Post from './component/Post';
 import Notifiction from './component/Notifiction';
-import Request from './component/Request';
-import Sent from './component/Sent';
 import ChangePassword from './component/Changepassword';
 
 
@@ -69,6 +66,7 @@ import axios from 'axios';
 function App(props) {
   var counter = 1;
 const [token,setToken]=useState()
+
  /* const [finishStatus, setfinishStatus] = useState(false);
 
  console.log(window.innerHeight); 
@@ -144,7 +142,7 @@ if(!online){
 else{ */
   return (
     <div>
-     <CommonState>
+      <CommonState>
       <PlayOnlineState>
       <MasterState>
       <AlertState>
@@ -172,13 +170,10 @@ else{ */
             <Route exact path='/resultcomputer' component={ResultComputer} />
              {/* <Route exact path='/main' component={Main} />  */}
              <PrivateRoute exact path='/human_vs_computer' component={HumanVsComputer} /> 
-            <Route exact path="/playfrind" component={Playfrind} />
             <Route exact path="/word" component={Word} />
             <Route exact path="/Post" component={Post} />
             <Route exact path="/notifiction" component={Notifiction} />
             <Route exact path="/friend" component={Friend} />
-            <Route exact path="/request" component={Request} />
-            <Route exact path="/sent" component={Sent} />
             <PrivateRoute exact path="/chooseplan" component={ChoosePlan} />
             <Route exact path="/hint" component={Hint} />
              {/* <Route exact path='/profile' render={(props) => (

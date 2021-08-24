@@ -12,12 +12,12 @@ const Keyboard = React.lazy(() => import('./Keyboard'));
 
 const HumanVsComputer = () => {
   //console.log("Match===", level);
-/* 
-  let element = document.getElementById('inputbox');
-  console.log("element=",element)
- */
+  /* 
+    let element = document.getElementById('inputbox');
+    console.log("element=",element)
+  */
   const commonContext=useContext(CommonContext)
-  const {inputText,setIsActive,seconds,setInputText,backup_input_text,inputText2,game_level,setSeonds}=commonContext
+  const {inputText,setIsActive,seconds,setInputText,backup_input_text,inputText2,game_level}=commonContext
   const authContext=useContext(AuthContext)
   const {user,login_data}=authContext
   const {level}=login_data
@@ -45,16 +45,27 @@ const HumanVsComputer = () => {
     single_shift_counter,
     word_length,
     deleteChar,
-    setWordLength
+    setResultWord
   } = humanContext;
 
 
-  const {count,hint_id}=hint_count
+  const {count,hint_id}=hint_count || {}
 
-  const {image_path,user1}=start_match_computer
-  const {image}=user1
+  const {image_path,user1}=start_match_computer || {}
+  const {image}=user1 || {}
   const [challenge,setChallenge]=useState(()=>false)
   const { myTurn } = useCharacterConsumerUpdate();
+
+ 
+
+/*   useEffect(()=>{
+    if(seconds===0){
+        setCurrentWinnerLoserHC('loser')
+        setResultWord(inputText,'Time Over')
+      }
+  },[seconds]) */
+
+
 
   useEffect(()=>{
     if(concede){
@@ -71,79 +82,10 @@ const HumanVsComputer = () => {
     }
 },[concede])
 
-  /* const deleteChar = () => {
-    //console.log("deletechar========",inputText)
-
-      if(game_level==='easy')
-      {
-        setInputText(inputText.substring(0,inputText.length-1))
-      }
-      else if(game_level==='medium')
-      {
-
-        if(human_position===0 || human_position===null)
-        {
-          setInputText(inputText.substring(0, inputText.length-1));
-        }
-        else if(human_position===1){
-          setInputText(inputText.substring(1, inputText.length));
-        }
-      }
-      else if(game_level==='expert')
-      {
-        if((human_position===0 || human_position===null) && (single_shift_counter===null || single_shift_counter===-1))
-        {
-          setInputText(inputText.substring(0, inputText.length-1));
-        }
-        else if(human_position===1)
-        {
-          setInputText(inputText.substring(1, inputText.length));
-        }
-        else if(single_shift_counter > 0)
-        {
-          console.log("first half=",inputText.substring(0,single_shift_counter-1))
-          console.log("second hlaf=",inputText.substring(single_shift_counter))
-          console.log("final text=",inputText.substring(0,single_shift_counter-1)+inputText.substring(single_shift_counter))
-          setInputText(inputText.substring(0,single_shift_counter-1)+inputText.substring(single_shift_counter))
-        }
-        
-      }
-      else if(game_level==='genius' )
-      {
-        
-        if(inputText!==null && inputText.length===word_length )
-        {
-          setInputText2(inputText2.substring(0, inputText2.length - 1));
-        }
-        else
-        {
-          if((human_position===0 || human_position===null) && (single_shift_counter===null || single_shift_counter===-1))
-          {
-            setInputText(inputText.substring(0, inputText.length-1));
-          }
-          else if(human_position===1)
-          {
-            setInputText(inputText.substring(1, inputText.length));
-          }
-          else if(single_shift_counter > 0)
-          {
-            console.log("first half=",inputText.substring(0,single_shift_counter-1))
-            console.log("second hlaf=",inputText.substring(single_shift_counter))
-            console.log("final text=",inputText.substring(0,single_shift_counter-1)+inputText.substring(single_shift_counter))
-            setInputText(inputText.substring(0,single_shift_counter-1)+inputText.substring(single_shift_counter))
-          }
-        }
-      }
-
-      setSingleShiftCounter('reset')
-      console.log("KEYBOARD ON 2")
-      setShowKeyboard(true);
-  };  */
-
   const playFun = () => {
     setSingleShiftCounter('reset')
     setInputText(backup_input_text)
-    checkWordExistApi()
+    checkWordExistApi(inputText)
     //setResultWord();
     setIsActive(false)
   };
@@ -165,9 +107,11 @@ const HumanVsComputer = () => {
       if(old_str===new_str)
       {
         console.log("Congratulations you win")
-        setCurrentWinnerLoserHC('winner')
+        checkWordExistApi(inputText2)
+       // setCurrentWinnerLoserHC('winner')
       }
-      if(old_str!==new_str){
+      if(old_str!==new_str)
+      {
         console.log("Please try again")
         alert("please enter correct word")
       }
@@ -200,8 +144,7 @@ else
                      src={login_data.image==="" ? 
                     process.env.PUBLIC_URL + "/assets/img/logo.png":  login_data.image_path+'/'+login_data.image } */
 
-                    src={start_match_computer && image==="" ? 
-                    process.env.PUBLIC_URL + "/assets/img/logo.png": image_path+'/'+image }
+                    src={start_match_computer && image==="" ? process.env.PUBLIC_URL + "/assets/img/logo.png": image_path+'/'+image }
                     //src={user ? !loading && user.image_path+'/'+user.data.image : process.env.PUBLIC_URL + "/assets/img/logo.png"}
                     //src={process.env.PUBLIC_URL + "/assets/img/logo.png"}
                     alt="logo"

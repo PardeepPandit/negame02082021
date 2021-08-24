@@ -4,17 +4,17 @@ export const TopAdd = () => {
     return (
         <Fragment>
             <div className="col-lg-8 mb-5 offset-md-2">
-                    <div id="demo" class="carousel slide" data-ride="carousel">
-                        <div class="carousel-inner">
-                            <div class="carousel-item active">
+                    <div id="demo" className="carousel slide" data-ride="carousel">
+                        <div className="carousel-inner">
+                            <div className="carousel-item active">
                             <img src="assets/img/ad1.jpg" alt="" className="img-fluid" />
                             </div>
 
-                            <div class="carousel-item">
+                            <div className="carousel-item">
                             <img src="assets/img/ad2.jpg" alt="" className="img-fluid" />
                             </div>
 
-                            <div class="carousel-item">
+                            <div className="carousel-item">
                             <img src="assets/img/ad3.jpg" alt="" className="img-fluid" />
                             </div>
                         </div>
@@ -29,9 +29,6 @@ export const TopAdd = () => {
                             </div>
                         </div>
                         
-                        <div className="col-lg-2">
-                            <img src="assets/img/ad4.jpg" alt="" className="img-fluid" />
-                        </div>
         </Fragment>
     )
 }

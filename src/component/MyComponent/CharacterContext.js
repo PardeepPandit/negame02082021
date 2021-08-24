@@ -1,6 +1,4 @@
 import React, { useContext, useState, useEffect } from 'react'
-import { useTimerConsumer, useTimerConsumerUpdate } from './TimerContext'
-import { useMainConsumer, useMainConsumerUpdate } from './MainContext'
 import {useBackgroundMusicConsumer} from './CustomHook'
 import CommonContext from './context/common/commonContext'
 import useSound from 'use-sound';
@@ -100,7 +98,7 @@ const {game_type,onlineUser}=playOnlineContext
   }
 
   useEffect(() => {
-    console.log("Calling getrandom char******************************** 2")
+    console.log("Calling getrandom char********************************2")
     
    setInputText(getRandomChar())
    console.log("Set Turn 1 human")

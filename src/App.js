@@ -67,7 +67,7 @@ function App(props) {
   var counter = 1;
 const [token,setToken]=useState()
 
- /* const [finishStatus, setfinishStatus] = useState(false);
+  const [finishStatus, setfinishStatus] = useState(false);
 
  console.log(window.innerHeight); 
  const onBackButtonEvent = (e) => {
@@ -92,9 +92,9 @@ const [token,setToken]=useState()
     return () => {
       window.removeEventListener('popstate', onBackButtonEvent);  
     };
-  },[]);   */
+  },[]);   
 
-useEffect(()=>{
+ useEffect(()=>{
   console.log("Firebase")
   const messaging=firebase.messaging()
   console.log("MEssage=",messaging)
@@ -106,7 +106,7 @@ useEffect(()=>{
     setToken(token)
   }).catch((err)=>console.log("Error=",err))
 })
-
+ 
 /*  useEffect(()=>{
 
   window.addEventListener("beforeunload", (ev) => 
@@ -149,11 +149,11 @@ else{ */
       <AuthState> 
       <LeaderState>
       <MainProvider>
-        <HumanState>
+      <HumanState>
       <CustomHookProvider>
       <TimerProvider>
-        <CharacterProvider>
-          <Alerts/>
+      <CharacterProvider>
+      <Alerts/>
           <Switch>
             <Route exact path="/" component={Login} />
             <Route exact path="/facebook" component={ReactFacebookLogin} />
@@ -202,19 +202,18 @@ else{ */
             <PrivateRoute exact path='/playonline' component={PlayOnline}/>
             <Route exact path='/challenge' component={Challenge}/>
           <Route component={NotFoundPage}/>
-          </Switch>
-         
-        </CharacterProvider>
+          </Switch>  
+      </CharacterProvider>
       </TimerProvider>
       </CustomHookProvider>
       </HumanState>
       </MainProvider>
       </LeaderState>
-    </AuthState>
-    </AlertState>
-    </MasterState> 
-    </PlayOnlineState>
-    </CommonState>
+      </AuthState>
+      </AlertState>
+      </MasterState> 
+      </PlayOnlineState>
+      </CommonState>
     </div>
   )
            // }

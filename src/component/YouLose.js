@@ -1,7 +1,6 @@
 import React, { Fragment ,useEffect,useContext,useState} from 'react'
 import {Link} from 'react-router-dom'
 import PlayOnlineContext from './playonline/context/playOnlineContext'
-import {useTimerConsumer,useTimerConsumerUpdate} from './MyComponent/TimerContext'
 import CommonContext from './MyComponent/context/common/commonContext'
 
 export const YouLose = () => {

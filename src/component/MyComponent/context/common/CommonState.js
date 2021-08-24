@@ -27,7 +27,9 @@ const CommonState=({children})=>{
    game_level:null
   };
  
+  console.log("Common State...")
   const [state,dispatch]=useReducer(commonReducer,initialState);
+
   useEffect(()=>{
 
     if(state.inputText!==null){

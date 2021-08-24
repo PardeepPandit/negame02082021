@@ -100,7 +100,8 @@ useEffect(()=>{
     if(game_level==='easy'){
       setInputText(inputText+state.next_char.toUpperCase())
     }
-    else if(game_level==='medium'){
+    else if(game_level==='medium')
+    {
       
       state.computer_position===0 ? setInputText(state.next_char.toUpperCase()+inputText) :setInputText(inputText+state.next_char.toUpperCase())
       
@@ -150,7 +151,7 @@ useEffect(()=>{
           console.log("calling checkwordApi ")
           //call checkWordExistApi to check computer's word
 
-            checkWordExistApi()
+            checkWordExistApi(inputText)
         }
       
 },[inputText]) 
@@ -429,7 +430,8 @@ const setCurrentWinnerLoserHC=(win_lose)=>{
 const frequencyCounter=()=>{
 
     return inputText.split('').reduce((total, letter) => {
-      total[letter] ? total[letter]++ : total[letter] = 1;
+      console.log(letter,"==",total[letter])
+      total[letter] = total[letter] + 1 || 1
       return total;
     }, {});
 
@@ -601,14 +603,14 @@ const getRandomWordFromApi=async()=>{
 //////////////////////////////////////////////////////////////////
 
 
-  const checkWordExistApi=async()=>{
+  const checkWordExistApi=async(check_word)=>{
     console.log(`${state.turn} checks word=`,inputText.toLowerCase())
     const config={
       headers: {
         'X-RapidAPI-Key' : '0689b1157bmsh9ca7f4b5701a660p1080c2jsn9e2fa49e7bcf'
       }
     }
-    let check_word=inputText
+    //let check_word=inputText
     if(game_level==='genius' && inputText!==null && inputText.length===state.word_length){
       check_word=inputText2
     }

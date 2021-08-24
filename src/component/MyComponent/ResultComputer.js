@@ -1,7 +1,5 @@
 import React, { Fragment,useState,useEffect,useContext} from 'react'
 import {Redirect,useHistory} from 'react-router-dom'
-import {Link} from 'react-router-dom'
-import { useTimerConsumer,useTimerConsumerUpdate } from './TimerContext'
 import {useCharacterConsumer,useCharacterConsumerUpdate} from './CharacterContext'
 import {useMainConsumer,useMainConsumerUpdate} from './MainContext'
 import Result from './Result'
@@ -18,7 +16,6 @@ export const ResultComputer= () => {
 
   const humanContext=useContext(HumanContext)
   const {winner_counter,loser_counter}=humanContext
-  const {setLoser,resetTime}=useTimerConsumerUpdate();
   const {redirectTo,finish}=useMainConsumer();
   const {round}=useCharacterConsumer();
   //const [finish,setFinish]=useState(false)

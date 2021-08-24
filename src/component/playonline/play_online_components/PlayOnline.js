@@ -3,10 +3,6 @@ import { Link } from "react-router-dom";
 import PlayOnlineContext from "../context/playOnlineContext";
 import HumanContext from "../../MyComponent/context/human/humanContext"
 import AuthContext from "../../MyComponent/context/auth/authContext";
-import {
-  useTimerConsumer,
-  useTimerConsumerUpdate,
-} from "../../MyComponent/TimerContext";
 import $ from "jquery";
 import MediumLevelUI from "../../MyComponent/LevelUI/MediumLevelUI";
 import Trophy from "../../MyComponent/Trophy";
@@ -71,9 +67,6 @@ const PlayOnline = () => {
   
   const { user1, user2 ,image_path} =JSON.parse(localStorage.getItem('start_match_online')) || onlineUser
 
-  const {  isActive } = useTimerConsumer();
-  const {resetTime, clearTime, setSeconds } =
-    useTimerConsumerUpdate();
 
   const [showChallenge, setShowChallenge] = useState(false);
 

@@ -5,9 +5,9 @@ import 'react-toastify/dist/ReactToastify.css';
 import AuthContext from './MyComponent/context/auth/authContext'
 import AlertContext from './MyComponent/context/alert/alertContext'
 import MasterContext from './MyComponent/context/master/masterContext'
-//import TopAdd from './MyComponent/Adds/TopAdd'
-//import Footer from "./Footer";
 const TopAdd=React.lazy(()=>import('./MyComponent/Adds/TopAdd'))
+const LeftAdd=React.lazy(()=>import('./MyComponent/Adds/LeftAdd'))
+const RightAdd=React.lazy(()=>import('./MyComponent/Adds/RightAdd'))
 const Footer=React.lazy(()=>import('./Footer'))
 
 function Login(props) {
@@ -75,56 +75,43 @@ else{
                     <div className="row">
                         <Suspense fallback={<div>Loading...</div>}>
                                 <TopAdd/>
+                                <LeftAdd/>
                         </Suspense>
                         
             <div className="col-lg-8">
-                <div className="login-wrapper">
-                <h2>Login</h2>                    
-                    
-                    
-                    <div className="login-form">
-                    <form onSubmit={e=>onSubmit(e)}>
-                                <div className="form-group form-fg">
-                                     <input type="text" name="username" className="input-text"value={username}  onChange={e=>onChange(e)}   placeholder="Username" required />
-                                </div>
-                                {/* <div className="form-group form-fg">
-                                <input type="text" name="register_type" className="input-text" value={register_type} onChange={e=>onChange(e)} placeholder="Email Address"/>
-                                <i className="fa fa-envelope"></i>
-
-                            </div> */}
-                            <div className="form-group form-fg">
-                                <input type="password" name="password" className="input-text"  value={password} onChange={e=>onChange(e)} placeholder="Password" required/>                                
-                            </div>
-
-                            <NavLink to="/forgot" className="forgetpass">Forgot Password</NavLink>
-                            <div className="form-group mt-2">
-                                <input type="submit" className="btn-md btn-fg btn-block" value='Login'/>
-                            </div>
-                            
-                        </form>
-                    </div>                    
-                </div>
-
-
-
-                <div className="social-login">
-                    <h3>Login With:</h3>
-                        <ul className="login-list">
-                            <li><a href="/facebook" className="facebook"><span>Facebook</span></a></li>
-                            {/* <li><a href="#" className="twitter"><i className="fa fa-twitter twitter-i"></i><span>Twitter</span></a></li> */}
-                            <li><a href="/google" className="google"><span>Google</span></a></li>
-                        </ul>
-                    <p>Don't have an account?* <Link to="/register" className="linkButton"> Register</Link></p>
-                </div>
-
-
-            </div>
-
-                        <div className="col-lg-2">
-                            <img src="assets/img/ad5.jpg" alt="" className="img-fluid" />
+            <div className="login-wrapper">
+            <h2>Login</h2>
+            <div className="login-form">
+            <form onSubmit={e=>onSubmit(e)}>
+                        <div className="form-group form-fg">
+                                <input type="text" name="username" className="input-text"value={username}  onChange={e=>onChange(e)}   placeholder="Username" required />
                         </div>
-
+                    <div className="form-group form-fg">
+                        <input type="password" name="password" className="input-text"  value={password} onChange={e=>onChange(e)} placeholder="Password" required/>                                
                     </div>
+
+                    <NavLink to="/forgot" className="forgetpass">Forgot Password</NavLink>
+                    <div className="form-group mt-2">
+                        <input type="submit" className="btn-md btn-fg btn-block" value='Login'/>
+                    </div>
+                    
+                </form>
+            </div>                    
+        </div>
+        <div className="social-login">
+            <h3>Login With:</h3>
+                <ul className="login-list">
+                    <li><a href="/facebook" className="facebook"><span>Facebook</span></a></li>
+                    {/* <li><a href="#" className="twitter"><i className="fa fa-twitter twitter-i"></i><span>Twitter</span></a></li> */}
+                    <li><a href="/google" className="google"><span>Google</span></a></li>
+                </ul>
+            <p>Don't have an account?* <Link to="/register" className="linkButton"> Register</Link></p>
+        </div>
+            </div>
+            <Suspense fallback={<div>Loading...</div>}>
+            <RightAdd/>
+            </Suspense>
+                </div>
                 </div>
             </div>
         </div>

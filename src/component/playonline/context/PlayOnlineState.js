@@ -72,7 +72,7 @@ const [state, dispatch] = useReducer(playOnlineReducer, initialState)
 const commonContext=useContext(CommonContext)
 const{inputText,setInputText,isActive,setIsActive,setSeconds}=commonContext
 
-
+console.log("play online state...")
 const finalResultCounter=(winner_loser)=>{
     dispatch({
         type:FINAL_RESULT_COUNTER,

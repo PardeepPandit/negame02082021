@@ -3,7 +3,6 @@ import AuthContext from './authContext';
 import authReducer from './authReducer';
 import AlertContext from '../alert/alertContext'
 import MasterContext from '../master/masterContext'
-import {Redirect} from 'react-router-dom'
 import axios from 'axios'
 import{
   REGISTER_SUCCESS,
@@ -21,7 +20,6 @@ import{
   PLAY,
   SET_LOADING
 } from '../../../../type'; 
-import { StaticRouter } from 'react-router';
 
 const AuthState=({children})=>{
   const initialState={

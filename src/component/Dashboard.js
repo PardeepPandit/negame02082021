@@ -1,8 +1,5 @@
 import React, { useState,useEffect,Fragment, useContext,useHistory} from 'react';
 import { Link, Redirect } from 'react-router-dom';
-import { useTimerConsumer,useTimerConsumerUpdate } from './MyComponent/TimerContext'
-import {useCharacterConsumer,useCharacterConsumerUpdate} from './MyComponent/CharacterContext'
-import {useMainConsumer,useMainConsumerUpdate} from './MyComponent/MainContext'
 import PlayOnlineContext from './playonline/context/playOnlineContext'
 import AuthContext from './MyComponent/context/auth/authContext'
 import HumanContext from './MyComponent/context/human/humanContext';
@@ -28,9 +25,6 @@ const Dashboard = (props) => {
     const humanContext=useContext(HumanContext)
     const {startMatchComputer,start_match_computer,loading,checkHintCount,setWordLength}=humanContext
 
-    const {isActive,loser}=useTimerConsumer();
-    const {setLoser}=useTimerConsumerUpdate();
-    const {setCon,setAlpha}=useMainConsumerUpdate()
     const [showLevel,setShowLevel]=useState(false)
     const [levelCheck,setLevelCheck]=useState(false)
     const [levelNumber,setLevelNumber]=useState(level)
@@ -75,26 +69,14 @@ const Dashboard = (props) => {
           if(start_match_computer){
 
                 //moveForward()
-                setCon(false)
-                setLoser({name:'You',out:false})
+                //setCon(false)
                 console.log("***************SET IS ACTIVE 2***************")
                 setIsActive(true)  
                 setStartMatch(false)
             }      
     },[start_match_computer])  
 
-    
-
-/* const moveForward=()=>{
-    console.log("MOVE FORWARD CALLED")
-  
-    
-    setCon(false)
-    setLoser({name:'You',out:false})
-    setIsActive(true)  
-    setStartMatch(false)
-} */
-         const onClick=(levelno,l_type)=>{
+        const onClick=(levelno,l_type)=>{
                     
                     setGameLevel(l_type)
                     checkHintCount(user.data.id)
@@ -281,7 +263,6 @@ const playOnline=()=>{
                         setSeconds(120) 
                         setWordLengthPopUp(true)}}>Genius*</Link> :
                      <Link to='#' onClick={()=>{
-                        
                         setShowLevel(false)
                         setLevelCheck(true)
                     }}>Genius</Link>}</li>

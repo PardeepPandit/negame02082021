@@ -1,4 +1,4 @@
-import React,{useReducer,useEffect} from 'react'
+import React,{useReducer,useEffect, useContext} from 'react'
 import axios from 'axios'
 import masterReducer from '../master/masterReducer'
 import MasterContext from '../master/masterContext'
@@ -15,8 +15,10 @@ const initialState={
     showPopup:true
 }
 
-const [state,dispatch]=useReducer(masterReducer,initialState);
 
+
+const [state,dispatch]=useReducer(masterReducer,initialState);
+console.log("Master state")
 
 useEffect(async()=>{
     setLoading()

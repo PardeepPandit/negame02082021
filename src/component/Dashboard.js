@@ -9,14 +9,17 @@ import Spinner from '../component/MyComponent/Spinner';
 import Level from './Level'
 import CommonContext from './MyComponent/context/common/commonContext'
 import WordLengthUI from './MyComponent/LevelUI/WordLengthUI';
-import { SET_SECONDS, STATE_LIST } from '../type';
+import RightAdd from './MyComponent/Adds/RightAdd'
+import LeftAdd from './MyComponent/Adds/LeftAdd'
+import PlayBackPopup from './PlayBackPopup';
+import {withRouter} from 'react-router-dom'
 
 
 const Dashboard = (props) => {
     //console.log("Home rendring")
-
+   
     const commonContext =useContext(CommonContext)
-    const {setInputText,setIsActive,setSeconds,setGameStatus,exitUser,setGameLevel}=commonContext
+    const {game_type,setInputText,setIsActive,setSeconds,setGameType,exitUser,setGameLevel,loadGameLevels,human_vs_computer,human_vs_online,load_game_level}=commonContext
 
     const authContext=useContext(AuthContext)
     const {user,login_data}=authContext
@@ -27,17 +30,18 @@ const Dashboard = (props) => {
 
     const [showLevel,setShowLevel]=useState(false)
     const [levelCheck,setLevelCheck]=useState(false)
-    const [levelNumber,setLevelNumber]=useState(level)
+    const [levelNumbers,setLevelNumbers]=useState(level)
     const [startMatch,setStartMatch]=useState(false)
 
     const playOnlineContext=useContext(PlayOnlineContext)
-    const {searchUserOnline,onlineUser,gameType,game_type,online_match_finish,onlineMatchFinish}=playOnlineContext
+    const {searchUserOnline,onlineUser,gameType,online_match_finish,onlineMatchFinish}=playOnlineContext
     const [search,setSearch]=useState(false)
     const [sec,setSec]=useState(()=>10)
     console.log("login data=",login_data)
     const [wordLengthPopUp,setWordLengthPopUp]=useState(false)
+    const [startgame,setStartGame]=useState({levelno:null,l_type:null})
     
- /*    useEffect(()=>{
+/*     useEffect(()=>{
 
         window.addEventListener("beforeunload", (ev) => 
       {  
@@ -47,52 +51,67 @@ const Dashboard = (props) => {
           return ev.returnValue = 'Are you sure you want to close?';
       }); 
       
-      },[])  */
+      },[])  */ 
 
-    useEffect(() => {
+/*     useEffect(() => {
        console.log("show level=",showLevel)
        console.log("level check=",levelCheck)
-    }, [levelCheck,showLevel])
+    }, [levelCheck,showLevel]) */
 
     useEffect(()=>{
+        let mounted = true;
         //if onlineUser has data then setIsActive to start timer
-        if(onlineUser && onlineUser!=='opponent_not_found' && onlineUser.user1.start==="1" && !online_match_finish){
-            console.log("***************SET IS ACTIVE 1***************")
-            setIsActive(true)
+        if(mounted)
+        {
+            if(onlineUser && onlineUser!=='opponent_not_found' && onlineUser.user1.start==="1" && !online_match_finish){
+                console.log("***************SET IS ACTIVE 1***************")
+                setIsActive(true)
+            }
         }
+       
+        return () => mounted = false;
     },[onlineUser,online_match_finish])
 
 
-      useEffect(()=>{
+   /*    useEffect(()=>{
        // console.log("start_match_computer useEffect=",start_match_computer)
-
-          if(start_match_computer){
-
+       console.log("Test case 3");
+          if(start_match_computer)
+          {
                 //moveForward()
-                //setCon(false)
                 console.log("***************SET IS ACTIVE 2***************")
                 setIsActive(true)  
                 setStartMatch(false)
-            }      
-    },[start_match_computer])  
+          }      
+    },[start_match_computer])   */
 
-        const onClick=(levelno,l_type)=>{
-                    
-                    setGameLevel(l_type)
-                    checkHintCount(user.data.id)
-                    setStartMatch(true) 
-                    
-                    if(game_type==='playonline')
-                    {
-                            playOnline()
-                    }
-                    else if(game_type==='humanvscomputer'){
 
-                            (l_type==='easy' || l_type==='medium' || l_type==='expert') ? setSeconds(60) : setSeconds(120)
-                            startMatchComputer(login_data.id,levelno)
-                    }            
-         
-        } 
+    useEffect(()=>{
+        console.log("state=>",startgame.levelno,",",startgame.l_type)
+        if(startgame.levelno && startgame.l_type){
+            console.log("Game Start")
+            //onClick(startgame.levelno,startgame.l_type)
+        }
+    },[startgame])
+  
+        /* const onClick=(levelno,l_type)=>{
+            console.log("ONClick function called=",human_vs_computer)
+            setGameLevel(l_type)
+            checkHintCount(user.data.id)
+            //setStartMatch(true) 
+            
+            if(human_vs_online)
+            {
+                    playOnline()
+            }
+            else if(human_vs_computer)
+            {
+                    console.log("Test case 1");
+                    (l_type==='Easy' || l_type==='Medium' || l_type==='Expert') ? setSeconds(60) : setSeconds(120)
+                    startMatchComputer(login_data.id,levelno)
+            }            
+            console.log("Test case 2")
+        }  */
 
         useEffect(()=>{
             $(document).ready(function(){
@@ -116,6 +135,20 @@ const Dashboard = (props) => {
     e.preventDefault()
     e.returnValue = '' 
   } 
+
+
+ /*  useEffect(()=>{
+    if(load_game_level){
+        setGameType('human_vs_computer')   
+    }
+  },[load_game_level]) */
+
+
+  useEffect(()=>{
+    if(game_type){
+        routeChange()
+    }
+  },[game_type])
   
 console.log("Dashboard=",onlineUser,",",online_match_finish)
 
@@ -130,158 +163,155 @@ const playOnline=()=>{
     //setSearch state for spinner
     setSearch(true)
 }        
+const routeChange = () =>{ 
+    
+     let path = `/gamelevels`; 
+        props.history.push({
+        pathname: path,
+        state:{levelNumbers:levelNumbers},
+    
+      }); 
+  }
+
+  
 
 
-  if(start_match_computer)
+    if((!onlineUser && search) || startMatch )
     {
-        console.log("REDIRECTING TO MAIN=",start_match_computer,",",levelNumber)
-         return <Redirect to='/human_vs_computer' />
-    } 
-
-
-    if((!onlineUser && search) || startMatch ){
-         /*if (sec===0) {
-            setSearch(false);
-          } else {
-            setTimeout(() => setSec(sec - 1), 1000);
-            console.log("Time=",sec)
-          } */
-          //setStartMatch(false)
+        console.log("?????=>",!onlineUser,",",search,",",startMatch)
         return <Spinner/>
     }
-    else{
+    else
+    {
+        return (
+        <Fragment>
+            <Header/>
+        {/* <!----banner-sectopn---> */}
+        <div class="section_card">
+            <div class="container">
+            <div class=" row">
+                <RightAdd/>
 
-  return (
-  
-<Fragment>
-    <Header/>
-{/* <!----banner-sectopn---> */}
-   <div class="section_card">
-       <div class="container">
-       <div class=" row">
-           <div class="col-md-4">
-                   <div class="card man1 card1 ">
-                            <div class=" row m-1">          
+                    <div className="col-md-8">
+                        <div className="align-items">
+                        {user && <img src={user.image_path+'/'+user.data.image} alt='Image not found' width="70"/>}
+                          {/*   <img src="assets/img/right-arrow.png" alt="" width="70" /> */}
+                            <h2 class="ne-game">The Never Ending Game</h2>
+                            <img src="assets/img/settings.png" alt="" width="52" />
+                        </div>
 
-                       <div class="col-md-8">
-                           <div class="left">
-                               <h3 class="play_heading">Play Online </h3>
-                               <p class="text-white m_p">PlayOnline</p>
-                               <Link to="#" class="play_btn" onClick={()=>{
-                                   onlineMatchFinish(false)
-                                   gameType('playonline')
-                                   setGameStatus('human_vs_online')
-                                   exitUser(user.data.id)
-                                   setShowLevel(!showLevel)}
-                                   } >Play</Link>
-                           </div>
-                       </div>
-                       <div class="col-md-4">
-                           <div class="image_r">
-                               <img class="earth1" src="assets/img/earth.jpg" alt="" />
-                           </div>
-                       </div>
-                   </div>
-               </div>
-               </div>
-                 <div class="col-md-4">
-                   <div class=" card man1 card2 ">
-                            <div class=" row m-1">          
-
-                       <div class="col-md-8">
-                           <div class="left">
-                               <h3 class="play_heading_n">Play With  Friends </h3>
-                                  <p class="text-white m_p">Play With  you own people</p>
-                               <Link class="play_btn" to="/friendrequest">Play</Link>
-                           </div>
-                       </div>
-                       <div class="col-md-4">
-                           <div class="image_r">
-                               <img class="earth" src="assets/img/friend.png" alt="" />
-                           </div>
-                       </div>
-                   </div>
-               </div>
-               </div>
-                 <div class="col-md-4">
-                   <div class=" card man1 card3 ">
-                            <div class=" row m-1">          
-
-                       <div class="col-md-8">
-                           <div class="left">
-                               <h3 class="play_heading_n">VS Computer </h3>
-                               <p class="text-white  m_p">Play With  Computer</p>
-                                   <button class="play_btn" onClick={()=>
-                                    {
-                                        gameType('humanvscomputer')
-                                        setGameStatus('human_vs_computer')
+                        <div className="intro-panel">
+                            <div className="intro-box">
+                                <div className="intro-icon">
+                                    <img src="assets/img/world.jpg" alt="" />
+                                        <div class="intro-caption-top">
+                                            <h3>Play online with the online pool</h3>
+                                        </div>
+                                        <div className="plat-btn">
+                                        <button  onClick={()=>{
+                                                            setGameType('human_vs_online') 
+                                                            loadGameLevels()
+                                                            }
+                                                    }><img src="assets/img/play.png" /></button>
+                                       {/*  <Link to="#" onClick={()=>{
+                                        onlineMatchFinish(false)
+                                        gameType('playonline')
+                                        setGameType('human_vs_online')
+                                        exitUser(user.data.id)
                                         setShowLevel(!showLevel)}
-                                   }>Play</button>   
-                           </div>
-                       </div>
-                       <div class="col-md-4">
-                           <div class="image_r">
-                               <img class="earth" src="assets/img/desk.png" alt="" />
-                           </div>
-                       </div>
-                   </div>
-               </div>
-               </div> 
-           </div>
-      
-       </div>
-   </div>
-        {showLevel && <Fragment>
-            <div className="level-contaienr" id='level'>
-                <div className="level-wrapper">
-                <span  onClick={()=>setShowLevel(!showLevel)}>X</span>
-                <h2>Select level</h2>
-                <ul className="level-list" >
-                    <li>{(levelNumber==="1" || levelNumber==='1,2' || levelNumber==='1,2,3' || levelNumber==='1,2,3,4') ? 
-                    <Link to='#' onClick={()=>onClick("1","easy")}>Easy*</Link> : 
-                     <Link to="#" onClick={()=>{
-                            setShowLevel(false)
-                            setLevelCheck(true)
-                        }}>Easy</Link>}</li>
+                                        } ><img src="assets/img/play.png" /></Link> */}
+                                        </div>
+                                        <div class="intro-caption-bottom">
+                                            <h3>Anywhere in the world</h3>
+                                        </div>
+                                </div>
+                            </div>
 
-                    <li>{(levelNumber==='1,2' || levelNumber==='1,2,3' || levelNumber==='1,2,3,4')  ?
-                     <Link to='#' onClick={()=>onClick("2","medium")}>Medium*</Link> :
-                     <Link to="#" onClick={()=>{
-                        
-                            setShowLevel(false)
-                            setLevelCheck(true)
-                        }}>Medium</Link>}</li>
-                    <li>{(levelNumber==='1,2,3' || levelNumber==='1,2,3,4')  ? 
-                    <Link to='#' onClick={()=>onClick("3",'expert')}>Expert*</Link> :
-                     <Link to="#" onClick={()=>{
-                        
-                            setShowLevel(false)
-                            setLevelCheck(true)
-                        }}>Expert</Link>}</li>
-                    <li>{(levelNumber==='1,2,3,4')  ?
-                     <Link to='#' onClick={()=>{
-                        setSeconds(120) 
-                        setWordLengthPopUp(true)}}>Genius*</Link> :
-                     <Link to='#' onClick={()=>{
-                        setShowLevel(false)
-                        setLevelCheck(true)
-                    }}>Genius</Link>}</li>
-                    </ul>
+                            <div className="intro-box">
+                                <div className="intro-icon">
+                                    <img src="assets/img/friends.jpg" alt="" />
+                                        <div class="intro-caption-top">
+                                            <h3 className="friend-color">PLAY WITH FRIENDS</h3>
+                                        </div>
+                                        <div className="plat-btn">
+                                        <Link to="/friendrequest"><img src="assets/img/play.png" /></Link>
+                                        </div>
+                                </div>
+                            </div>
+
+                            <div className="intro-box">
+                                <div className="intro-icon">
+                                    <img src="assets/img/computer.jpg" alt="" />
+                                        <div class="intro-caption-top">
+                                            <h3>PLAY AGAINST THE COMPUTER</h3>
+                                        </div>
+                                        <div className="plat-btn">
+
+                                            {/* <button onClick={()=>{
+                                                gameType('humanvscomputer')
+                                                setGameType('human_vs_computer')
+                                                togglePopupPlayBack()
+                                                }} ><img src="assets/img/play.png"/></button> */}
+                                        {/* <Link to={{
+                                            pathname:'/gamelevels',
+                                            aboutProps:{
+                                                onClick,
+                                                showLevel:showLevel,
+                                                levelNumber:levelNumber
+                                            }
+                                        }}><img src="assets/img/play.png" /></Link>  */}
+
+                                        <button  onClick={()=>{
+                                                            setGameType('human_vs_computer')
+                                                            setWordLengthPopUp(true) 
+                                                            loadGameLevels()
+                                                            }
+                                                    }><img src="assets/img/play.png" /></button>
+
+                                        {/* <button onClick={()=>
+                                            {
+                                                gameType('humanvscomputer')
+                                                setGameType('human_vs_computer')
+                                                setShowLevel(!showLevel)}
+                                        }><img src="assets/img/play.png" /></button> */}
+                                        </div>
+                                </div>
+                            </div>
+
+                            <div className="learn-game">
+                                <div className="learn-row">
+                                    <div className="learn-left">
+                                        <img src="assets/img/userico1n.png" alt="" />
+                                        <h4>How to play and <br/> Privacy - Terms &amp; Conditions</h4>
+                                    </div>
+
+                                    <div class="learn-right learn-left">
+                                        <img src="assets/img/invite-friend.jpeg" alt="" />
+                                        <h4>INVITE <br/> FRIENDS</h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <LeftAdd/>
+
+
                 </div>
+            
             </div>
-        </Fragment>}
+        </div>
+               {/*  {showLevel && <Fragment><GameLevels setShowLevel={setShowLevel} onClick={onClick} setLevelCheck={setLevelCheck} showLevel={showLevel}levelNumber={levelNumber}/></Fragment>} */}
+               
+                {/* {wordLengthPopUp && <WordLengthUI setWordLengthPopUp={setWordLengthPopUp}  setWordLength={setWordLength}/>} */}
 
-        {wordLengthPopUp && <WordLengthUI setWordLengthPopUp={setWordLengthPopUp} onClick={onClick} setWordLength={setWordLength}/>}
-
-        {levelCheck &&  <Level onClick={onClick} levelCheck={levelCheck} setLevelCheck={setLevelCheck}/> }
-    
-</Fragment>
+                {levelCheck &&  <Level  levelCheck={levelCheck} setLevelCheck={setLevelCheck}/> }
+            
+        </Fragment>
 
 
   )
-        }
-
-
+    }
 }
 
 export default Dashboard;

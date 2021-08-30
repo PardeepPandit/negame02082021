@@ -60,14 +60,17 @@ import PlayOnlineState from './component/playonline/context/PlayOnlineState';
 import Challenge from './component/playonline/play_online_components/Challenge'
 import firebase from './firebase'
 import CommonState from './component/MyComponent/context/common/CommonState';
-import NotFoundPage from './component/MyComponent/NotFoundPage'
+import PageNotFound from './component/MyComponent/PageNotFound'
+import GameLevels from './component/GameLevels';
+import PlayBackPopup from './component/PlayBackPopup'
+import EasyGameLevel from './component/EasyGameLevel';
 import axios from 'axios';
 
 function App(props) {
   var counter = 1;
 const [token,setToken]=useState()
 
-  const [finishStatus, setfinishStatus] = useState(false);
+ /*  const [finishStatus, setfinishStatus] = useState(false);
 
  console.log(window.innerHeight); 
  const onBackButtonEvent = (e) => {
@@ -92,7 +95,7 @@ const [token,setToken]=useState()
     return () => {
       window.removeEventListener('popstate', onBackButtonEvent);  
     };
-  },[]);   
+  },[]);    */
 
  useEffect(()=>{
   console.log("Firebase")
@@ -156,9 +159,13 @@ else{ */
       <Alerts/>
           <Switch>
             <Route exact path="/" component={Login} />
+            <Route exact path="/PlayBackPopup" component={PlayBackPopup} />
+
+            <Route exact path="/gamelevels" component={GameLevels} />
             <Route exact path="/facebook" component={ReactFacebookLogin} />
             <Route exact path="/google" component={Google} />
-             <Route exact path="/dashboard" component={Dashboard} />
+              <Route exact path="/dashboard" component={Dashboard} /> 
+            {/* <Route exact path="/dashboard" component={(props)=> <Dashboard {...props}/>} />   */}
              <PrivateRoute exact path='/paypal/:price' component={PayPal}/>
             <Route exact path="/register" component={Register} />
             <Route exact path="/forgot" component={Forgot} />
@@ -201,7 +208,7 @@ else{ */
             {/* ///////////////////////////Play-Online///////////////////////////////////// */}
             <PrivateRoute exact path='/playonline' component={PlayOnline}/>
             <Route exact path='/challenge' component={Challenge}/>
-          <Route component={NotFoundPage}/>
+          <Route component={PageNotFound}/>
           </Switch>  
       </CharacterProvider>
       </TimerProvider>

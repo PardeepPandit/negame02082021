@@ -81,14 +81,14 @@ const HumanState=({children})=>{
   const {inputText,setInputText,setSeconds,setIsActive,backup_input_text,inputText2,game_level,setInputText2}=commonContext
 console.log("Human state....",inputText)
 useEffect(()=>{
-  console.log("warning 1")
-  console.log("calling checkhintcount from useEffect 1=",user && user.data.id)
-  if(user && user.data.id)
-  {
-    console.log("calling checkhintcount from useEffect 2=",user.data.id)
-    checkHintCount(user.data.id)
-  }
-
+    console.log("warning 1")
+    console.log("calling checkhintcount from useEffect 1=",user && user.data.id)
+    if(user && user.data.id)
+    {
+      console.log("calling checkhintcount from useEffect 2=",user.data.id)
+      checkHintCount(user.data.id)
+    }
+  
 },[user])  
 
 
@@ -97,21 +97,21 @@ useEffect(()=>{
   console.log("warning 2")
   if(state.next_char){
 
-    if(game_level==='easy'){
+    if(game_level==='Easy'){
       setInputText(inputText+state.next_char.toUpperCase())
     }
-    else if(game_level==='medium')
+    else if(game_level==='Medium')
     {
       
       state.computer_position===0 ? setInputText(state.next_char.toUpperCase()+inputText) :setInputText(inputText+state.next_char.toUpperCase())
       
     }
-    else if(game_level==='genius'){
+    else if(game_level==='Genius'){
 
       setInputText(inputText+state.next_char.toUpperCase())
     }
     console.log("calling findNextChar");
-    (game_level==='easy' || game_level==='medium' || game_level==='expert') ? setSeconds(60) :setSeconds(120)
+    (game_level==='Easy' || game_level==='Medium' || game_level==='Expert') ? setSeconds(60) :setSeconds(120)
       setIsActive(true)
       console.log("KEYBOARD ON 5")
       setShowKeyboard(true)
@@ -120,7 +120,7 @@ useEffect(()=>{
 
 useEffect(()=>{
   console.log("warning 3")
-  if(game_level==='medium')
+  if(game_level==='Medium')
   {
       if(state.human_position===0)
       {
@@ -131,7 +131,7 @@ useEffect(()=>{
           setInputText('_'+backup_input_text)    
       }
   }
-  else if(game_level==='expert' || game_level==='genius')
+  else if(game_level==='Expert' || game_level==='Genius')
   {
     if(state.human_position===1)
     {
@@ -148,7 +148,7 @@ useEffect(()=>{
   console.log("warning 4")
   console.log("CHECK POINT 1",state.turn)
         if(state.turn==='computer' && inputText!==null && inputText.length > 1 ){
-          console.log("calling checkwordApi ")
+          console.log("calling checkwordApi for word= ",inputText)
           //call checkWordExistApi to check computer's word
 
             checkWordExistApi(inputText)
@@ -185,7 +185,7 @@ useEffect(()=>{
   }
 },[state.match_round_details]) 
 
-/*  useEffect(()=>{
+ /*useEffect(()=>{
   console.log("warning 7")
   if(state.turn){
   console.log(`changing turn from ${state.turn}`)
@@ -208,11 +208,11 @@ useEffect(()=>{
       else if(state.word_exist===true && inputText.length > 3)
       {
 
-          if(game_level==='easy' || game_level==='medium' || game_level==='expert')
+          if(game_level==='Easy' || game_level==='Medium' || game_level==='Expert')
           {
             state.turn==='human' ? setCurrentWinnerLoserHC('loser') :setCurrentWinnerLoserHC('winner')
           }
-          else if(game_level==='genius' && inputText!==null && inputText.length===state.word_length){
+          else if(game_level==='Genius' && inputText!==null && inputText.length===state.word_length){
             setCurrentWinnerLoserHC('winner')
           }else{
             getRandomWordFromApi()
@@ -221,7 +221,7 @@ useEffect(()=>{
       else if(state.word_exist==='word not found' && inputText!==null  && inputText.length > 3 && state.turn==='human')
       {
         console.log("Word not found in check word API , now calling Random word API")
-        if(game_level==='genius' && inputText.length===state.word_length){
+        if(game_level==='Genius' && inputText.length===state.word_length){
           setCurrentWinnerLoserHC('loser')
         }
         else{
@@ -255,7 +255,7 @@ useEffect(() => {
     else{
       dispatch({
         type:GET_HINT,
-        payload:state.resultWord.word
+        payload:state.random_word
       }) 
     }    
   }
@@ -430,7 +430,7 @@ const setCurrentWinnerLoserHC=(win_lose)=>{
 const frequencyCounter=()=>{
 
     return inputText.split('').reduce((total, letter) => {
-      console.log(letter,"==",total[letter])
+      //console.log(letter,"==",total[letter])
       total[letter] = total[letter] + 1 || 1
       return total;
     }, {});
@@ -448,28 +448,33 @@ const getWordFromRapidApiHC=async()=>{
   }
   try 
     {
-      if(game_level==='easy')
+      if(game_level==='Easy')
       {
        
-        res=await axios.get(`https://wordsapiv1.p.rapidapi.com/words/?letterPattern=^${inputText.toLowerCase()}[a-zA-Z]*$&random=true`,config)
-        console.log("Response=",res.data)
+       /*  res=await axios.get(`https://wordsapiv1.p.rapidapi.com/words/?letterPattern=^${inputText.toLowerCase()}[a-zA-Z]*$&random=true`,config) */
+       res=await axios.get(process.env.REACT_APP_BASEURL+`/api/level_one?search=${inputText.toLowerCase()}`,config)
+       console.log("Response=",res.data)
       }
-      else if(game_level==='medium')
+      else if(game_level==='Medium')
       {
-        res=await axios.get(`https://wordsapiv1.p.rapidapi.com/words/?letterPattern=^[a-zA-Z]${inputText.toLowerCase()}[a-zA-Z]*$&random=true`,config)
+        //res=await axios.get(`https://wordsapiv1.p.rapidapi.com/words/?letterPattern=^[a-zA-Z]${inputText.toLowerCase()}[a-zA-Z]*$&random=true`,config)
+        res=await axios.get(process.env.REACT_APP_BASEURL+`/api/level_two?search=${inputText.toLowerCase()}`,config)
+
       }
-      else if(game_level==='expert')
+      else if(game_level==='Expert')
       {
         dynamic_api=dynamicAPI()
         console.log("Dynamic API=",dynamic_api)
         console.log(`https://wordsapiv1.p.rapidapi.com/words/?letterPattern=^(|[a-zA-Z])${dynamic_api}*$&random=true`)
-        res=await axios.get(`https://wordsapiv1.p.rapidapi.com/words/?letterPattern=^(|[a-zA-Z])${dynamic_api}*$&random=true`,config)
+        //res=await axios.get(`https://wordsapiv1.p.rapidapi.com/words/?letterPattern=^(|[a-zA-Z])${dynamic_api}*$&random=true`,config)
+        res=await axios.get(process.env.REACT_APP_BASEURL+`/api/level_three?search=${inputText.toLowerCase()}`,config)
       }
-      else if(game_level==='genius')
+      else if(game_level==='Genius')
       {
         dynamic_api=dynamicAPI()
         console.log(`https://wordsapiv1.p.rapidapi.com/words/?letterPattern=^(?=.*^(\\w%2B[^ ])$)(?=.*^${dynamic_api})&random=true&letters=${state.word_length}`)
-         res=await axios.get(`https://wordsapiv1.p.rapidapi.com/words/?letterPattern=^(?=.*^(\\w%2B[^ ])$)(?=.*^${dynamic_api})&random=true&letters=${state.word_length}`,config) 
+         //res=await axios.get(`https://wordsapiv1.p.rapidapi.com/words/?letterPattern=^(?=.*^(\\w%2B[^ ])$)(?=.*^${dynamic_api})&random=true&letters=${state.word_length}`,config) 
+         res=await axios.get(process.env.REACT_APP_BASEURL+`/api/level_four?search=${inputText.toLowerCase()}&length=${state.word_length}`,config)
       }
 
         if(res.status===200)
@@ -477,10 +482,10 @@ const getWordFromRapidApiHC=async()=>{
 
           if(res.data.hasOwnProperty('results'))
           {
-            setResultWord(res.data.word,res.data.results[0].definition)
+            setResultWord(res.data.data.word,res.data.data.definition_1)
           }
           else{
-            setResultWord(res.data.word)
+            setResultWord(res.data.data.word)
           }
 
           return res
@@ -497,7 +502,7 @@ const getWordFromRapidApiHC=async()=>{
 function dynamicAPI(){
 
   let str=''
-  if(game_level==='expert')
+  if(game_level==='Expert')
   {
     console.log("inputText=",inputText)
      Array.from(inputText.toLowerCase()).forEach((item)=>{
@@ -505,7 +510,7 @@ function dynamicAPI(){
     })
     return str
   }
-  else if(game_level==='genius')
+  else if(game_level==='Genius')
   {
     const calculate_frequency=frequencyCounter()
     console.log("Frequecy=",calculate_frequency)
@@ -524,56 +529,66 @@ const getRandomWordFromApi=async()=>{
     let dynamic_api=''
     const config={
         headers: {
-          'X-RapidAPI-Key' : '0689b1157bmsh9ca7f4b5701a660p1080c2jsn9e2fa49e7bcf'
+          //'X-RapidAPI-Key' : '0689b1157bmsh9ca7f4b5701a660p1080c2jsn9e2fa49e7bcf'
+          'APPKEY':'Py9YJXgBecbbqxjRVaHarcSnJyuzhxGqJTkY6xKZRfrdXFy72HPXvFRvfEjy'
         }
       }
-   
+     
       let res=null
       try {
-        if(game_level==='easy')
+        if(game_level==='Easy')
         {
-          res=await axios.get(`https://wordsapiv1.p.rapidapi.com/words/?letterPattern=^${inputText.toLowerCase()}[a-zA-Z]*$&random=true`,config)
+          //res=await axios.get(`https://wordsapiv1.p.rapidapi.com/words/?letterPattern=^${inputText.toLowerCase()}[a-zA-Z]*$&random=true`,config)
+          res=await axios.get(process.env.REACT_APP_BASEURL+`/api/level_one?search=${inputText.toLowerCase()}`,config)
+          console.log("Easy Response===",res.data.data.word)
         }
-        else if(game_level==='medium')
+        else if(game_level==='Medium')
         {
-          res=await axios.get(`https://wordsapiv1.p.rapidapi.com/words/?letterPattern=^[a-zA-Z]${inputText.toLowerCase()}[a-zA-Z]*$&random=true`,config)
+          //res=await axios.get(`https://wordsapiv1.p.rapidapi.com/words/?letterPattern=^[a-zA-Z]${inputText.toLowerCase()}[a-zA-Z]*$&random=true`,config)
+          res=await axios.get(process.env.REACT_APP_BASEURL+`/api/level_two?search=${inputText.toLowerCase()}`,config)
+          console.log("Response from getRandomWordFromApi=",res.data)
           setRandomPosition()
         }
-        else if(game_level==='expert')
+        else if(game_level==='Expert')
         {
           dynamic_api=dynamicAPI()
           console.log("Dynamic API=",dynamic_api)
           console.log(`https://wordsapiv1.p.rapidapi.com/words/?letterPattern=^(|[a-zA-Z])${dynamic_api}*$&random=true`)
-          res=await axios.get(`https://wordsapiv1.p.rapidapi.com/words/?letterPattern=^(|[a-zA-Z])${dynamic_api}*$&random=true`,config)
+         // res=await axios.get(`https://wordsapiv1.p.rapidapi.com/words/?letterPattern=^(|[a-zA-Z])${dynamic_api}*$&random=true`,config)
+         res=await axios.get(process.env.REACT_APP_BASEURL+`/api/level_three?search=${inputText.toLowerCase()}`,config)
+         console.log("Response from getRandomWordFromApi=",res.data)
           setRandomPosition()
         }
-        else if(game_level==='genius')
+        else if(game_level==='Genius')
         {
           dynamic_api=dynamicAPI()
           console.log(`https://wordsapiv1.p.rapidapi.com/words/?letterPattern=^(?=.*^(\\w%2B[^ ])$)(?=.*^${dynamic_api})&random=true&letters=${state.word_length}`)
-          res=await axios.get(`https://wordsapiv1.p.rapidapi.com/words/?letterPattern=^(?=.*^(\\w%2B[^ ])$)(?=.*^${dynamic_api})&random=true&letters=${state.word_length}`,config) 
+         // res=await axios.get(`https://wordsapiv1.p.rapidapi.com/words/?letterPattern=^(?=.*^(\\w%2B[^ ])$)(?=.*^${dynamic_api})&random=true&letters=${state.word_length}`,config) 
+         res=await axios.get(process.env.REACT_APP_BASEURL+`/api/level_four?search=${inputText.toLowerCase()}&length=${state.word_length}`,config)
+         console.log("Response from getRandomWordFromApi=",res.data)
         } 
       
-      console.log(`${game_level} Response code ${res.status} from getRandomWord=`,res.data.word)
-
+      //console.log(`${game_level} Response code ${res.status} from getRandomWord=`,res.data.word)
+      console.log(`${game_level} Response code ${res.data} from getRandomWord=`,res.data.data.word)
       if(res.status===200)
       {
 
         if(res.data.hasOwnProperty('results'))
         {
           console.log("Property exist=", res.data.hasOwnProperty('results'))
-          setResultWord(res.data.word,res.data.results[0].definition)
+          //setResultWord(res.data.word,res.data.results[0].definition)
+          setResultWord(res.data.data.word,res.data.data.definition_1)
         }
         else{
-          setResultWord(res.data.word)
+          setResultWord(res.data.data.word)
         }
 
             dispatch({
               type:GET_RANDOM_WORD_SUCCESS,
-              payload:res.data.word===undefined ? 'word not found' : res.data.word
+              payload:res.data.data.word===undefined ? 'word not found' : res.data.data.word
           })
 
-          if(res.data.word===undefined){
+          if(res.data.data.word===undefined){
             setCurrentWinnerLoserHC('loser')
           }
          
@@ -585,7 +600,7 @@ const getRandomWordFromApi=async()=>{
         {
 
           setCurrentWinnerLoserHC('loser')
-          {game_level==='genius' ? setResultWord(inputText,'No matching word found in dictionary with those letters'):setResultWord()} 
+          {game_level==='Genius' ? setResultWord(inputText,'No matching word found in dictionary with those letters'):setResultWord()} 
             dispatch({
                 type:GET_RANDOM_WORD_FAIL,
             })
@@ -611,7 +626,7 @@ const getRandomWordFromApi=async()=>{
       }
     }
     //let check_word=inputText
-    if(game_level==='genius' && inputText!==null && inputText.length===state.word_length){
+    if(game_level==='Genius' && inputText!==null && inputText.length===state.word_length){
       check_word=inputText2
     }
     console.log("check_word=",check_word)
@@ -627,7 +642,8 @@ const getRandomWordFromApi=async()=>{
                   console.log("Property exist=", res.data.hasOwnProperty('results'))
                   setResultWord(res.data.word,res.data.results[0].definition)
                 }
-                else{
+                else
+                {
                   setResultWord(res.data.word)
                 }
 
@@ -669,7 +685,7 @@ const getRandomWordFromApi=async()=>{
         const input_text_length=inputText.length
         const random_word_length=state.random_word.length
 
-        if(input_text_length<random_word_length && game_level==='easy')
+        if(input_text_length<random_word_length && game_level==='Easy')
         {
          // console.log("check 101=",state.random_word,",",inputText,",",input_text_length,",",random_word_length)
           console.log("Next character for computer=",state.random_word.charAt(input_text_length))
@@ -677,7 +693,7 @@ const getRandomWordFromApi=async()=>{
           setNextCharacter(state.random_word.charAt(input_text_length))
           
         } 
-       else if(input_text_length < random_word_length && game_level==='medium'){
+       else if(input_text_length < random_word_length && game_level==='Medium'){
 
           if(state.computer_position===1){
             console.log("Debug1=",inputText,",",state.random_word.indexOf(inputText.toLowerCase()))
@@ -691,7 +707,7 @@ const getRandomWordFromApi=async()=>{
           }
             
         }
-        else if(input_text_length < random_word_length && game_level==='expert')
+        else if(input_text_length < random_word_length && game_level==='Expert')
         {  
            const random_word_len=state.random_word.length
            let demo_array=new Array(random_word_len)
@@ -753,7 +769,7 @@ const getRandomWordFromApi=async()=>{
            setShowKeyboard(true)  */
 
         }
-        else if(input_text_length < random_word_length && game_level==='genius')
+        else if(input_text_length < random_word_length && game_level==='Genius')
         {
           nextCharGenius()
         }
@@ -992,11 +1008,11 @@ const setWordLength=(len)=>{
 const deleteChar = () => {
   //console.log("deletechar========",inputText)
 
-    if(game_level==='easy')
+    if(game_level==='Easy')
     {
       setInputText(inputText.substring(0,inputText.length-1))
     }
-    else if(game_level==='medium')
+    else if(game_level==='Medium')
     {
 
       if(state.human_position===0 || state.human_position===null)
@@ -1007,7 +1023,7 @@ const deleteChar = () => {
         setInputText(inputText.substring(1, inputText.length));
       }
     }
-    else if(game_level==='expert')
+    else if(game_level==='Expert')
     {
       if((state.human_position===0 || state.human_position===null) && (state.single_shift_counter===null || state.single_shift_counter===-1))
       {
@@ -1026,7 +1042,7 @@ const deleteChar = () => {
       }
       
     }
-    else if(game_level==='genius' )
+    else if(game_level==='Genius' )
     {
       
       if(inputText!==null && inputText.length===state.word_length )

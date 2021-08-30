@@ -20,7 +20,7 @@ export function useCharacterConsumerUpdate() {
 export function CharacterProvider({ children }) {
   
 const commonContext=useContext(CommonContext)
-const {inputText,setInputText,setIsActive,isActive,setSeconds,seconds,inputText2,setInputText2,game_level}=commonContext
+const {inputText,setInputText,setIsActive,isActive,setSeconds,backup_input_text,inputText2,setInputText2,game_level}=commonContext
 
 const playOnlineContext=useContext(PlayOnlineContext)
 const {game_type,onlineUser}=playOnlineContext
@@ -186,11 +186,11 @@ if(keyAudio)
     //let currentChar = e
     currentChar = currentChar.charAt(currentChar.length - 1)
     console.log("myturn input Text=", currentChar)
-        if(game_level==='easy')
+        if(game_level==='Easy')
         {
             setInputText(inputText+currentChar)
         }
-        else if(game_level==="medium")
+        else if(game_level==="Medium")
         {
             /* if(human_position===1)
             {
@@ -202,14 +202,14 @@ if(keyAudio)
             } */
             setTextPositioning(currentChar)
         }
-        else if(game_level==='expert')
+        else if(game_level==='Expert')
         {
             setTextPositioning(currentChar) 
         }
-        else if(game_level==='genius')
+        else if(game_level==='Genius')
         {
          console.log(`${game_level} set text`) 
-          if(inputText.length===word_length)
+          if(backup_input_text.length===word_length)
           {
               console.log("Input box 2=",currentChar)
             setInputText2(inputText2 ? inputText2+currentChar : currentChar); 

@@ -3,10 +3,11 @@ import{
      SET_INPUT_TEXT2,
      SET_ISACTIVE,
      SET_SECONDS,
-     SET_GAME_STATUS,
+     SET_GAME_TYPE,
      SET_BACKUP_INPUT_TEXT,
      SET_GAME_LEVEL,
-     RESET_COMMONSTATE
+     RESET_COMMONSTATE,
+     LOAD_LEVEL
     } from '../../../../type'; 
     
     //comment
@@ -34,33 +35,11 @@ import{
                             ...state,
                             seconds:payload
                           }
-                          case SET_GAME_STATUS:
-                            if(payload==='human_vs_computer'){
+                          case SET_GAME_TYPE:
                               return{
                                 ...state,
-                                human_vs_computer:true,
+                                game_type:payload,
                               }
-                            }
-                            else if(payload==='human_vs_online'){
-                              return{
-                                ...state,
-                                human_vs_online:true,
-                              }
-                            }
-                            else if(payload==='human_vs_frined'){
-                              return{
-                                ...state,
-                                human_vs_frined:true
-                              }
-                            }
-                            else{
-                              return{
-                                ...state,
-                                human_vs_frined:false,
-                                human_vs_computer:false,
-                                human_vs_online:false
-                              }
-                            }
                             case SET_BACKUP_INPUT_TEXT:
                               return{
                                   ...state,
@@ -71,15 +50,20 @@ import{
                                   ...state,
                                   game_level:payload
                                 }
+                                case LOAD_LEVEL:
+                                  return{
+                                    ...state,
+                                    load_game_level:payload
+                                  }
                                 case RESET_COMMONSTATE:
                                   return{
+                                    ...state,
                                     inputText:null,
                                     inputText2:null,
                                     isActive:false,
+                                    load_game_level:null,
                                     seconds:60,
-                                    human_vs_computer:false,
-                                    human_vs_frined:false,
-                                    human_vs_online:false,
+                                    game_type:null,
                                     game_level:null
                                   }
                             

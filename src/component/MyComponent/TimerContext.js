@@ -7,7 +7,7 @@ const TimerContext = React.createContext();
 export function TimerProvider({ children }) {
 
 const commonContext=useContext(CommonContext)
-const {inputText,isActive,seconds,setSeconds,human_vs_computer}=commonContext
+const {inputText,isActive,seconds,setSeconds,game_type,human_vs_online}=commonContext
 
 const humanContext=useContext(HumanContext)
 const {setCurrentWinnerLoserHC,setResultWord}=humanContext
@@ -27,13 +27,13 @@ const {setCurrentWinnerLoserHC,setResultWord}=humanContext
          myVar = setTimeout(() => setSeconds(seconds - 1), 1000);
       }
         else {
-        if(human_vs_computer)
+        if(game_type==='human_vs_computer')
         {
           console.log("InputText in Timer Context=",inputText);
           setCurrentWinnerLoserHC('loser')
           setResultWord(inputText,'Time Over')
         }
-        else
+        else if(human_vs_online)
         {
           console.log("PLAY ONLINE TIME UP calling saveword API from TimerContext")
             saveWord({

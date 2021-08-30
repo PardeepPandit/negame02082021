@@ -76,15 +76,14 @@ header {
       padding: 5px;
 }
  .main-input{
-    height: 40px;
-    font-size: 3rem;
+     width: 100%;
+    outline: none !important;
+    box-shadow: none;
     font-weight: bold;
-    width: 88%;
     border-radius: 25px;
-    border: 1px solid #ffeb3c;
-    padding: 0 11px;
+    border: none;
     text-align: center;
-    background-color: #ffeb3c;
+    background-color: #3401cc;
 }
  .round_text h1 {
     color: #fff;

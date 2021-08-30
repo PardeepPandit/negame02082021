@@ -45,27 +45,27 @@ const shiftCounter=(arg)=>{
 
 return (
     <Fragment>
-    <div style={{textAlign:'center' , color:'blue', backgroundColor:'yellow'}}>
+    <div className="shift-btns" style={{textAlign:'center' , color:'blue'}}>
             <h1 style={activeButton===4 ? active : nonactive} onClick={()=>{
                                                                             setActiveButton(4)
                                                                             setHumanPosition(1)
                                                                             }} >
-            {"Left End"}</h1> 
+            {"<<"}</h1> 
             <h1 style={activeButton===3 ? active : nonactive} onClick={()=>{
                                                                             setActiveButton(3)
                                                                             shiftCounter('increment')
                                                                             }} >
-            {"Left Shift"}</h1>
+            {"<"}</h1>
             <h1 style={activeButton===2 ? active : nonactive} onClick={()=>{
                                                                             setActiveButton(2)
                                                                             shiftCounter('decrement')
                                                                             }} >
-            {"Right Shift"}</h1> 
+            {">"}</h1> 
             <h1 style={activeButton===1 ? active : nonactive} onClick={()=>{
                                                                             setActiveButton(1)
                                                                             setHumanPosition(0)
                                                                             }} >
-            {"Right End"}</h1> 
+            {">>"}</h1> 
     </div>
     </Fragment>
     )

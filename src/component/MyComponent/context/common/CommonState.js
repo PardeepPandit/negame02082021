@@ -7,10 +7,11 @@ import{
     SET_INPUT_TEXT2,
     SET_ISACTIVE,
     SET_SECONDS,
-    SET_GAME_STATUS,
+    SET_GAME_TYPE,
     SET_BACKUP_INPUT_TEXT,
     SET_GAME_LEVEL,
-    RESET_COMMONSTATE
+    RESET_COMMONSTATE,
+    LOAD_LEVEL
 } from '../../../../type'; 
 
 
@@ -21,10 +22,9 @@ const CommonState=({children})=>{
    backup_input_text:null,
    isActive:false,
    seconds:60,
-   human_vs_computer:false,
-   human_vs_online:false,
-   human_vs_friend:false,
-   game_level:null
+   game_type:null,
+   game_level:null,
+   load_game_level:null
   };
  
   console.log("Common State...")
@@ -59,6 +59,28 @@ const setGameLevel=(level)=>[
   })
 ]
 
+const loadGameLevels=async()=>{
+
+  const config={
+    headers:{
+        'Context-type':'appplication/json',
+        'APPKEY' :'Py9YJXgBecbbqxjRVaHarcSnJyuzhxGqJTkY6xKZRfrdXFy72HPXvFRvfEjy'
+    }
+}
+  try{
+      const res=await axios.get(process.env.REACT_APP_BASEURL+'/api/levels',config)
+      console.log("Response from Load levels=",res.data)
+
+      dispatch({
+        type:LOAD_LEVEL,
+        payload:res.data
+      })
+  }
+  catch(error){
+    console.log("Error in Load level=",error)
+  }
+}
+
 const setBackUpInputText=(arg)=>{
   dispatch({
     type:SET_BACKUP_INPUT_TEXT,
@@ -84,9 +106,9 @@ const setBackUpInputText=(arg)=>{
     }
 }
 
-  const setGameStatus=(game_type)=>{
+  const setGameType=(game_type)=>{
     dispatch({
-      type:SET_GAME_STATUS,
+      type:SET_GAME_TYPE,
       payload:game_type
     })
   }
@@ -132,20 +154,20 @@ const resetCommonState=()=>{
     inputText2:state.inputText2,
     isActive:state.isActive,
     seconds:state.seconds,
-    human_vs_computer:state.human_vs_computer,
-    human_vs_online:state.human_vs_online,
-    human_vs_friend:state.human_vs_friend,
     backup_input_text:state.backup_input_text,
+    game_type:state.game_type,
     game_level:state.game_level,
+    load_game_level:state.load_game_level,
     setInputText,
     setInputText2,
     setIsActive,
     setSeconds,
-    setGameStatus,
+    setGameType,
     exitUser,
     setBackUpInputText,
     setGameLevel,
-    resetCommonState
+    resetCommonState,
+    loadGameLevels
       }}>
       {children}
     </CommonContext.Provider>

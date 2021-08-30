@@ -225,6 +225,7 @@ export default (state,action)=>{
                                                         next_char:null,
                                                         temp_word:null,
                                                         show_keyboard:true,
+                                                        single_shift_counter:null,
                                                         round:1,
                                                         play:true,
                                                         word_exist:false,

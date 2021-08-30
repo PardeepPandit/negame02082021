@@ -19,7 +19,7 @@ export const Result = () => {
  const nextRound=()=>{
 
   console.log("nextRound() called in Timer");
-  (game_level==='easy' || game_level==='medium' || game_level==='expert') ? setSeconds(60) : setSeconds(120)
+  (game_level==='Easy' || game_level==='Medium' || game_level==='Expert') ? setSeconds(60) : setSeconds(120)
   sendMatchRoundHC(
     {
         id:start_match_computer.user1.id,

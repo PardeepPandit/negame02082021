@@ -18,6 +18,8 @@ const ChoosePlan = (props) => {
     const authContext=useContext(AuthContext)
     const {user,isAuthenticated}=authContext
 
+
+
     const masterContext=useContext(MasterContext)
     const {planDetails,loading,showPopup,getPlanDetails}=masterContext
     const [checkout,setCheckOut]=useState(false)
@@ -81,6 +83,7 @@ const ChoosePlan = (props) => {
 }
 
 
+
   return (
     <Fragment>
         {showPopup && <Success/>}
@@ -109,7 +112,8 @@ const ChoosePlan = (props) => {
                                             return <PlanItems key={list.id} item={list} activeFun={activeFun} setCheckOut={setCheckOut} checkout={checkout} setMoney={setMoney} active={active}/>
                                         })}
                                         <div className="col-lg-12">
-                                            {active && <Link to={money!='0' ? `/paypal/${money}`:'/dashboard'}> <button onClick={()=>localStorage.removeItem('start_match_computer')} className="membership-btn" id="membership-btn-1" style={{backgroundColor:'green'}}>Get Membership Now*</button></Link>}
+                                            {active && <Link to={money!='0' ? `/paypal/${money}`:'/dashboard'}> <button onClick={()=>localStorage.removeItem('start_match_computer')
+                                              } className="membership-btn" id="membership-btn-1" style={{backgroundColor:'green'}}>Get Membership Now*</button></Link>}
                                             {!active && <Link to='#'> <button className="membership-btn" id="membership-btn-2" style={{backgroundColor:'gray'}}>Get Membership Now</button></Link>}
                                         </div>
                                     </div>
@@ -124,11 +128,8 @@ const ChoosePlan = (props) => {
             </div>
         </div>
     </div>  
-      
-        </div></Fragment>
-        
-    
-        
+      </div>
+      </Fragment> 
     </Fragment> 
       );
 

@@ -25,7 +25,8 @@ import{
   SET_RANDOM_POSITION,
   SET_TEMP_WORD,
   SINGLE_SHIFT_COUNTER,
-  SET_WORD_LENGTH
+  SET_WORD_LENGTH,
+  SET_ROUND_COMPLETE
   } from '../../../../type'; 
 
 export default (state,action)=>{ 

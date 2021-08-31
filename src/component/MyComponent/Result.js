@@ -30,10 +30,11 @@ export const Result = () => {
 )
      setLoading()
     
-    setTimeout(()=>{
+      setTimeout(()=>{
       setInputText(null);
       setInputText2(null);
       setBackUpInputText(null);
+      console.log("setIsActive true")
       setIsActive(true)
       roundFinishResetHC()
   },2000) 
@@ -111,13 +112,11 @@ return (
 
   </div>
 
-          </div>
-          </div>
-          </div>
+    </div>
+    </div>
+    </div>
 
   </Fragment>
 )
 }
-
-
 export default Result

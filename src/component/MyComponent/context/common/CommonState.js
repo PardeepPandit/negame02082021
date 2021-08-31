@@ -1,3 +1,4 @@
+
 import React,{useReducer,useContext,useEffect} from 'react';
 import commonReducer from '../common/commonReducer'
 import CommonContext from '../common/commonContext'
@@ -30,6 +31,9 @@ const CommonState=({children})=>{
   console.log("Common State...")
   const [state,dispatch]=useReducer(commonReducer,initialState);
 
+
+
+
   useEffect(()=>{
 
     if(state.inputText!==null){
@@ -58,6 +62,18 @@ const setGameLevel=(level)=>[
     payload:level
   })
 ]
+
+const getCampaign=async()=>{
+  /* const config={
+    headers:{
+      'Context-type':'appplication/json',
+      'APPKEY' :'Py9YJXgBecbbqxjRVaHarcSnJyuzhxGqJTkY6xKZRfrdXFy72HPXvFRvfEjy'
+  }
+}
+
+const res=await axios.get(process.env.REACT_APP_BASEURL+'/api/getCampaigns',config)
+    console.log("Response from campagin=",res.data) */
+}
 
 const loadGameLevels=async()=>{
 
@@ -167,7 +183,8 @@ const resetCommonState=()=>{
     setBackUpInputText,
     setGameLevel,
     resetCommonState,
-    loadGameLevels
+    loadGameLevels,
+    getCampaign
       }}>
       {children}
     </CommonContext.Provider>

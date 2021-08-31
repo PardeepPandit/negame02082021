@@ -13,6 +13,7 @@ import HintPopup from "./HintPopup";
 import WarningPopup from './WarningPopup'
 import RightAdd from './MyComponent/Adds/RightAdd'
 import LeftAdd from './MyComponent/Adds/LeftAdd'
+import {Link} from 'react-router-dom'
 
 
 const Keyboard = React.lazy(() => import('./Keyboard'));
@@ -74,7 +75,8 @@ if(hint){
 
 
   useEffect(()=>{
-    if(concede && inputText!==null){
+    if(concede && inputText!==null)
+    {
       console.log("concede and randome_word=",concede,",",random_word)
       setIsActive(false)
       setPlay(false)
@@ -89,6 +91,14 @@ if(hint){
 },[concede])
 
  
+useEffect(()=>{
+
+  if(backup_input_text!==null && word_length%2===0 && backup_input_text.length===word_length){
+        setShowKeyboard(true)
+  }
+
+},[backup_input_text])
+
 
   const playFun = () => {
     setSingleShiftCounter('reset')
@@ -136,6 +146,7 @@ if(hint){
        
       }
   }
+
 console.log("challenge=",challenge)
 if(loading_HC)
 {
@@ -161,7 +172,7 @@ else
                   type="button"
                 > <img src="assets/img/right-arrow.png" alt="" width="70" /></button>
                
-                <img src="assets/img/settings.png" alt="" width="52" />
+               <Link  to='/setting'><img src="assets/img/settings.png" alt="" width="52"/></Link>
               </div>
 
               <div className="players-box">
@@ -212,7 +223,7 @@ else
                 {(game_level==="Expert" || (game_level==="Genius" && backup_input_text!==null && backup_input_text.length!==word_length)) && show_keyboard && <ExpertAndGeniusLevelUI/>}
                 {/* {game_level==="genius" && show_keyboard && inputText!==null && inputText.length!==word_length &&<GeniusLevelUI/>} */}
            
-                 {game_level==="Genius" && show_keyboard && backup_input_text!==null && backup_input_text.length===word_length && challenge && <input type="text" className="main-input" value={inputText2}/>}  
+                 {game_level==="Genius" &&  show_keyboard && backup_input_text!==null && backup_input_text.length===word_length && challenge && <input type="text" className="main-input" value={inputText2}/>}  
                  {game_level==="Genius" && show_keyboard && backup_input_text!==null && backup_input_text.length===word_length && challenge && <h3>*Please type in the letters that will compelete your word</h3>}  
 
                 {show_keyboard ? (

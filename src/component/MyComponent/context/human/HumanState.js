@@ -35,7 +35,8 @@ import{
   SET_RANDOM_POSITION,
   SINGLE_SHIFT_COUNTER,
   SET_BACKUP_INPUT_TEXT,
-  SET_WORD_LENGTH
+  SET_WORD_LENGTH,
+  SET_ROUND_COMPLETE
 } from '../../../../type'; 
 
 
@@ -78,7 +79,7 @@ const HumanState=({children})=>{
   const {user}=authContext
 
   const commonContext =useContext(CommmonContext)
-  const {inputText,setInputText,setSeconds,setIsActive,backup_input_text,inputText2,game_level,setInputText2}=commonContext
+  const {inputText,setInputText,setSeconds,setIsActive,backup_input_text,inputText2,game_level,isActive,setInputText2}=commonContext
 console.log("Human state....",inputText)
 useEffect(()=>{
     console.log("warning 1")
@@ -185,15 +186,19 @@ useEffect(()=>{
   }
 },[state.match_round_details]) 
 
- /*useEffect(()=>{
-  console.log("warning 7")
+ useEffect(()=>{
+  /* console.log("warning 7")
   if(state.turn){
   console.log(`changing turn from ${state.turn}`)
     //state.concede===true ?  setResultWord(state.hint):setResultWord()
     console.log("Set Turn 3 human or computer")
   state.turn==='human' ? setTurn('computer') : setTurn('human')
-  }
-},[state.current_winner_loser_HC])  */
+  } */
+  console.log("setIsActive false")
+
+  state.current_winner_loser_HC!==null && setIsActive(false)
+
+},[state.current_winner_loser_HC])
 
 useEffect(()=>{
   console.log("warning 8")
@@ -313,6 +318,8 @@ const setPlay=(true_false)=>{
     payload:true_false
   })
 }
+
+
 
 
 const setMasterHistory=(details)=>{
@@ -459,6 +466,7 @@ const getWordFromRapidApiHC=async()=>{
       {
         //res=await axios.get(`https://wordsapiv1.p.rapidapi.com/words/?letterPattern=^[a-zA-Z]${inputText.toLowerCase()}[a-zA-Z]*$&random=true`,config)
         res=await axios.get(process.env.REACT_APP_BASEURL+`/api/level_two?search=${inputText.toLowerCase()}`,config)
+        console.log("Response from level two getrandomwordAPI=",res.data)
 
       }
       else if(game_level==='Expert')
@@ -468,6 +476,7 @@ const getWordFromRapidApiHC=async()=>{
         console.log(`https://wordsapiv1.p.rapidapi.com/words/?letterPattern=^(|[a-zA-Z])${dynamic_api}*$&random=true`)
         //res=await axios.get(`https://wordsapiv1.p.rapidapi.com/words/?letterPattern=^(|[a-zA-Z])${dynamic_api}*$&random=true`,config)
         res=await axios.get(process.env.REACT_APP_BASEURL+`/api/level_three?search=${inputText.toLowerCase()}`,config)
+        console.log("Response from level three getrandomwordAPI=",res.data)
       }
       else if(game_level==='Genius')
       {
@@ -546,7 +555,7 @@ const getRandomWordFromApi=async()=>{
         {
           //res=await axios.get(`https://wordsapiv1.p.rapidapi.com/words/?letterPattern=^[a-zA-Z]${inputText.toLowerCase()}[a-zA-Z]*$&random=true`,config)
           res=await axios.get(process.env.REACT_APP_BASEURL+`/api/level_two?search=${inputText.toLowerCase()}`,config)
-          console.log("Response from getRandomWordFromApi=",res.data)
+          console.log("Response from level 2 from getRandomWordFromApi=",res.data)
           setRandomPosition()
         }
         else if(game_level==='Expert')
@@ -556,7 +565,7 @@ const getRandomWordFromApi=async()=>{
           console.log(`https://wordsapiv1.p.rapidapi.com/words/?letterPattern=^(|[a-zA-Z])${dynamic_api}*$&random=true`)
          // res=await axios.get(`https://wordsapiv1.p.rapidapi.com/words/?letterPattern=^(|[a-zA-Z])${dynamic_api}*$&random=true`,config)
          res=await axios.get(process.env.REACT_APP_BASEURL+`/api/level_three?search=${inputText.toLowerCase()}`,config)
-         console.log("Response from getRandomWordFromApi=",res.data)
+         console.log("Response from level 3 getRandomWordFromApi=",res.data)
           setRandomPosition()
         }
         else if(game_level==='Genius')

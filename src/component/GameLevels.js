@@ -28,7 +28,8 @@ console.log("props=",props)
        if(start_match_computer)
        {
              console.log("***************SET IS ACTIVE 2***************")
-             setIsActive(true)  
+             setIsActive(true) 
+            // setPlayBackPopup(false)
              //setStartMatch(false)
        }      
  },[start_match_computer]) 
@@ -83,7 +84,7 @@ if(start_match_computer)
             
             <img src="assets/img/right-arrow.png" alt="" width="70" onClick={()=>goBack()} />
             <img src="assets/img/tile-logo.png" alt="" width="150" />
-            <img src="assets/img/settings.png" alt="" width="52" />
+            <Link  to='/setting'><img src="assets/img/settings.png" alt="" width="52"/></Link>
         </div>
 
             <img src="assets/img/challenge-yourself.jpeg" className="img-fluid" />
@@ -102,54 +103,7 @@ if(start_match_computer)
             </div>
                 </Fragment>
         
-        ))}
-
-
-
-        {/* <div class="choice-box">
-            <div class="choice-left">
-                <h2>Easy</h2>
-                <h3>Play letters only behind</h3>
-                <h4>Click here for the rules <Link to="#">Young</Link> <Link to="#">Adults</Link>
-                </h4>
-            </div>
-            {(levelNumber==="1" || levelNumber==='1,2' || levelNumber==='1,2,3' || levelNumber==='1,2,3,4') && 
-            <Link to='#' onClick={()=>onClick("1","easy")}><img src="assets/img/play2.png" alt="" width="200" /></Link>}
-        </div>
-
-        <div class="choice-box medium-box">
-            <div class="choice-left">
-                <h2>Medium</h2>
-                <h3>Play letters in front of or behind</h3>
-                <h4>Click here for the rules <Link to="#">Young</Link> <Link to="#">Adults</Link>
-                </h4>
-            </div>
-            {(levelNumber==='1,2' || levelNumber==='1,2,3' || levelNumber==='1,2,3,4')  &&
-        <Link to='#' onClick={()=>onClick("2","medium")}><img src="assets/img/play2.png" alt="" width="200" /></Link>}
-        </div>
-
-        <div class="choice-box expert-box">
-            <div class="choice-left">
-                <h2>EXPERT</h2>
-                <h3>Play letters anywhere</h3>
-                <h4>Click here for the rules  <Link to="#">Young</Link> <Link to="#">Adults</Link></h4>
-            </div>
-            {(levelNumber==='1,2,3' || levelNumber==='1,2,3,4')  && 
-    <Link to='#' onClick={()=>onClick("3",'Expert')}><img src="assets/img/play2.png" alt="" width="200" /></Link>}
-        </div>
-
-        <div class="choice-box genius-box">
-            <div class="choice-left">
-                <h2>GENIUS</h2>
-                <h3>Anagram Level</h3>
-                <h3>Play letters anywhere an re-arrange them</h3>
-                <h4>Click here for the rules<Link to="#">Young</Link> <Link to="#">Adults</Link>
-                </h4>
-            </div>
-            {(levelNumber==='1,2,3,4')  &&
-    <Link to='#' onClick={()=>onClick("3",'Expert')}><img src="assets/img/play2.png" alt="" width="200" /></Link>}
-        </div>*/}
-                
+        ))}     
         </div>
         </div>
          </div>

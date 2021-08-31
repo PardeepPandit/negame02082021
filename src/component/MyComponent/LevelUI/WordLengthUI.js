@@ -13,9 +13,6 @@ const WordLengthUI=({setWordLengthPopUp,onClick,setWordLength})=>{
                 <Link to="#" onClick={()=>setWordLength(5)}>5</Link>
               </li>
               <li>
-                <Link to="#" onClick={()=>setWordLength(6)}>6</Link>
-              </li>
-              <li>
                 <Link to="#" onClick={()=>setWordLength(7)}>7</Link>
               </li>
               <li>

@@ -70,6 +70,20 @@ function App(props) {
   var counter = 1;
 const [token,setToken]=useState()
 
+useEffect(async()=>{
+  const config={
+    headers:{
+      'Context-type':'appplication/json',
+      'APPKEY' :'Py9YJXgBecbbqxjRVaHarcSnJyuzhxGqJTkY6xKZRfrdXFy72HPXvFRvfEjy'
+  }
+}
+
+const res=await axios.get(process.env.REACT_APP_BASEURL+'/api/getCampaigns',config)
+    console.log("Response from campagin=",res.data)
+    localStorage.setItem('campaign',JSON.stringify(res.data.data))
+},[])
+
+
  /*  const [finishStatus, setfinishStatus] = useState(false);
 
  console.log(window.innerHeight); 

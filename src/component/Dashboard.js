@@ -197,7 +197,7 @@ const routeChange = () =>{
                         {user && <img src={user.image_path+'/'+user.data.image} alt='Image not found' width="70"/>}
                           {/*   <img src="assets/img/right-arrow.png" alt="" width="70" /> */}
                             <h2 class="ne-game">The Never Ending Game</h2>
-                            <img src="assets/img/settings.png" alt="" width="52" />
+                            <Link  to='/setting'><img src="assets/img/settings.png" alt="" width="52"/></Link>
                         </div>
 
                         <div className="intro-panel">

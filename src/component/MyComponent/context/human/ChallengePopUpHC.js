@@ -7,7 +7,8 @@ const ChallengePopUpHC=({setChallenge})=>{
     const {setIsActive,setSeconds}=commonContext
     return(
         <Fragment>
-            <div style={{width:'200px', height:'200px' ,backgroundColor:'lightblue'}}>
+            <div className="chllenge-box">
+                <img src="assets/img/smile.png" width="120" />
             <h1>YOU HAVE BEEN CHALLENGED BY THE COMPUTER, NOW COMPLETE A WORD</h1>
             <button onClick={()=>{
                 setIsActive(true)

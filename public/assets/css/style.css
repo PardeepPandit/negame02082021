@@ -1801,10 +1801,28 @@ h2.word {
     color: #fff;
     text-align: center;   
 }
-
+.chllenge-box{
+    background-image: url(../img/bluebg.jpg);
+    color: #fff;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+.chllenge-box h1{
+    width: 50%;
+    text-align: center;
+}
+    .chllenge-box button{
+    background-color: green;
+    width: 130px;
+    height: 50px;
+    padding: 0 !important;
+}
 .section_card{
     background-color: #fff;
-    background-image: url(../img/background.jpg);
+    background-image: url(../img/bluebg.jpg);
     background-size: cover;
     /* padding: 11% 0; */
     background-position: center;
@@ -2412,7 +2430,32 @@ width: 100%;
     border-radius: 100px;
     margin-left: 10px;
     color: #007bff;
-}    
+}
+.cus-arrow35{
+    width: auto;
+    background-color: transparent;
+}
+.buttons-box{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.buttons-box button{
+    border-radius: 0 !important;
+    color: #fff;
+    margin: 0 1rem 0 0;
+    width: 100px;
+    padding: 0 !important;
+}
+.hint-box2{
+    background-image: url(assets/img/bluebg.jpg) !important;
+  }
+.buttons-box button:nth-child(1){
+    background-color: red;
+}
+.buttons-box button:nth-child(2){
+    background-color: green;
+}
       
       .pull-right i {
     background-color: #eeeeee;

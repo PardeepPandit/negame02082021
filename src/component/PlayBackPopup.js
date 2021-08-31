@@ -43,7 +43,7 @@ const PlayBackPopup = ({levelSelected,handleClose}) => {
   console.log("new prtops=",l_no,",",l_name)
   return (
     <Fragment>
-    <div className="" style={{position: 'fixed', top: '0', width: '100%', backgroundColor: '#000000f2', height: '100%'}}>
+    <div className="" style={{position: 'fixed', top: '0', width: '100%', backgroundImage: 'url(assets/img/bluebg.jpg)', height: '100%'}}>
       <div class="align-items choice-top start-logo mb-4">
             <img src="assets/img/tile-logo.png" alt="" class="img-fluid" width="300" />
       </div>

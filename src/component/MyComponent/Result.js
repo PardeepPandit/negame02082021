@@ -69,7 +69,7 @@ return (
       
 <div class="container">
 <div class="over_lay"></div>
-<div class="round_match">
+<div class="">
 <div class="row">
 <div class="col-md-12">
 <div className="star-box lose-box">

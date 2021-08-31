@@ -26,7 +26,13 @@ const history=useHistory()
   return (
     <div className="popup-box">
       <div className="box">
+        <img src="assets/img/logo.png" alt="" width="130" />
         <h3>Do you want to exit?</h3>
+
+        <div className="buttons-box">
+
+        <button onClick={props.handleClose}>No</button>
+
         <button onClick={()=>{
             resetCommonState()
             resetHumanState()
@@ -35,7 +41,9 @@ const history=useHistory()
         }
       }
           >Yes</button>
-        <button onClick={props.handleClose}>No</button>
+  
+        </div>
+        
       </div>
     </div>
   );

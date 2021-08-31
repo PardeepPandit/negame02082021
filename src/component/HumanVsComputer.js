@@ -169,7 +169,7 @@ else
               <div className="align-items hvc-top">
               <button
                   onClick={() => togglePopupExit()}
-                  type="button"
+                  type="button" className="cus-arrow35"
                 > <img src="assets/img/right-arrow.png" alt="" width="70" /></button>
                
                <Link  to='/setting'><img src="assets/img/settings.png" alt="" width="52"/></Link>

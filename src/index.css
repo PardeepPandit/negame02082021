@@ -23,16 +23,16 @@ body {
     left: 0;
   }
   
+  
   .box {
-    position: relative;
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    top: 50%;
+    text-align: center;
     width: 40%;
-    height: 20%;
-    margin: 0 auto;
-    margin-top: calc(100vh - 95vh - 20px);
-    background: lightblue;
+    background: #fff;
     padding: 20px;
-    border: 1px solid #999;
-    overflow: auto;
   }
   
   .close-icon {

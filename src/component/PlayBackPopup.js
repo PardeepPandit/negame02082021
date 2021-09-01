@@ -23,7 +23,7 @@ const PlayBackPopup = ({levelSelected,handleClose}) => {
   const onClick=(levelno,l_type)=>{
     console.log("ONClick function called=",game_type,",",levelno,",",l_type)
     //setGameLevel(l_type)
-    checkHintCount(user.data.id)
+    checkHintCount(user && user.data.id)
     //setStartMatch(true) 
     
     if(human_vs_online)

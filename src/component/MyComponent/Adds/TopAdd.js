@@ -3,10 +3,10 @@ import React,{Fragment, useEffect} from 'react'
 
 export const TopAdd = () => {
 
-    const campaignList=JSON.parse(localStorage.getItem('campaign'))
+   // const campaignList=JSON.parse(localStorage.getItem('campaign'))
 
 
-    console.log("compaign=",campaignList)
+    //console.log("compaign=",campaignList)
     return (
         <Fragment>
     <div className="col-lg-8 mb-5 offset-md-2">

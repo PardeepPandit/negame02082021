@@ -20,6 +20,40 @@ const GameLevels = (props ) => {
     const [levelSelected,setLevelSelected]=useState({l_no:null,l_name:null})
 
 const history=useHistory()
+
+/*  useEffect(() => {
+    window.addEventListener('beforeunload', onRefresh)
+    return () => {
+      window.removeEventListener('beforeunload', onRefresh)
+ 
+    }
+  }, [])
+  const onRefresh = e => {
+    e.preventDefault()
+    console.log("Refreshing game page")
+    window.location.reload(loadGameLevels())
+  }  */
+
+ /*  if (window.performance)
+  {
+    console.log("window.performance=",window.performance)
+    if (performance.navigation.type === 1)
+    {
+      alert( "This page is reloaded" );
+    } 
+  } */
+  
+  useEffect(()=>{
+    if (performance.navigation.type === 1)
+    {
+        loadGameLevels()
+        console.log("Back to dashboard from gamelevels")
+        //resetCommonState()
+       // history.push('/dashboard')
+    } 
+
+  },[window.performance])
+  
 console.log("historuy=",history)
 
 console.log("props=",props)

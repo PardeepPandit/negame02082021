@@ -1,4 +1,4 @@
-import React, { useState,useEffect,Fragment, useContext,useHistory} from 'react';
+import React, { useState,useEffect,Fragment, useContext} from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import PlayOnlineContext from './playonline/context/playOnlineContext'
 import AuthContext from './MyComponent/context/auth/authContext'
@@ -13,17 +13,18 @@ import RightAdd from './MyComponent/Adds/RightAdd'
 import LeftAdd from './MyComponent/Adds/LeftAdd'
 import PlayBackPopup from './PlayBackPopup';
 import {withRouter} from 'react-router-dom'
+import  {useHistory}  from 'react-router-dom';
 
 
 const Dashboard = (props) => {
     //console.log("Home rendring")
-   
+   const history=useHistory()
     const commonContext =useContext(CommonContext)
     const {game_type,setInputText,setIsActive,setSeconds,setGameType,exitUser,setGameLevel,loadGameLevels,human_vs_computer,human_vs_online,load_game_level}=commonContext
 
     const authContext=useContext(AuthContext)
     const {user,login_data}=authContext
-    const {level}=login_data
+    const {level}=login_data || {}
 
     const humanContext=useContext(HumanContext)
     const {startMatchComputer,start_match_computer,loading,checkHintCount,setWordLength}=humanContext
@@ -124,7 +125,8 @@ const Dashboard = (props) => {
 
 
 
- useEffect(() => {
+ 
+/*  useEffect(() => {
     window.addEventListener('beforeunload', alertUser)
     return () => {
       window.removeEventListener('beforeunload', alertUser)
@@ -134,7 +136,7 @@ const Dashboard = (props) => {
   const alertUser = e => {
     e.preventDefault()
     e.returnValue = '' 
-  } 
+  }  */
 
 
  /*  useEffect(()=>{
@@ -146,6 +148,7 @@ const Dashboard = (props) => {
 
   useEffect(()=>{
     if(game_type){
+        console.log("Redirect to gameleves")
         routeChange()
     }
   },[game_type])
@@ -168,7 +171,7 @@ const routeChange = () =>{
      let path = `/gamelevels`; 
         props.history.push({
         pathname: path,
-        state:{levelNumbers:levelNumbers},
+        //state:{levelNumbers:levelNumbers},
     
       }); 
   }

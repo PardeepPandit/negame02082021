@@ -80,6 +80,7 @@ return (
 </div>
 
   <div class="top-middl_lost text-center">
+ { current_winner_loser_HC ==='loser' ? <img src="assets/img/sad.png" alt="" width="130" /> :<img src="assets/img/Smile.png" alt="" width="130" />}
     <h2 class="win-text">{current_winner_loser_HC ==='loser' ?<Fragment><span className="lose-text">You Lost</span></Fragment>:
     <Fragment>
         <ul className="star-list">

@@ -1,12 +1,27 @@
 import React,{Fragment} from 'react'
 import {Link} from 'react-router-dom'
+import $ from 'jquery'
+
 const WordLengthUI=({setWordLengthPopUp,onClick,setWordLength})=>{
+
+  $(document).ready(function () {
+    $("ul.level-list li a").on('click', function () {
+if ($(this).hasClass("active")) {
+    $(this).addClass("active")
+        } else
+        {
+           $("ul.level-list li a").removeClass("active")
+            $(this).addClass("active")
+        }
+    })
+}) 
+
 
     return(
         <Fragment>
         <div className="level-contaienr" id="challenge">
           <div className="level-wrapper">
-          <img src="assets/img/right-arrow.png" onClick={()=>setWordLengthPopUp(false)} alt="backbutton" style={{width:'180px'}}/>
+          <img src="assets/img/right-arrow.png" onClick={()=>setWordLengthPopUp(false)} alt="backbutton" style={{width:'100px'}}/>
             <h1 >Please Select Word Length</h1>
             <ul className="level-list">
               <li>
@@ -18,7 +33,7 @@ const WordLengthUI=({setWordLengthPopUp,onClick,setWordLength})=>{
               <li>
                 <Link to="#" onClick={()=>setWordLength(9)}>9</Link>
               </li>
-             {/* <li>
+             <li>
                 <Link to="#" onClick={()=>setWordLength(8)}>8</Link>
               </li>
                <li>
@@ -44,11 +59,26 @@ const WordLengthUI=({setWordLengthPopUp,onClick,setWordLength})=>{
               </li>
               <li>
                 <Link to="#" onClick={()=>setWordLength(16)}>16</Link>
-              </li> */}
+              </li>
+              <li>
+                <Link to="#" onClick={()=>setWordLength(12)}>12</Link>
+              </li>
+              <li>
+                <Link to="#" onClick={()=>setWordLength(13)}>13</Link>
+              </li>
+              <li>
+                <Link to="#" onClick={()=>setWordLength(14)}>14</Link>
+              </li>
+              <li>
+                <Link to="#" onClick={()=>setWordLength(15)}>15</Link>
+              </li>
+              <li>
+                <Link to="#" onClick={()=>setWordLength(16)}>16</Link>
+              </li>
             </ul>
-             <button onClick={()=>{
+             <button className="list-submit" onClick={()=>{
                 onClick("4",'Genius')
-                setWordLengthPopUp(false)}} style={{color:'black' ,width:'200px',textAlign:'center'}}>Submit</button> 
+                setWordLengthPopUp(false)}}>Submit</button> 
           </div>
         </div>
       </Fragment>

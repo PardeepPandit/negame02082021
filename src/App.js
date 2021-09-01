@@ -58,7 +58,7 @@ import PayPal from './component/MyComponent/PayPal'
 import PlayOnline from './component/playonline/play_online_components/PlayOnline'
 import PlayOnlineState from './component/playonline/context/PlayOnlineState';
 import Challenge from './component/playonline/play_online_components/Challenge'
-import firebase from './firebase'
+//import firebase from './firebase'
 import CommonState from './component/MyComponent/context/common/CommonState';
 import PageNotFound from './component/MyComponent/PageNotFound'
 import GameLevels from './component/GameLevels';
@@ -111,7 +111,7 @@ const res=await axios.get(process.env.REACT_APP_BASEURL+'/api/getCampaigns',conf
     };
   },[]);    */
 
- useEffect(()=>{
+/*  useEffect(()=>{
   console.log("Firebase")
   const messaging=firebase.messaging()
   console.log("MEssage=",messaging)
@@ -123,7 +123,7 @@ const res=await axios.get(process.env.REACT_APP_BASEURL+'/api/getCampaigns',conf
     setToken(token)
   }).catch((err)=>console.log("Error=",err))
 })
- 
+  */
 /*  useEffect(()=>{
 
   window.addEventListener("beforeunload", (ev) => 

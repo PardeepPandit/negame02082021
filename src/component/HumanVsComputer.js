@@ -203,7 +203,7 @@ else
               </div>
 
               <div className="round">
-              <h1>Round {round} {" "} {game_level && game_level.toUpperCase()}</h1>
+              <h1>Round: {round} | Level: {game_level && game_level.toUpperCase()} | Word: {word_length}</h1>
               </div>
             </div>
 
@@ -223,8 +223,9 @@ else
                 {(game_level==="Expert" || (game_level==="Genius" && backup_input_text!==null && backup_input_text.length!==word_length)) && show_keyboard && <ExpertAndGeniusLevelUI/>}
                 {/* {game_level==="genius" && show_keyboard && inputText!==null && inputText.length!==word_length &&<GeniusLevelUI/>} */}
            
-                <div className='challenge-input'> {game_level==="Genius" &&  show_keyboard && backup_input_text!==null && backup_input_text.length===word_length && challenge && <input type="text" className="main-input" value={inputText2}/>}  
-                 {game_level==="Genius" && show_keyboard && backup_input_text!==null && backup_input_text.length===word_length && challenge && <h3>*Please type in the letters that will compelete your word</h3>}  </div> 
+                <div className='challenge-input'> {game_level==="Genius" &&  show_keyboard && backup_input_text!==null && backup_input_text.length===word_length && challenge && <input type="text" className="main-input maininput2" value={inputText2}/>}  
+
+                 {game_level==="Genius" && show_keyboard && backup_input_text!==null && backup_input_text.length===word_length && challenge && <h3 style={{textAlign:'center'}}>*Please type in the letters that will compelete your word</h3>}  </div> 
 
                 {show_keyboard ? (
                   <div class="keypad" >

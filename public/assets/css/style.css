@@ -116,9 +116,10 @@ body{
 .time-round{
     display: flex;
     justify-content: space-between;
+    flex-direction: column;
 }
 .time, .round{
-    width: 50%;
+    /* width: 50%; */
     text-align: center;
 }
 .time{
@@ -4059,6 +4060,13 @@ ul.level-list li a.active{
     align-items: center;
     justify-content: center;
     display: flex;
+}
+.maininput2{
+    background-color: yellow !important;
+    border-radius: 0 !important;
+    min-height: 70px;
+    font-size: 3rem;
+    color: #000 !important;
 }
 .nodata{
     font-size: 60px;

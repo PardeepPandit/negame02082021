@@ -831,10 +831,8 @@ const setNextCharacter=(char)=>{
      
       } catch (error) {
           console.log("Error in checkHintCount=",error)
-      }
-      
+      } 
   }
-
 
 const setHintUsed=async(true_false,param='')=>{
 

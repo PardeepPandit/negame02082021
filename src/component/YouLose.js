@@ -6,10 +6,10 @@ import CommonContext from './MyComponent/context/common/commonContext'
 export const YouLose = () => {
 
     const commonContext=useContext(CommonContext)
-    const {setIsActive,setSeconds,seconds,setInputText,setBackUpInputText,inputText}=commonContext
+    const {setIsActive,setSeconds,seconds,setInputText,setBackUpInputText,inputText,setShowKeyboard}=commonContext
   
     const playOnlineContext=useContext(PlayOnlineContext)
-    const {word_definition,resetStateHHForRound,winner_loser,saveWord,onlineUser,sendMatchRound,online_round_counter, get_word,setRoundComplete,setApiHit,setCurrentStatus,setShowKeyboard,user_click_next_round_button,opponent_click_next_round_button,showNextRoundButton,setShowNextRoundButton,round_complete,setUserOpponentAgree,finalResultCounter,final_result_winner_counter,final_result_loser_counter,setwinnerLoser,getFinalResultOnline,final_result_data,changeMatchStatus,nextRound,setResultWordHH}=playOnlineContext
+    const {word_definition,resetStateHHForRound,winner_loser,saveWord,onlineUser,sendMatchRound,online_round_counter, get_word,setRoundComplete,setApiHit,setCurrentStatus,user_click_next_round_button,opponent_click_next_round_button,showNextRoundButton,setShowNextRoundButton,round_complete,setUserOpponentAgree,finalResultCounter,final_result_winner_counter,final_result_loser_counter,setwinnerLoser,getFinalResultOnline,final_result_data,changeMatchStatus,nextRound,setResultWordHH}=playOnlineContext
     const {data}=get_word || {}
     const {word,user_id,gamestatus,challenge,concede}=data || {}
 
@@ -58,7 +58,7 @@ export const YouLose = () => {
                         //Note: it will execute when user checks incorrect word
                        
 
-                            console.log("Calling save word API from L status=1,0,0")
+                        console.log("SAVEWORD API 3=",gamestatus,challenge,",",concede)
                             saveWord({
                             match_id:onlineUser.user1.match_id,
                             gamestatus:'101',
@@ -78,6 +78,7 @@ export const YouLose = () => {
                     }
                     else if(onlineUser.user1.user_id!==user_id && gamestatus==='0' && challenge==='1' && concede==='0')
                     {
+                        console.log("SAVEWORD API 29=",gamestatus,challenge,",",concede)
                         saveWord({
                             match_id:onlineUser.user1.match_id,
                             gamestatus:'4',
@@ -129,9 +130,41 @@ export const YouLose = () => {
 useEffect(()=>{
         console.log(`ROUND CHANGE YL-${online_round_counter}`)
 
+    if(winner_loser==='loser' && showNextRoundButton){
+        setShowNextRoundButton(false)
+        console.log("SAVEWORD API 1=",gamestatus,challenge,",",concede)
+        setUserOpponentAgree(true)
+        saveWord({
+            match_id:onlineUser.user1.match_id,
+            gamestatus:"0",
+            concede:"0",
+            user_id:parseInt(onlineUser.user1.user_id),
+            challenge:"0",
+            word:"",
+            round:online_round_counter
+        },1,false)
+
+
+        setTimeout(()=>{
+            console.log(`calling reset state in you lose after 3 seconds`)
+            resetStateHHForRound(true)
+        },[4000])
+        setRoundComplete(true)
+        console.log("Time Reset@@@@@@@@@@@@@  1")
+        setIsActive(false)
+        setSeconds(60)
+        setShowKeyboard(false)
+    }
+
+},[online_round_counter])
+
+
+useEffect(()=>{
+        console.log(`ROUND CHANGE YL-${online_round_counter}`)
+
     if(user_click_next_round_button===true && opponent_click_next_round_button===true && winner_loser==='loser'){
 
-        console.log("calling save word API from LOSE set all fields to ZERO")
+        console.log("SAVEWORD API 1=",gamestatus,challenge,",",concede)
         setUserOpponentAgree(true)
         saveWord({
             match_id:onlineUser.user1.match_id,
@@ -180,7 +213,7 @@ useEffect(()=>{
     
 
     const onClick=()=>{
-        console.log("calling save word API on button click")
+        console.log("SAVEWORD API 4=",gamestatus,challenge,",",concede)
         setShowNextRoundButton(false)
         //finalResultCounter(winner_loser)
         saveWord({

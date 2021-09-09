@@ -12,7 +12,11 @@ import{
     SET_BACKUP_INPUT_TEXT,
     SET_GAME_LEVEL,
     RESET_COMMONSTATE,
-    LOAD_LEVEL
+    LOAD_LEVEL,
+    SET_HUMAN_POSITION,
+    SINGLE_SHIFT_COUNTER,
+    SET_SHOW_KEYBOARD,
+    SET_RANDOM_POSITION
 } from '../../../../type'; 
 
 
@@ -25,13 +29,40 @@ const CommonState=({children})=>{
    seconds:60,
    game_type:null,
    game_level:null,
-   load_game_level:null
+   load_game_level:null,
+   human_position:null,
+   showKeyboard:false,
+   single_shift_counter:null,
   };
  
   console.log("Common State...")
   const [state,dispatch]=useReducer(commonReducer,initialState);
 
-
+useEffect(()=>{
+  console.log("warning 3")
+  if(state.game_level==='Medium')
+  {
+      if(state.human_position===0)
+      {
+        setInputText(state.backup_input_text+'_')
+      }
+      else if(state.human_position===1)
+      {
+          setInputText('_'+state.backup_input_text)    
+      }
+  }
+  else if(state.game_level==='Expert' || state.game_level==='Genius')
+  {
+    if(state.human_position===1)
+    {
+      setInputText(state.backup_input_text && '_'+state.backup_input_text.slice(0,state.backup_input_text.length))
+    }
+    if(state.human_position===0)
+    {
+      setInputText(state.backup_input_text && state.backup_input_text.slice(0,state.backup_input_text.length)+'_')  
+    }
+  }
+},[state.human_position])
 
 
   useEffect(()=>{
@@ -56,6 +87,131 @@ const CommonState=({children})=>{
      
 },[state.inputText])
 
+
+const deleteChar = () => {
+  //console.log("deletechar========",inputText)
+
+    if(state.game_level==='Easy')
+    {
+      setInputText(state.inputText.substring(0,state.inputText.length-1))
+    }
+    else if(state.game_level==='Medium')
+    {
+
+      if(state.human_position===0 || state.human_position===null)
+      {
+        setInputText(state.inputText.substring(0, state.inputText.length-1));
+      }
+      else if(state.human_position===1){
+        setInputText(state.inputText.substring(1, state.inputText.length));
+      }
+    }
+    else if(state.game_level==='Expert')
+    {
+      if((state.human_position===0 || state.human_position===null) && (state.single_shift_counter===null || state.single_shift_counter===-1))
+      {
+        setInputText(state.inputText.substring(0, state.inputText.length-1));
+      }
+      else if(state.human_position===1)
+      {
+        setInputText(state.inputText.substring(1, state.inputText.length));
+      }
+      else if(state.single_shift_counter > 0)
+      {
+        console.log("first half=",state.inputText.substring(0,state.single_shift_counter-1))
+        console.log("second hlaf=",state.inputText.substring(state.single_shift_counter))
+        console.log("final text=",state.inputText.substring(0,state.single_shift_counter-1)+state.inputText.substring(state.single_shift_counter))
+        setInputText(state.inputText.substring(0,state.single_shift_counter-1)+state.inputText.substring(state.single_shift_counter))
+      }
+      
+    }
+    else if(state.game_level==='Genius' )
+    {
+      
+      if(state.inputText!==null && state.inputText.length===state.word_length )
+      {
+        setInputText2(state.inputText2.substring(0, state.inputText2.length - 1));
+      }
+      else
+      {
+        if((state.human_position===0 || state.human_position===null) && (state.single_shift_counter===null || state.single_shift_counter===-1))
+        {
+          setInputText(state.inputText.substring(0, state.inputText.length-1));
+        }
+        else if(state.human_position===1)
+        {
+          setInputText(state.inputText.substring(1, state.inputText.length));
+        }
+        else if(state.single_shift_counter > 0)
+        {
+          console.log("first half=",state.inputText.substring(0,state.single_shift_counter-1))
+          console.log("second hlaf=",state.inputText.substring(state.single_shift_counter))
+          console.log("final text=",state.inputText.substring(0,state.single_shift_counter-1)+state.inputText.substring(state.single_shift_counter))
+          setInputText(state.inputText.substring(0,state.single_shift_counter-1)+state.inputText.substring(state.single_shift_counter))
+        }
+      }
+    }
+
+    setSingleShiftCounter('reset')
+    console.log("KEYBOARD ON 2")
+    setShowKeyboard(true);
+}; 
+
+
+const setRandomPosition=()=>{
+  dispatch({
+    type:SET_RANDOM_POSITION,
+    payload:Math.floor(Math.random() * 2)
+  })
+}
+
+const setSingleShiftCounter=(inc_dec)=>{
+ // console.log("counter value=",state.single_shift_counter,",",inputText.length)
+  if(inc_dec==='increment')
+  {
+    if(state.single_shift_counter===null){
+      dispatch({
+        type:SINGLE_SHIFT_COUNTER,
+        payload:state.single_shift_counter+1 
+      })
+    }
+    else if(state.single_shift_counter!==null && (state.single_shift_counter < state.backup_input_text.length)){
+      dispatch({
+        type:SINGLE_SHIFT_COUNTER,
+        payload:state.single_shift_counter+1 
+      })
+    }
+    else{
+      dispatch({
+        type:SINGLE_SHIFT_COUNTER,
+        payload:null
+      })
+    }
+  }
+  else if(inc_dec==='decrement'){
+  
+    if(state.single_shift_counter===0 || state.single_shift_counter===null){
+      dispatch({
+        type:SINGLE_SHIFT_COUNTER,
+        payload:-1
+      })
+    }
+    else if(state.single_shift_counter >0){
+      dispatch({
+        type:SINGLE_SHIFT_COUNTER,
+        payload:state.single_shift_counter-1 
+      })
+    }
+  }
+else{
+    dispatch({
+      type:SINGLE_SHIFT_COUNTER,
+      payload:null
+    })
+  }
+  
+}
+
 const setGameLevel=(level)=>[
   dispatch({
     type:SET_GAME_LEVEL,
@@ -74,6 +230,15 @@ const getCampaign=async()=>{
 const res=await axios.get(process.env.REACT_APP_BASEURL+'/api/getCampaigns',config)
     console.log("Response from campagin=",res.data) */
 }
+
+// set position of character in inputText
+const setHumanPosition=(position)=>{
+  dispatch({
+    type:SET_HUMAN_POSITION,
+    payload:position
+  })
+}
+
 
 const loadGameLevels=async()=>{
 
@@ -96,7 +261,12 @@ const loadGameLevels=async()=>{
     console.log("Error in Load level=",error)
   }
 }
-
+const setShowKeyboard=(true_false)=>{
+  dispatch({
+      type:SET_SHOW_KEYBOARD,
+      payload:true_false
+  })
+}
 const setBackUpInputText=(arg)=>{
   dispatch({
     type:SET_BACKUP_INPUT_TEXT,
@@ -174,6 +344,9 @@ const resetCommonState=()=>{
     game_type:state.game_type,
     game_level:state.game_level,
     load_game_level:state.load_game_level,
+    human_position:state.human_position,
+    single_shift_counter:state.single_shift_counter,
+    showKeyboard:state.showKeyboard,
     setInputText,
     setInputText2,
     setIsActive,
@@ -184,7 +357,11 @@ const resetCommonState=()=>{
     setGameLevel,
     resetCommonState,
     loadGameLevels,
-    getCampaign
+    getCampaign,
+    setHumanPosition,
+    deleteChar,
+    setShowKeyboard
+    
       }}>
       {children}
     </CommonContext.Provider>

@@ -5,6 +5,7 @@ import HumanContext from "../../MyComponent/context/human/humanContext"
 import AuthContext from "../../MyComponent/context/auth/authContext";
 import $ from "jquery";
 import MediumLevelUI from "../../MyComponent/LevelUI/MediumLevelUI";
+import ExpertAndGeniusLevelUI from "../../MyComponent/LevelUI/ExpertAndGeniusLevelUI";
 import Trophy from "../../MyComponent/Trophy";
 import { Spinner } from "reactstrap";
 import CommonContext from '../../MyComponent/context/common/commonContext'
@@ -13,19 +14,20 @@ import Keyboard from "../../Keyboard";
 import HintPopup from '../../HintPopup'
 import ExitPopup from "../../ExitPopup";
 import WarningPopup from "../../WarningPopup";
+import {useCharacterConsumerUpdate} from "../../MyComponent/CharacterContext";
 
 //comment add in playonline
 
 const PlayOnline = () => {
 
   const commonContext =useContext(CommonContext)
-  const {setInputText,inputText,setIsActive,seconds,game_level,exitUser,setSeconds,backup_input_text}=commonContext
+  const {setInputText,inputText,setIsActive,seconds,game_level,exitUser,setSeconds,setShowKeyboard,showKeyboard,setHumanPosition,deleteChar,backup_input_text,word_length}=commonContext
   const authContext = useContext(AuthContext);
   const { user } = authContext;
 
   const humanContext=useContext(HumanContext)
   const {hint,hint_used,hint_count,setHintUsed}=humanContext
-  
+  const { myTurn } = useCharacterConsumerUpdate();
 
   const playOnlineContext = useContext(PlayOnlineContext);
   const {
@@ -45,8 +47,6 @@ const PlayOnline = () => {
     challenge_popup_on,
     setChallengePopup,
     round_result,
-    showKeyboard,
-    setShowKeyboard,
     reset_state,
     setApiHit,
     setwinnerLoser,
@@ -168,6 +168,7 @@ const PlayOnline = () => {
     //console.log("play button=", inputText);
     console.log("calling save word API form playonline on play button click")
     setApiHit(60)
+    setHumanPosition(null)
     saveWord({
       user_id: parseInt(user.data.id),
       word: inputText,
@@ -190,18 +191,19 @@ const PlayOnline = () => {
   };
 
 
-  const deleteChar = () => {
+ /*  const deleteChar = () => {
     //delete only last character from input text
     console.log("SET INPUT TEXT 7")
     setInputText(inputText.slice(0, inputText.length - 1));
     //show keyboard again to enter new character
     console.log("KEYBOARD ON 9")
     setShowKeyboard(true);
-  };
+  }; */
 
 
   let old_str=null
   let new_str=null
+
   const compareChallengedString=()=>{
     //old_str=Array.from(word).sort().join('').toString()
    // new_str=Array.from(inputText).sort().join('').toString()
@@ -236,20 +238,16 @@ const PlayOnline = () => {
       alert("word length 36");
     }
     console.log("SET INPUT TEXT 8 and setshow keyboard true 7=",inputText,",",e.target.outerText)
-    setInputText(inputText + e.target.outerText);
+    //setInputText(inputText + e.target.outerText);
+
     
-    //console.log("setshow keyboard true 7")
+
+
+
+    myTurn(e);
+    console.log("setshow keyboard true 7")
     challenge!=='1' &&   setShowKeyboard(false);
 
-    /* if(winner_loser==='winner'){
-        console.log("Stop Hiding keyboard")
-    }
-    else{
-      console.log("Hiding keyboard")
-       setShowKeyboard(false)
-    } */
-    
-    
     setPlayButtonHide(true);
   };
 
@@ -477,10 +475,12 @@ const PlayOnline = () => {
                 </div> 
             </Fragment>
             }  
-
-
+            {game_level==="Medium" && showKeyboard && <MediumLevelUI />}
+            {(game_level==="Expert" || (game_level==="Genius" && backup_input_text!==null && backup_input_text.length!==word_length)) && showKeyboard && <ExpertAndGeniusLevelUI/>}
+                
              {/* <h2>keyboard {showKeyboard ? "show" :"hide"}</h2>
              <h2>online_round_counter {online_round_counter}</h2>
+             {game_level==="Medium" && showKeyboard && <MediumLevelUI />}
              <h2>round_result {online_round_counter>=2 ? round_result[online_round_counter-2] : "wait"}</h2> 
             <h2>API HIT {getwordapihit}</h2>*/}
                 {onlineUser && showKeyboard ? (
@@ -540,7 +540,10 @@ const PlayOnline = () => {
                     {!showKeyboard && playButtonHide &&  challenge!=='1' ?  (
                       <div className="play_btn_m game-buttons">
                         <button onClick={() => playButton()}>Play</button>
-                        <button onClick={() => deleteChar()}>
+                        <button onClick={() => {
+                          
+                          
+                          deleteChar()}}>
                           <img
                             src="assets/img/backspace.svg"
                             alt=""

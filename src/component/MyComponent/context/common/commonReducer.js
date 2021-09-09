@@ -7,7 +7,9 @@ import{
      SET_BACKUP_INPUT_TEXT,
      SET_GAME_LEVEL,
      RESET_COMMONSTATE,
-     LOAD_LEVEL
+     LOAD_LEVEL,
+     SET_HUMAN_POSITION,
+     SET_SHOW_KEYBOARD
     } from '../../../../type'; 
     
     //comment
@@ -54,6 +56,18 @@ import{
                                   return{
                                     ...state,
                                     load_game_level:payload
+                                  }
+                                  case SET_HUMAN_POSITION:
+                                        return{
+                                            ...state,
+                                            human_position:payload,
+                                            single_shift_counter:null
+                                        }
+                              case SET_SHOW_KEYBOARD:
+                                  return{
+                                    ...state,
+                                    showKeyboard:payload,
+                                    reset_state:false
                                   }
                                 case RESET_COMMONSTATE:
                                   return{

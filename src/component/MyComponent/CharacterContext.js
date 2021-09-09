@@ -20,13 +20,13 @@ export function useCharacterConsumerUpdate() {
 export function CharacterProvider({ children }) {
   
 const commonContext=useContext(CommonContext)
-const {inputText,setInputText,setIsActive,isActive,setSeconds,backup_input_text,inputText2,setInputText2,game_level}=commonContext
+const {inputText,setInputText,setIsActive,isActive,setSeconds,backup_input_text,inputText2,setInputText2,game_level,human_position}=commonContext
 
 const playOnlineContext=useContext(PlayOnlineContext)
 const {game_type,onlineUser}=playOnlineContext
 
   const humanContext=useContext(HumanContext)
-  const {human_position,setShowKeyboard,play,setPlay,setTurn,round,current_winner_loser_HC,start_match_computer,word_length}=humanContext
+  const {setShowKeyboard,play,setPlay,setTurn,round,current_winner_loser_HC,start_match_computer,word_length}=humanContext
 
   const {keyAudio}=useBackgroundMusicConsumer();
  
@@ -107,6 +107,7 @@ const {game_type,onlineUser}=playOnlineContext
   }, [])
 
   function setTextPositioning(currentChar){
+    console.log("setTextPosition=",currentChar)
     if(inputText!==null &&  inputText.indexOf('_') > -1){
             
       const first_part=inputText.substr(0, inputText.indexOf('_')) 
@@ -119,15 +120,17 @@ const {game_type,onlineUser}=playOnlineContext
 
         setInputText(final_part)
     }
-    else if(human_position===1){
+    else if(human_position===1)
+    {
       setInputText(inputText + currentChar)
     }
-    else if(human_position===0){
+    else if(human_position===0)
+    {
       setInputText(currentChar + inputText)
     }
     else
     {
-    setInputText(inputText + currentChar); 
+      setInputText(inputText + currentChar); 
     }
   }
  

@@ -9,14 +9,14 @@ import HumanContext from  './MyComponent/context/human/humanContext'
 const YouWin = () => {
 
     const commonContext=useContext(CommonContext)
-    const {inputText,setSeconds,seconds,setIsActive,setInputText,setBackUpInputText,resetCommonState,backup_input_text}=commonContext
+    const {inputText,setSeconds,seconds,setIsActive,setInputText,setBackUpInputText,resetCommonState,setShowKeyboard}=commonContext
 
 
     const humanContext=useContext(HumanContext)
    // const {resetHumanState}=useContext(humanContext)
 
     const playOnlineContext=useContext(PlayOnlineContext)
-    const {word_definition,resetStateHHForRound,winner_loser,saveWord,onlineUser,sendMatchRound,online_round_counter,setRoundComplete,setShowKeyboard,get_word,clearAllInterval,opponent_click_next_round_button,user_click_next_round_button,showNextRoundButton,setShowNextRoundButton,setUserOpponentAgree,finalResultCounter,final_result_winner_counter,final_result_loser_counter,setwinnerLoser,getFinalResultOnline,changeMatchStatus,nextRound,round_complete,setResultWordHH,resetStateHHForMatch}=playOnlineContext
+    const {word_definition,resetStateHHForRound,winner_loser,saveWord,onlineUser,sendMatchRound,online_round_counter,setRoundComplete,get_word,clearAllInterval,opponent_click_next_round_button,user_click_next_round_button,showNextRoundButton,setShowNextRoundButton,setUserOpponentAgree,finalResultCounter,final_result_winner_counter,final_result_loser_counter,setwinnerLoser,getFinalResultOnline,changeMatchStatus,nextRound,round_complete,setResultWordHH,resetStateHHForMatch}=playOnlineContext
  
     const {data}=get_word || {}
     const {user_id,gamestatus,challenge,concede}=data || {}
@@ -61,7 +61,7 @@ const YouWin = () => {
             )
 
                     if(onlineUser.user1.user_id!==user_id && gamestatus==='101' && challenge==='0' && concede==='0'){
-                        console.log("calling save word API in response of 101 ")
+                        console.log("SAVEWORD API 6=",gamestatus,challenge,",",concede)
                         saveWord({
                             match_id:onlineUser.user1.match_id,
                             gamestatus:'0',
@@ -74,7 +74,7 @@ const YouWin = () => {
                     }
                     else if(onlineUser.user1.user_id!==user_id && gamestatus==='1' && challenge==='0' && concede==='0')
                     {
-                        console.log("calling save word API form you Win on winner popup")
+                        console.log("SAVEWORD API 7=",gamestatus,challenge,",",concede)
                         saveWord({
                             match_id:onlineUser.user1.match_id,
                             gamestatus:'3',
@@ -97,7 +97,7 @@ const YouWin = () => {
                     }
                     else if(onlineUser.user1.user_id!==user_id && gamestatus==='0' && challenge==='1' && concede==='0')
                     {
-                        console.log("calling save word API form you Win on winner popup 2")
+                        console.log("SAVEWORD API 24=",gamestatus,challenge,",",concede)
                         //setResultWordHH(inputText,word_definition)
                         saveWord({
                             match_id:onlineUser.user1.match_id,
@@ -159,9 +159,44 @@ const YouWin = () => {
    useEffect(()=>{
 
     console.log(`ROUND CHANGE YW-${online_round_counter}`)
-    if(user_click_next_round_button===true && opponent_click_next_round_button===true && winner_loser==='winner'){
+    if(winner_loser==='winner' && showNextRoundButton)
+    {
+        setShowNextRoundButton(false)
+        console.log("SAVEWORD API 8=",gamestatus,challenge,",",concede)
+        setUserOpponentAgree(true)
+        saveWord({
+            match_id:onlineUser.user1.match_id,
+            gamestatus:"0",
+            concede:"0",
+            user_id:parseInt(onlineUser.user1.user_id),
+            challenge:"0",
+            word:"",
+            round:online_round_counter
+        },8,false)
             
-        console.log("calling save word API from WIN set all fields to ZERO")
+        
+        setTimeout(()=>{
+            console.log(`calling reset state in you win after 3 seconds,ROUND CHANGE-${online_round_counter}`)
+            resetStateHHForRound(true)
+        },[4000])
+        setRoundComplete(true)
+        console.log("setisActive true")
+        setIsActive(true)
+        setSeconds(60)
+        console.log("KEYBOARD ON 1")
+        setShowKeyboard(true)
+    }
+
+   },[online_round_counter])
+
+
+   useEffect(()=>{
+
+    console.log(`ROUND CHANGE YW-${online_round_counter}`)
+    if(user_click_next_round_button===true && opponent_click_next_round_button===true && winner_loser==='winner')
+    {
+            
+        console.log("SAVEWORD API 8=",gamestatus,challenge,",",concede)
         setUserOpponentAgree(true)
         saveWord({
             match_id:onlineUser.user1.match_id,
@@ -193,7 +228,8 @@ const YouWin = () => {
     {
         console.log("user_click_next_round_button=",user_click_next_round_button)
         console.log("opponent_click_next_round_button=",opponent_click_next_round_button)
-        if(user_click_next_round_button===true && opponent_click_next_round_button===true && winner_loser==='winner'){
+        if(user_click_next_round_button===true && opponent_click_next_round_button===true && winner_loser==='winner')
+        {
             console.log("BOTH USERS AGREE TO GO IN NEXT ROUND")
             console.log("SET INPUT TEXT BLANK YW")
             setInputText('')
@@ -211,7 +247,7 @@ const YouWin = () => {
 const onClick=()=>{
     
     setShowNextRoundButton(false)
-    console.log("calling save word API form you Win on button click after 3sec")
+    console.log("SAVEWORD API 9=",gamestatus,challenge,",",concede)
     saveWord({
         match_id:onlineUser.user1.match_id,
         gamestatus:'5',

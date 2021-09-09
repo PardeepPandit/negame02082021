@@ -220,7 +220,9 @@ else
                 </div>
                 {/*  {loser.out && <div className="bg-white">{JSON.stringify(val)}</div>} */}
                 {game_level==="Medium" && show_keyboard && <MediumLevelUI />}
+
                 {(game_level==="Expert" || (game_level==="Genius" && backup_input_text!==null && backup_input_text.length!==word_length)) && show_keyboard && <ExpertAndGeniusLevelUI/>}
+                
                 {/* {game_level==="genius" && show_keyboard && inputText!==null && inputText.length!==word_length &&<GeniusLevelUI/>} */}
            
                 <div className='challenge-input'> {game_level==="Genius" &&  show_keyboard && backup_input_text!==null && backup_input_text.length===word_length && challenge && <input type="text" className="main-input maininput2" value={inputText2}/>}  

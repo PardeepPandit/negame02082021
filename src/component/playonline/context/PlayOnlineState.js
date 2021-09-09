@@ -57,7 +57,6 @@ challenge_popup_on:false,
 getwordapihit:60,
 //round_result:{r1:null,r2:null,r3:null,r4:null,r5:null},
 round_result:[],
-showKeyboard:false,
 stop_old_instance:false,
 reset_state:false,
 interval_id:[],
@@ -79,7 +78,7 @@ hint_count:null,
 const [state, dispatch] = useReducer(playOnlineReducer, initialState)
 
 const commonContext=useContext(CommonContext)
-const{inputText,setInputText,isActive,setIsActive,setSeconds,backup_input_text}=commonContext
+const{inputText,setInputText,isActive,setIsActive,setSeconds,backup_input_text,setShowKeyboard,showKeyboard}=commonContext
 
 console.log("play online state...")
 const finalResultCounter=(winner_loser)=>{
@@ -238,12 +237,12 @@ useEffect(()=>{
     
 },[state.onlineUser])
 
-const setShowKeyboard=(true_false)=>{
+/* const setShowKeyboard=(true_false)=>{
     dispatch({
         type:SET_SHOW_KEYBOARD,
         payload:true_false
     })
-}
+} */
 
 useEffect(()=>{
 
@@ -443,7 +442,7 @@ const saveWord=async(formData,callingID,flag=true)=>{
     }
 
     const body=formData
-    console.log("save word API body=",body)
+    console.log(`save word API body ${callingID}=`,body)
     try {
 
         const res=await axios.post(process.env.REACT_APP_BASEURL+`/api/save/word`,body,config)
@@ -477,12 +476,12 @@ const saveWord=async(formData,callingID,flag=true)=>{
                         if(state.winner_loser==="winner" || state.winner_loser==="loser") 
                         {
                             console.log("calling getword API form saveword 240=",match_id,",",user_id)
-                            getWord(match_id,user_id,240)//240 because getword api hits twice in a second and screen timer in 120 sec. so to equate both (on screen timer and getword api hit timer) 
+                            getWord(match_id,user_id,120)//240 because getword api hits twice in a second and screen timer in 120 sec. so to equate both (on screen timer and getword api hit timer) 
                         }
                         else
                         {
                             console.log("calling getword API form saveword 120=",match_id,",",user_id)
-                            getWord(match_id,user_id,120)//120 because getword api hits twice in a second and screen timer in 60 sec. so to equate both (on screen timer and getword api hit timer) 
+                            getWord(match_id,user_id,60)//120 because getword api hits twice in a second and screen timer in 60 sec. so to equate both (on screen timer and getword api hit timer) 
                         } 
                     }
 
@@ -519,6 +518,10 @@ const nextRoundButton=(user)=>{
 //////////////////////////////      GET WORD
 const getWord=(match_id,user_id,time)=>{
 
+        let old_object=null;
+        let new_object=null;
+
+
     //console.log("My interval in get word API =",user_id)
 //state.interval_id.forEach(clearInterval);
     clearAllInterval()
@@ -541,6 +544,7 @@ const getWord=(match_id,user_id,time)=>{
        //console.log("Response from getWord=",res.data.data)
 
        const{concede,gamestatus,challenge}=res.data.data
+       new_object=res.data.data
          //console.log("Response from getWord=",user_id,",",res.data.data.user_id,",",res.data.data.word,",",time)
 
         if(JSON.stringify(res.status)==='200' && JSON.stringify(res.data.status)==='200')
@@ -559,6 +563,9 @@ const getWord=(match_id,user_id,time)=>{
     if(JSON.stringify(res.status)==='200' && JSON.stringify(res.data.status)==='200')
     {   
 
+        if(!Object.is(old_object,new_object))
+        {
+            old_object=new_object
             console.log("Match Finish=",localStorage.getItem('match_finish'))
        
 
@@ -568,7 +575,7 @@ const getWord=(match_id,user_id,time)=>{
             console.log("CLEAR INTERVAL 1")
             clearInterval(myinterval)
         }
-        if(state.showKeyboard===true && state.winner_loser===null && user_id!==parseInt(res.data.data.user_id) && gamestatus!=="0" && challenge==="0" && concede==="0"){
+        if(showKeyboard===true && state.winner_loser===null && user_id!==parseInt(res.data.data.user_id) && gamestatus!=="0" && challenge==="0" && concede==="0"){
                 
             console.log("stop get word API keyboard ON")
             console.log("CLEAR INTERVAL 2")
@@ -603,6 +610,7 @@ const getWord=(match_id,user_id,time)=>{
         else if(user_id!==parseInt(res.data.data.user_id) && gamestatus==="0" && challenge==="1" && concede==="0")
         {
             console.log("CLEAR INTERVAL 5")
+            console.log("SAVEWORD API 26=",gamestatus,challenge,",",concede)
             clearInterval(myinterval)
               saveWord({
                 match_id:state.onlineUser.user1.match_id,
@@ -654,6 +662,7 @@ const getWord=(match_id,user_id,time)=>{
             console.log("setwinnerloser 3")
             //time=240
             setResultWordHH(backup_input_text,'Word is complete')
+            console.log("SAVEWORD API 20=",gamestatus,challenge,",",concede)
             saveWord({
                 match_id:state.onlineUser.user1.match_id,
                 gamestatus:"0",
@@ -712,6 +721,7 @@ const getWord=(match_id,user_id,time)=>{
                // setwinnerLoser('loser')
                //console.log("YOU CAN PLAY NEXT MOVE")
                //clearInterval(myinterval)
+              /*  console.log("SAVEWORD API 30=",gamestatus,challenge,",",concede)
                saveWord({
                 match_id:state.onlineUser.user1.match_id,
                 gamestatus:"0",
@@ -720,7 +730,7 @@ const getWord=(match_id,user_id,time)=>{
                 challenge:"0",
                 word:"",
                 round:state.online_round_counter
-            },29,true)
+            },30,true) */
                
         }
        else if(res.data.data.word && user_id!==parseInt(res.data.data.user_id) && concede==="0" && gamestatus==="0" && challenge==="0")
@@ -770,7 +780,7 @@ const getWord=(match_id,user_id,time)=>{
                 })
         }
     }
-    
+}
     }
     else{
         console.log("No conditon match=",res.status,",",res.data.status,",",res.data.data.word)
@@ -783,7 +793,7 @@ const getWord=(match_id,user_id,time)=>{
     time=time-1
     //setApiHit(time)
     
-},500)
+},1000)
 
     setIntervalId(myinterval)
 
@@ -989,7 +999,6 @@ const setApiHit=(count)=>{
             challenge_popup_on:state.challenge_popup_on,
             getwordapihit:state.getwordapihit,
             round_result:state.round_result,
-            showKeyboard:state.showKeyboard,
             stop_old_instance:state.stopOldInstance,
             reset_state:state.reset_state,
             interval_id:state.interval_id,
@@ -1022,7 +1031,6 @@ const setApiHit=(count)=>{
             setChallengePopup,
             setApiHit,
             setRoundResult,
-            setShowKeyboard,
             stopOldInstance,
             setIntervalId,
             setCurrentStatus,

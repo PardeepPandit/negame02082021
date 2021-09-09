@@ -31,7 +31,6 @@ import{
   SET_FINAL_RESULT_HC,
   RESET_HUMAN_STATE,
   SET_MATCH_ROUND_DETAILS,
-  SET_MASTER_HISTORY,
   SET_RANDOM_POSITION,
   SINGLE_SHIFT_COUNTER,
   SET_BACKUP_INPUT_TEXT,
@@ -65,7 +64,6 @@ const HumanState=({children})=>{
         result_history:[],
         final_result_HC:null,
         match_round_details:null,
-        master_history_HC:[],
         computer_position:null,
         word_length:null
        //[{round:1,word:,complete_word:,round_respnse}],[]
@@ -79,7 +77,7 @@ const HumanState=({children})=>{
   const {user}=authContext
 
   const commonContext =useContext(CommmonContext)
-  const {inputText,setInputText,setSeconds,setIsActive,backup_input_text,inputText2,game_level,isActive,setInputText2}=commonContext
+  const {inputText,setInputText,setSeconds,setIsActive,backup_input_text,inputText2,game_level,isActive,setInputText2,game_type}=commonContext
 console.log("Human state....",inputText)
 useEffect(()=>{
     console.log("warning 1")
@@ -178,13 +176,13 @@ useEffect(()=>{
   }
 },[state.random_word])
 
-useEffect(()=>{
+/* useEffect(()=>{
   console.log("warning 6")
   if(state.match_round_details!==null){
     console.log("Round DEtails=",state.match_round_details)
     setMasterHistory({round:state.round,word:inputText,complete_word:state.random_word,round_details:state.match_round_details})
   }
-},[state.match_round_details]) 
+},[state.match_round_details])  */
 
  useEffect(()=>{
   /* console.log("warning 7")
@@ -253,7 +251,7 @@ useEffect(() => {
   if(state.hint_used)
   {
     console.log("calling get hint in humanstate");
-    if(inputText!==null && inputText.length===1)
+    if((inputText!==null && inputText.length===1) || game_type==='human_vs_online')
     {
       getHint()
     }
@@ -322,12 +320,7 @@ const setPlay=(true_false)=>{
 
 
 
-const setMasterHistory=(details)=>{
-   dispatch({
-     type:SET_MASTER_HISTORY,
-     payload:details
-   })
- }
+
  
 
 const sendMatchRoundHC=async(formdata)=>{
@@ -1104,7 +1097,6 @@ const deleteChar = () => {
         result_history:state.result_history,
         final_result_HC:state.final_result_HC,
         match_round_details:state.match_round_details,
-        master_history_HC:state.master_history_HC,
         temp_word:state.temp_word,
         word_length:state.word_length,
         getRandomWordFromApi,
@@ -1126,7 +1118,6 @@ const deleteChar = () => {
         sendMatchRoundHC,
         changeMatchStatusHC,
         resetHumanState,
-        setMasterHistory,
         getHint,
         setLoading,
         setRandomPosition,

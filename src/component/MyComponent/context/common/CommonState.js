@@ -36,7 +36,7 @@ const CommonState=({children})=>{
 
   useEffect(()=>{
 
-    if(state.inputText!==null){
+    if(state.inputText!==null && state.inputText!==''){
           if(state.inputText.indexOf('_')>-1){
             const first_part=state.inputText.substr(0, state.inputText.indexOf('_')) 
             const second_pard=state.inputText.substr(state.inputText.indexOf('_')+1,state.inputText.length)

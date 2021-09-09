@@ -60,6 +60,7 @@ import{
                                     ...state,
                                     inputText:null,
                                     inputText2:null,
+                                    backup_input_text:null,
                                     isActive:false,
                                     load_game_level:null,
                                     seconds:60,

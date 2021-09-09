@@ -1,16 +1,17 @@
 import React,{Fragment,useContext} from 'react';
 import PlayOnlineContext from '../context/playOnlineContext';
 import CommonContext from '../../MyComponent/context/common/commonContext'
+import { SET_ISACTIVE } from '../../../type';
 
 
 const ChallengePopup = () => {
 
         const commonContext =useContext(CommonContext)
-        const {setInputText,setSeconds}=commonContext
+        const {setInputText,setSeconds,inputText,setIsActive}=commonContext
 
 
     const playOnlineContext=useContext(PlayOnlineContext)
-    const {setPopup}=playOnlineContext
+    const {setChallengePopup,saveWord,onlineUser,online_round_counter}=playOnlineContext
 
     return (
 
@@ -36,10 +37,12 @@ const ChallengePopup = () => {
                                         <h1><span style={{color:'white'}}>YOU HAVE BEEN CHALLENGED BY THE OPPONENT</span></h1>
                                         <h1><span style={{color:'white'}}>NOW COMPLETE A WORD</span></h1>
                                         <button onClick={()=>{
-                                            setSeconds()
+                                            setSeconds(120)
+                                            setIsActive(true)
                                             console.log("SET INPUT TEXT 6")
                                             setInputText('')
-                                            setPopup(true)}} className="play-again">OK</button>
+                                            setChallengePopup(false)
+                                            }} className="play-again">OK</button>
                                     </div>
                                 </div>
                             </div>

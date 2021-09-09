@@ -4,21 +4,26 @@ import PlayBackPopup from './PlayBackPopup';
 import AuthContext from './MyComponent/context/auth/authContext'
 import CommonContext from './MyComponent/context/common/commonContext'
 import HumanContext from './MyComponent/context/human/humanContext';
-import HumanVsComputer from './HumanVsComputer';
-const GameLevels = (props ) => {
+import PlayOnlineContext from './playonline/context/playOnlineContext'
+import Spinner from '../component/MyComponent/Spinner';
+
+const GameLevels = () => {
 
     const commonContext =useContext(CommonContext)
-    const {setIsActive,load_game_level,setGameStatus,loadGameLevels,human_vs_computer,resetCommonState,setGameLevel,human_vs_online,setSeconds}=commonContext
+    const {setIsActive,load_game_level,setInputText,loadGameLevels,human_vs_computer,resetCommonState,setGameLevel,human_vs_online,setSeconds}=commonContext
     const humanContext =useContext(HumanContext)
     const {start_match_computer,checkHintCount,startMatchComputer}=humanContext
-
-
+    const playOnlineContext =useContext(PlayOnlineContext)
+    const {searchUserOnline,onlineUser,online_match_finish}=playOnlineContext
+    const authContext=useContext(AuthContext)
+    const {user}=authContext
 
     //const {onClick}=props.location
 
     const [playbackpopup,setPlayBackPopup]=useState(false)
     const [levelSelected,setLevelSelected]=useState({l_no:null,l_name:null})
-
+    const [search,setSearch]=useState(false)
+    const [startMatch,setStartMatch]=useState(false)
 const history=useHistory()
 
 /*  useEffect(() => {
@@ -53,10 +58,21 @@ const history=useHistory()
     } 
 
   },[window.performance])
+
+
+  useEffect(()=>{
+
+    if(onlineUser && onlineUser!=='opponent_not_found' && onlineUser.user1.start==="1" && !online_match_finish){
+        console.log("***************SET IS ACTIVE 1***************")
+        setIsActive(true)
+    }
+
+
+},[onlineUser,online_match_finish])
   
 console.log("historuy=",history)
 
-console.log("props=",props)
+
 
    useEffect(()=>{
        if(start_match_computer)
@@ -64,29 +80,14 @@ console.log("props=",props)
              console.log("***************SET IS ACTIVE 2***************")
              setIsActive(true) 
             // setPlayBackPopup(false)
-             //setStartMatch(false)
+             setStartMatch(false)
        }      
  },[start_match_computer]) 
 
 
-/*  const onClick=(levelno,l_type)=>{
-    console.log("ONClick function called=",human_vs_computer)
-    setGameLevel(l_type)
-    checkHintCount(user.data.id)
-    //setStartMatch(true) 
-    
-    if(human_vs_online)
-    {
-          //  playOnline()
-    }
-    else if(human_vs_computer)
-    {
-            console.log("Test case 1");
-            (l_type==='Easy' || l_type==='Medium' || l_type==='Expert') ? setSeconds(60) : setSeconds(120)
-            startMatchComputer(login_data.id,levelno)
-    }            
-    console.log("Test case 2")
-} */
+
+
+
 
 const togglePopupPlayBack=(l_no,l_name)=>{
 
@@ -101,12 +102,34 @@ const goBack=()=>{
     history.push('/dashboard')
 }
 
+const playOnline=()=>{
+  console.log("SET INPUT TEXT 1")
+  setInputText('')
+  searchUserOnline(user && user.data.id)  
+  //setSearch state for spinner
+  setSearch(true)
+} 
+
+
+
 
 if(start_match_computer)
 {
     console.log("REDIRECTING TO MAIN=",start_match_computer)
      return <Redirect to='/human_vs_computer' />
 } 
+if(onlineUser && onlineUser!=='opponent_not_found' && !online_match_finish)
+  {
+    console.log("redirect to playonline",onlineUser,",",!online_match_finish)
+    return <Redirect to='/playonline'/>
+  }
+else if((!onlineUser && search) || startMatch )
+    {
+        console.log("?????=>",!onlineUser,",",search,",",startMatch)
+        return <Spinner/>
+    }
+else
+{
   return (
     <Fragment>
    <div class="section_card_ga section_card">
@@ -143,13 +166,13 @@ if(start_match_computer)
          </div>
         </div>
 
-        {playbackpopup && <PlayBackPopup  handleClose={setPlayBackPopup} levelSelected={levelSelected} />}
+      {playbackpopup && <PlayBackPopup  handleClose={setPlayBackPopup} levelSelected={levelSelected} playOnline={playOnline} setStartMatch={setStartMatch}/>}
            
   
 </Fragment>
       );
 
-
+        }
 }
 
 export default GameLevels;

@@ -13,7 +13,7 @@ const humanContext=useContext(HumanContext)
 const {setCurrentWinnerLoserHC,setResultWord}=humanContext
 
   const playOnlineContext=useContext(PlayOnlineContext)
-  const {onlineUser,saveWord,setRoundComplete,resetState}=playOnlineContext
+  const {onlineUser,saveWord,setRoundComplete,resetStateHHForRound,setwinnerLoser,online_round_counter,setResultWordHH}=playOnlineContext
 
 
   var myVar;
@@ -33,20 +33,23 @@ const {setCurrentWinnerLoserHC,setResultWord}=humanContext
           setCurrentWinnerLoserHC('loser')
           setResultWord(inputText,'Time Over')
         }
-        else if(human_vs_online)
+        else if(game_type==='human_vs_online')
         {
-          console.log("PLAY ONLINE TIME UP calling saveword API from TimerContext")
-            saveWord({
-            match_id:onlineUser.user1.match_id,
-            gamestatus:'0',
-            concede:"0",
-            user_id:parseInt(onlineUser.user1.user_id),
-            challenge:"0",
-            word:""
-        },10) 
+          console.log("PLAY ONLINE TIME UP ")
+             saveWord({
+                        match_id:onlineUser.user1.match_id,
+                        gamestatus:'2',
+                        concede:"0",
+                        user_id:parseInt(onlineUser.user1.user_id),
+                        challenge:"0",
+                        round:online_round_counter,
+                        word:""
+                    },10,false)  
+        setwinnerLoser('loser')
         console.log("ALL STATE RESET for playonline IN Timer Context")
-        resetState(true)
-        setRoundComplete(false)
+        setResultWordHH(inputText,'Time Over')
+        //resetStateHHForRound(true)
+        //setRoundComplete(false)
         } 
         
       }

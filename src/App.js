@@ -174,11 +174,10 @@ else{ */
           <Switch>
             <Route exact path="/" component={Login} />
             <Route exact path="/PlayBackPopup" component={PlayBackPopup} />
-
             <Route exact path="/gamelevels" component={GameLevels} />
             <Route exact path="/facebook" component={ReactFacebookLogin} />
             <Route exact path="/google" component={Google} />
-              <Route exact path="/dashboard" component={Dashboard} /> 
+            <Route exact path="/dashboard" component={Dashboard} /> 
             {/* <Route exact path="/dashboard" component={(props)=> <Dashboard {...props}/>} />   */}
              <PrivateRoute exact path='/paypal/:price' component={PayPal}/>
             <Route exact path="/register" component={Register} />

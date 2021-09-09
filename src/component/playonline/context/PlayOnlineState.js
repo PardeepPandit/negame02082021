@@ -13,7 +13,8 @@ import {
     TURN_CHANGE,
     SET_WORD_DEFINITION,
     SET_RESULT,
-    RESET_STATE,
+    RESET_STATE_FOR_ROUND,
+    RESET_STATE_FOR_MATCH,
     SET_GAME_TYPE,
     SET_ROUND_COMPLETE,
     SET_POPUP,
@@ -31,7 +32,11 @@ import {
     FINAL_RESULT_COUNTER,
     SET_FINAL_RESULT_DATA,
     MATCH_FINISH,
-    CHANGE_MATCH_STATUS
+    NEXT_ROUND,
+    START_GAME,
+    SET_HINT_COUNT,
+    SET_HINT_USED,
+    GET_HINT
 } from '../../../type'
 const PlayOnlineState=({children})=>{
 
@@ -48,7 +53,7 @@ info:[],
 game_type:null,
 send_match_round:null,
 round_complete:false,
-popdisabled:false,
+challenge_popup_on:false,
 getwordapihit:60,
 //round_result:{r1:null,r2:null,r3:null,r4:null,r5:null},
 round_result:[],
@@ -64,13 +69,17 @@ user_opponent_agree:false,
 final_result_winner_counter:0,
 final_result_loser_counter:0,
 final_result_data:localStorage.getItem('final_result_data'),
-online_match_finish:false
+online_match_finish:false,
+start_game:false,
+hint:null,
+hint_used:false,
+hint_count:null,
 }
 
 const [state, dispatch] = useReducer(playOnlineReducer, initialState)
 
 const commonContext=useContext(CommonContext)
-const{inputText,setInputText,isActive,setIsActive,setSeconds}=commonContext
+const{inputText,setInputText,isActive,setIsActive,setSeconds,backup_input_text}=commonContext
 
 console.log("play online state...")
 const finalResultCounter=(winner_loser)=>{
@@ -88,6 +97,13 @@ const onlineMatchFinish=(true_false)=>{
     })
 }
 
+const nextRound=()=>{
+    dispatch({
+        type:NEXT_ROUND
+    })
+}
+
+
 const changeMatchStatus=async(match_id)=>{
     const config={
         headers:{
@@ -98,10 +114,7 @@ const changeMatchStatus=async(match_id)=>{
     try {
         const res=await axios.get(process.env.REACT_APP_BASEURL+`/api/change/match/status?match_id=${match_id}`,config)
         console.log("Response form Change match status=",res.data)
-        /* dispatch({
-            type:CHANGE_MATCH_STATUS,
-            payload:res.data
-        }) */
+     
     } catch (error) {
         console.log("Error in change match status API=",error)
         
@@ -119,7 +132,7 @@ const getFinalResultOnline=async(match_id,user_id)=>{
 
     try {
         const res=await axios.get(process.env.REACT_APP_BASEURL+`/api/final/result?match_id=${match_id}&user_id=${user_id}`,config)
-        console.log("Response form final result API=",res.data)
+        console.log("Response form final result API=",res.data,",",state.final_result_winner_counter,",",state.final_result_loser_counter)
         dispatch({
             type:SET_FINAL_RESULT_DATA,
             payload:res.data
@@ -161,11 +174,31 @@ const setCurrentStatus=(winner_loser)=>{
 }
 
 
+useEffect(() => {
+    
+    if(state.hint_used)
+    {
+      console.log("calling get hint in humanstate");
+      if(inputText!==null && inputText.length===1)
+      {
+        getHintHH()
+      }
+      else{
+        dispatch({
+          type:GET_HINT,
+          payload:state.random_word
+        }) 
+      }    
+    }
+    
+  }, [state.hint_used]);
+
 useEffect(()=>{
     console.log("setshow keyboard true 5",state.turn_change,",",state.winner_loser)
     if(state.onlineUser && state.get_word)
     {
 
+        
         if((state.turn_change!==null && state.winner_loser==='winner') || (state.turn_change!==null && state.winner_loser!=='loser'))
         {
             console.log("KEYBOARD ON 7")
@@ -199,6 +232,7 @@ useEffect(()=>{
     if(state.onlineUser)
     {
         console.log("setshow keyboard true 8")
+        setStartGame(true)
     setShowKeyboard(state.onlineUser.user1.start === "1" ? true :  state.winner_loser==="winner" ? true :false)
     }
     
@@ -233,14 +267,62 @@ const setRoundResult=(result)=>{
     })
 }
 
-const setPopup=(true_false)=>{
+const setStartGame=(true_false)=>{
+    dispatch({
+        type:START_GAME,
+        payload:true_false
+    })
+}
+
+const setChallengePopup=(true_false)=>{
     dispatch({
         type:SET_POPUP,
         payload:true_false
     })
 }
 
-
+const getHintHH=async()=>{
+    // setLoading()
+     const config={
+         headers: {
+           'X-RapidAPI-Key' : '0689b1157bmsh9ca7f4b5701a660p1080c2jsn9e2fa49e7bcf'
+         }
+       }
+       try {
+         const res= await axios.get(`https://wordsapiv1.p.rapidapi.com/words/?letterPattern=^${inputText.toLowerCase()}[a-zA-Z]*$&random=true`,config)
+     console.log(`Response code ${res.status} from getHintHH=`,res.data)
+   
+     if(res.status===200)
+     {
+       //console.log("Property exist=", res.data.hasOwnProperty('results'))
+         if(res.data.hasOwnProperty('results'))
+         {
+           console.log("Property exist=", res.data.hasOwnProperty('results'))
+           setResultWordHH(res.data.word,res.data.results[0].definition)
+         }
+         else{
+           setResultWordHH(res.data.word)
+         }
+   
+       dispatch({
+         type:GET_HINT,
+         payload:res.data.word
+       }) 
+     }
+   
+     } catch (error) {
+       console.log("Error in getHintHH=",error)
+       if(error)
+       {
+   
+         dispatch({
+           type:GET_HINT,
+           payload:'Word not exist**'
+         }) 
+         
+       } 
+     }  
+   }
 
 const setRoundComplete=(true_false)=>{
 
@@ -264,6 +346,7 @@ const sendMatchRound=async(formdata)=>{
     }
     const {id,round,status,points}=formdata
     const body=formdata
+    console.log("Match Round=",body)
     try {
 
         const res=await axios.post(process.env.REACT_APP_BASEURL+'/api/match/round',body,config)
@@ -278,11 +361,12 @@ const sendMatchRound=async(formdata)=>{
 
 
 const searchUserOnline=async(id)=>{
-    //console.log("getting data for online user id=",id)
+    console.log("getting data for online user id=",id)
     //search opponent for 120 seconds
 
 
     if(id===null){
+        console.log("check user id here=",id)
         dispatch({
             type:SEARCH_ONLINE,
             payload:null
@@ -359,7 +443,7 @@ const saveWord=async(formData,callingID,flag=true)=>{
     }
 
     const body=formData
-    //console.log("save word API body=",body)
+    console.log("save word API body=",body)
     try {
 
         const res=await axios.post(process.env.REACT_APP_BASEURL+`/api/save/word`,body,config)
@@ -382,17 +466,25 @@ const saveWord=async(formData,callingID,flag=true)=>{
             if(flag)
             {           
                 setTimeout(()=>{
-
-                    if(state.winner_loser==="winner" || state.winner_loser==="loser") 
+                    if(state.final_result_winner_counter===3 || state.final_result_loser_counter===3)
                     {
-                        console.log("calling getword API form saveword 120=",match_id,",",user_id)
-                        getWord(match_id,user_id,180)
+
+                        console.log("Not calling getword API")
+                           
                     }
                     else
-                    {
-                        console.log("calling getword API form saveword 60=",match_id,",",user_id)
-                        getWord(match_id,user_id,90)
-                    } 
+                    { 
+                        if(state.winner_loser==="winner" || state.winner_loser==="loser") 
+                        {
+                            console.log("calling getword API form saveword 240=",match_id,",",user_id)
+                            getWord(match_id,user_id,240)//240 because getword api hits twice in a second and screen timer in 120 sec. so to equate both (on screen timer and getword api hit timer) 
+                        }
+                        else
+                        {
+                            console.log("calling getword API form saveword 120=",match_id,",",user_id)
+                            getWord(match_id,user_id,120)//120 because getword api hits twice in a second and screen timer in 60 sec. so to equate both (on screen timer and getword api hit timer) 
+                        } 
+                    }
 
                 },2000)
             }
@@ -401,8 +493,6 @@ const saveWord=async(formData,callingID,flag=true)=>{
         else{
             console.log("NOT CALLING getword API from saveWord")
         }  
-            
- 
    
     }
     } catch (error) {
@@ -447,58 +537,89 @@ const getWord=(match_id,user_id,time)=>{
         //console.log("matchid=",match_id)
     try {
 
-        const res=await axios.get(process.env.REACT_APP_BASEURL+`/api/get/word?match_id=${match_id}`,config)
+        const res=await axios.get(process.env.REACT_APP_BASEURL+`/api/get/word?match_id=${match_id}&round=${state.online_round_counter}`,config)
        //console.log("Response from getWord=",res.data.data)
 
        const{concede,gamestatus,challenge}=res.data.data
          //console.log("Response from getWord=",user_id,",",res.data.data.user_id,",",res.data.data.word,",",time)
 
-        if(JSON.stringify(res.status)==='200' && JSON.stringify(res.data.status)==='200'){
+        if(JSON.stringify(res.status)==='200' && JSON.stringify(res.data.status)==='200')
+        {
         dispatch({
             type:GET_WORD,
             payload:res.data
         })
     }
-    console.log(`getword=${myinterval}=`,time,",",res.data.data.word,",",user_id,",",parseInt(res.data.data.user_id),",",res.data.data.gamestatus,",",res.data.data.challenge,",",res.data.data.concede)
+    console.log(`getword=${myinterval}=`,time,",",res.data.data.word,",",res.data.data.round,",",user_id,",",parseInt(res.data.data.user_id),",",res.data.data.gamestatus,",",res.data.data.challenge,",",res.data.data.concede)
 
        // setApiHit(state.getwordapihit)
         //user_id!==parseInt(res.data.data.user_id)
         //&& user_id!==parseInt(res.data.data.user_id) && concede!=="1" 
 
-    if(JSON.stringify(res.status)==='200' && JSON.stringify(res.data.status)==='200' &&  res.data.data.word)
+    if(JSON.stringify(res.status)==='200' && JSON.stringify(res.data.status)==='200')
     {   
 
             console.log("Match Finish=",localStorage.getItem('match_finish'))
+       
+
+            
         if(JSON.parse(localStorage.getItem('match_finish'))===true){
+
+            console.log("CLEAR INTERVAL 1")
             clearInterval(myinterval)
         }
-        if(state.showKeyboard===true && state.winner_loser===null){
+        if(state.showKeyboard===true && state.winner_loser===null && user_id!==parseInt(res.data.data.user_id) && gamestatus!=="0" && challenge==="0" && concede==="0"){
                 
             console.log("stop get word API keyboard ON")
+            console.log("CLEAR INTERVAL 2")
             clearInterval(myinterval)
         }
         console.log("CHECK final result data=",state.final_result_data)
         if(state.final_result_data){
             console.log("My interval end=",myinterval)
+            console.log("CLEAR INTERVAL 3")
             clearInterval(myinterval)
         }
         
         if(time < 0)
         {
-            console.log("Clear get word API 1")
+            console.log("CLEAR INTERVAL 4")
             console.log("My Interval instance end=",myinterval)
             clearInterval(myinterval)
         }
         else
         {
-        if(user_id!==parseInt(res.data.data.user_id) && gamestatus==="0" && challenge==="0" && concede==="1")
+        
+        if(user_id!==parseInt(res.data.data.user_id) && gamestatus==="2" && challenge==="0" && concede==="0")
         {
-               // setwinnerLoser('loser')
-               //console.log("YOU CAN PLAY NEXT MOVE")
-               //clearInterval(myinterval)
+            console.log("setwinnerloser 8")
+            setwinnerLoser('winner')
+        }
+        else if(user_id!==parseInt(res.data.data.user_id) && gamestatus==="18" && challenge==="0" && concede==="0")
+        {
+            console.log("setwinnerloser 9")
+            setwinnerLoser('winner')
+        }
+        else if(user_id!==parseInt(res.data.data.user_id) && gamestatus==="0" && challenge==="1" && concede==="0")
+        {
+            console.log("CLEAR INTERVAL 5")
+            clearInterval(myinterval)
+              saveWord({
+                match_id:state.onlineUser.user1.match_id,
+                gamestatus:'0',
+                concede:'0',
+                user_id:parseInt(state.onlineUser.user1.user_id),
+                challenge:"0",
+                word:inputText,
+                round:state.online_round_counter
+             },26,false) 
+             console.log("KEYBOARD ON 30")
+             setShowKeyboard(true) 
+            setChallengePopup(true)
         }
         else if(state.user_click_next_round_button===true && state.opponent_click_next_round_button===true && gamestatus==='5' && state.round_result[state.online_round_counter-2]==='winner'){
                  console.log("Both users clicked on next round button")
+                 console.log("CLEAR INTERVAL 6")
                 setInputText('')
                 nextRoundButton(false)
                 clearInterval(myinterval) 
@@ -506,11 +627,10 @@ const getWord=(match_id,user_id,time)=>{
         else if(state.user_click_next_round_button===true && state.opponent_click_next_round_button===true  && gamestatus==='5' && state.round_result[state.online_round_counter-2]==='loser'){
                  console.log("Both users clicked on next round button and continue hit get API")
                 setInputText('')
-                setInputText(res.data.data.word)
+               // setInputText(res.data.data.word)
                 nextRoundButton(false)
         }
         else if(user_id!==parseInt(res.data.data.user_id) && gamestatus==="5"  ){
-
 
             console.log("YOUR OPPONENT CLICKED ON NEXT ROUND BUTTON=",state.opponent_click_next_round_button,",",state.user_click_next_round_button,",",state.user_opponent_agree)
             nextRoundButton("opponent")
@@ -528,18 +648,36 @@ const getWord=(match_id,user_id,time)=>{
                 alert("word length==36")
             }
         }
-       else if(user_id!==parseInt(res.data.data.user_id)  && (challenge==="0" && concede==="0" && (gamestatus==="3" || gamestatus==="4")))
+       else if(user_id!==parseInt(res.data.data.user_id)  && (challenge==="0" && concede==="0" && gamestatus==="3"))
         {
             // getWordDefinition(res.data.data.word)
-            console.log("*********SET LOSER*************")
+            console.log("setwinnerloser 3")
+            //time=240
+            setResultWordHH(backup_input_text,'Word is complete')
+            saveWord({
+                match_id:state.onlineUser.user1.match_id,
+                gamestatus:"0",
+                concede:"0",
+                user_id:parseInt(state.onlineUser.user1.user_id),
+                challenge:"0",
+                word:"",
+                round:state.online_round_counter
+            },20,false)
             setwinnerLoser('loser')
+
             //console.log("Clear get word API 4")
             ///clearInterval(myinterval)
         }
         else if(user_id!==parseInt(res.data.data.user_id)  && challenge==="0" && concede==="0" && gamestatus==="101"){
 
-            console.log("*********SET WINNER*************")
+            console.log("setwinnerloser 4")
             setwinnerLoser('winner')
+        }
+        else if(user_id!==parseInt(res.data.data.user_id)  && challenge==="0" && concede==="0" && gamestatus==="4"){
+
+            console.log("setwinnerloser 43")
+            setwinnerLoser('winner')
+            setResultWordHH(inputText,'Word is not complete after challenge')
         }
         else if(gamestatus==="5")
         {
@@ -559,6 +697,7 @@ const getWord=(match_id,user_id,time)=>{
             setInputText(res.data.data.word)
             //console.log("Clear get word API 5")
             console.log("My Interval instance end=",myinterval)
+            console.log("CLEAR INTERVAL 8")
             clearInterval(myinterval)
          }
         else if(res.data.data.word==="") {
@@ -567,6 +706,22 @@ const getWord=(match_id,user_id,time)=>{
             setInputText('')
             //console.log("Clear get word API 6")
             ///clearInterval(myinterval)
+        }
+        else if(user_id!==parseInt(res.data.data.user_id) && gamestatus==="0" && challenge==="0" && concede==="0")
+        {
+               // setwinnerLoser('loser')
+               //console.log("YOU CAN PLAY NEXT MOVE")
+               //clearInterval(myinterval)
+               saveWord({
+                match_id:state.onlineUser.user1.match_id,
+                gamestatus:"0",
+                concede:"0",
+                user_id:parseInt(state.onlineUser.user1.user_id),
+                challenge:"0",
+                word:"",
+                round:state.online_round_counter
+            },29,true)
+               
         }
        else if(res.data.data.word && user_id!==parseInt(res.data.data.user_id) && concede==="0" && gamestatus==="0" && challenge==="0")
         {
@@ -587,11 +742,13 @@ const getWord=(match_id,user_id,time)=>{
                 //console.log("*************SPECIAL CASE 2***********")
                 
                 console.log("My Interval instance end=",myinterval)
+                console.log("CLEAR INTERVAL 9")
                // setInputText('')
                 clearInterval(myinterval)
             }
             else if(state.round_result >=2 && state.round_result[state.online_round_counter-2]==='loser' ){
                 //setInputText('')
+                console.log("CLEAR INTERVAL 10")
                 clearInterval(myinterval)
                 console.log("continue hitting get word API")
             }
@@ -601,6 +758,7 @@ const getWord=(match_id,user_id,time)=>{
             //console.log("SET INPUT TEXT 3")
             //setInputText(res.data.data.word)
             //clearInterval(myinterval)
+            console.log("NO ACTION")
         }
        
 
@@ -612,10 +770,12 @@ const getWord=(match_id,user_id,time)=>{
                 })
         }
     }
+    
     }
     else{
         console.log("No conditon match=",res.status,",",res.data.status,",",res.data.data.word)
     }
+    
     } catch (error) {
         console.log("Error from Get Word=",error)
         
@@ -629,6 +789,49 @@ const getWord=(match_id,user_id,time)=>{
 
 }
 
+const setHintUsedHH=async(true_false,param='')=>{
+
+    //setLoading()
+     
+           const config={
+            headers:{
+              'Content-Type':'application/json',
+              'APPKEY' : 'Py9YJXgBecbbqxjRVaHarcSnJyuzhxGqJTkY6xKZRfrdXFy72HPXvFRvfEjy'
+            }
+          } 
+          console.log("Form data for setHintUsed=",param)
+          const {user_id,hint_id,match_id,round}=param
+        if(!state.hint_used && param!==''){
+            try {
+              const body=param
+              const res=await axios.post(process.env.REACT_APP_BASEURL+'/api/useHints',body,config)
+                /*  const res=await axios.post(process.env.REACT_APP_BASEURL+`/api/useHints?user_id=${user_id}&hint_id=${hint_id}&match_id=${match_id}&round=${round}`,config)   */
+                console.log("Response from setHintUsed=",res.data)
+            } catch (error) {
+              console.log("Error in setHintUsed=",error)
+            }
+  
+          
+  
+  
+            try {
+              const res=await axios.get(process.env.REACT_APP_BASEURL+`/api/userHints?user_id=${user_id}`,config)
+              console.log("Resoponse from setHintUsed Available hint=",res.data)
+              dispatch({
+                type:SET_HINT_COUNT,
+                payload:res.data
+              })
+            } catch (error) {
+              console.log("Error in Available hint=",error)
+            }
+           
+          }
+         
+        dispatch({
+            type:SET_HINT_USED,
+            payload:true_false
+        })  
+  }
 
 const setIntervalId=(intervalid)=>{
 
@@ -641,6 +844,7 @@ const setIntervalId=(intervalid)=>{
 ////////////////////////////////////////////////// CHECK WORD
 
 const getWordDefinition=async(word)=>{
+    console.log("getting definiton of=",word)
    
           try {
             const config={
@@ -648,12 +852,8 @@ const getWordDefinition=async(word)=>{
               'APPKEY': 'Py9YJXgBecbbqxjRVaHarcSnJyuzhxGqJTkY6xKZRfrdXFy72HPXvFRvfEjy'
             }
           }
-          const body=
-          {
-              word:word
-          }
-            
-          const res =await axios.post(process.env.REACT_APP_BASEURL+'/api/get/words/meaning',body,config)
+
+          const res =await axios.get(process.env.REACT_APP_BASEURL+`/api/check_word?search=${word}`,config)
          
           console.log("word meaning=====>",res.data)
           if(JSON.stringify(res.data.status)==='400'){
@@ -665,16 +865,18 @@ const getWordDefinition=async(word)=>{
               /* payload:{word:inputText ,definition:res.data.error_message} */
             })
             console.log("Setting Loser from playonline getWordDefinition API")
+            console.log("setwinnerloser 5")
             setwinnerLoser('loser')
           }
           //console.log("word meaning=====>",res.data.data.definition) 
           if(JSON.stringify(res.data.status)==='200'){
-              console.log("definition found=",res.data.data)
+              console.log("definition found=",res.data.data.definition_1)
             dispatch({
               type:SET_WORD_DEFINITION,
-              payload:res.data.data
+              payload:{word:inputText,definition:res.data.data.definition_1}
             })
             console.log("Setting Winner from playonline getWordDefinition API")
+            console.log("setwinnerloser 6")
             setwinnerLoser('winner')
              //get current round no. from localstroge and increament by 1
             state.info.push({
@@ -685,6 +887,7 @@ const getWordDefinition=async(word)=>{
           }
           
           } catch (error) {
+              console.log("Error=",error)
             //setResultWord({word:inputText,definition:''})
             dispatch({
               type:SET_WORD_DEFINITION,
@@ -701,6 +904,17 @@ const getWordDefinition=async(word)=>{
                 payload:winner_loser
             })
         }
+
+
+
+const setResultWordHH=(word=inputText,def='')=>{
+
+    dispatch({
+        type:SET_WORD_DEFINITION,
+        payload:{word:word,definition:def}
+    })
+}
+
 
 
  ////////////////////////////////// TIMER
@@ -722,9 +936,15 @@ const setTurn=(flag)=>{
     })
 }
 
-const resetState=(true_false)=>{
+const resetStateHHForRound=(true_false)=>{
     dispatch({
-        type:RESET_STATE,
+        type:RESET_STATE_FOR_ROUND,
+        payload:true_false
+    })
+}
+const resetStateHHForMatch=(true_false)=>{
+    dispatch({
+        type:RESET_STATE_FOR_MATCH,
         payload:true_false
     })
 }
@@ -766,7 +986,7 @@ const setApiHit=(count)=>{
             game_type:state.game_type,
             send_match_round:state.send_match_round,
             round_complete:state.round_complete,
-            popdisabled:state.popdisabled,
+            challenge_popup_on:state.challenge_popup_on,
             getwordapihit:state.getwordapihit,
             round_result:state.round_result,
             showKeyboard:state.showKeyboard,
@@ -782,6 +1002,10 @@ const setApiHit=(count)=>{
             final_result_winner_counter:state.final_result_winner_counter,
             final_result_data:state.final_result_data,
             online_match_finish:state.online_match_finish,
+            start_game:state.start_game,
+            hint:state.hint,
+            hint_used:state.hint_used,
+            hint_count:state.hint_count,
             setLoading,
             searchUserOnline,
             saveWord,
@@ -789,12 +1013,13 @@ const setApiHit=(count)=>{
             setTimer,
             setTurn,
             getWordDefinition,
-            resetState,
+            resetStateHHForRound,
+            resetStateHHForMatch,
             gameType,
             sendMatchRound,
             setRoundComplete,
             setwinnerLoser,
-            setPopup,
+            setChallengePopup,
             setApiHit,
             setRoundResult,
             setShowKeyboard,
@@ -808,7 +1033,12 @@ const setApiHit=(count)=>{
             finalResultCounter,
             getFinalResultOnline,
             onlineMatchFinish,
-            changeMatchStatus
+            changeMatchStatus,
+            nextRound,
+            setStartGame,
+            setResultWordHH,
+            setHintUsedHH,
+            getHintHH
         }}>
             {children }
 

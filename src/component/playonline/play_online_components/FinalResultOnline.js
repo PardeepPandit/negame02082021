@@ -10,18 +10,18 @@ import PlayOnlineContext from '../context/playOnlineContext'
 export const FinalResultOnline = ({title}) => {
 
   const commonContext=useContext(CommonContext)
-  const {setInputText,setIsActive,setSeconds }=commonContext
+  const {setInputText,setIsActive,setSeconds,resetCommonState }=commonContext
 
   const playOnlineContext=useContext(PlayOnlineContext)
-  const {final_result_winner_counter,final_result_data,resetState,setRoundResult,finalResultCounter,onlineMatchFinish}=playOnlineContext
+  const {final_result_winner_counter,final_result_data,resetStateHHForMatch,setRoundResult,finalResultCounter,onlineMatchFinish}=playOnlineContext
 
     const {data}=final_result_data || {}
 
     
 
     const onClick=()=>{
-          resetState(true)
-          onlineMatchFinish(true)
+          resetStateHHForMatch(true)
+          resetCommonState()
           localStorage.removeItem('current_status')
           finalResultCounter(null)
           setRoundResult(null)
@@ -90,7 +90,7 @@ export const FinalResultOnline = ({title}) => {
             <div className="new_mtch_btn">
                    {/* <a href="#" style={{"font-size": "26px;"}}> New Match</a> */}
                    {/* <button className='btn btn-info next_r' onClick={redirect}>Next Match</button> */}
-                    <Link to='/dashboard'  onClick={()=>onClick()} className='play-again'>New Match</Link>
+                    <Link to='/dashboard'  onClick={()=>onClick()} className='play-again'>New Match-HH</Link>
                  
                   </div>
                 </div>

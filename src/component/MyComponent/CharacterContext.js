@@ -225,11 +225,8 @@ if(keyAudio)
 
 
   return (
-    <CharacterContext.Provider value={{  
-                                             play }}>
-      <CharacterContextUpdate.Provider value={{ 
-                                                   myTurn,
-                                                    }}>
+    <CharacterContext.Provider value={{ play }}>
+      <CharacterContextUpdate.Provider value={{myTurn}}>
         {children}
       </CharacterContextUpdate.Provider>
     </CharacterContext.Provider >

@@ -8,7 +8,7 @@ import{
   TURN_CHANGE,
   SET_WORD_DEFINITION,
   SET_RESULT,
-  RESET_STATE,
+  RESET_STATE_R,
   SET_GAME_TYPE,
   SET_ROUND_COMPLETE,
   SET_POPUP,
@@ -25,7 +25,13 @@ import{
   FINAL_RESULT_COUNTER,
   SET_FINAL_RESULT_DATA,
   MATCH_FINISH,
-  CHANGE_MATCH_STATUS
+  START_GAME,
+  NEXT_ROUND,
+  RESET_STATE_FOR_ROUND,
+  RESET_STATE_FOR_MATCH,
+  SET_HINT_USED,
+  SET_HINT_COUNT,
+  GET_HINT
   } from '../../../type'; 
   
   //comment
@@ -126,7 +132,7 @@ import{
                     case SET_POPUP:
                       return{
                         ...state,
-                        popdisabled:payload,
+                        challenge_popup_on:payload,
                         reset_state:false
                       }
                       case API_HIT:
@@ -135,6 +141,24 @@ import{
                           getwordapihit:payload,
                           reset_state:false
                         }
+                        case SET_HINT_USED:
+                          return{
+                              ...state,
+                              hint_used:payload,
+                              hint:null
+                          }
+                          case GET_HINT:
+                            return{
+                                ...state,
+                                hint:payload,
+                                loading_HC:false
+                            }
+                          case SET_HINT_COUNT:
+                                return{
+                                    ...state,
+                                    hint_count:payload,
+                                    loading_HC:false
+                                }
                         case SET_ROUND_RESULT:
                           return{
                             ...state,
@@ -152,6 +176,11 @@ import{
                                 ...state,
                                 stop_old_instance:payload,
                                 reset_state:false
+                              }
+                              case NEXT_ROUND:
+                              return{
+                                ...state,
+                                online_round_counter:state.online_round_counter+1
                               }
                               case SET_INTERVAL_ID:
                                 return{
@@ -227,8 +256,13 @@ import{
                                              ...state,
                                              online_match_finish:payload
                                            }
+                                           case START_GAME:
+                                             return{
+                                               ...state,
+                                               start_game:payload
+                                             }
 
-                case RESET_STATE:
+                case RESET_STATE_FOR_ROUND:
                   localStorage.setItem('user_click_NRB',false)
                   localStorage.setItem('opponent_click_NRB',false)
                   return{
@@ -241,7 +275,6 @@ import{
                     turn_change:null,
                     word_definition:{word:"",definition:""},
                     winner_loser:null,
-                    online_round_counter:state.online_round_counter+1,
                     round_complete:false,
                     next_round_button_click:null,
                     opponent_click_next_round_button:false,
@@ -250,6 +283,45 @@ import{
                     //interval_id:[]
                     //showKeyboard:false
                   }
+                  case RESET_STATE_FOR_MATCH:
+                    localStorage.removeItem('start_match_online')
+                    localStorage.removeItem('user_click_NRB')
+                    localStorage.removeItem('opponet_click_NRB')
+                    localStorage.removeItem('current_status')
+                    localStorage.removeItem('final_result_data')
+                    localStorage.removeItem('match_finish')
+                    return{
+                      ...state,
+                      onlineUser:null,
+                      save_word:null,
+                      get_word:null,
+                      loading:false,
+                      turn_change:null,
+                      word_definition:{word:"",definition:""},
+                      winner_loser:null,
+                      online_round_counter:1,
+                      info:[],
+                      game_type:null,
+                      send_match_round:null,
+                      round_complete:false,
+                      challenge_popup_on:false,
+                      getwordapihit:60,
+                      round_result:[],
+                      showKeyboard:false,
+                      stop_old_instance:false,
+                      reset_state:false,
+                      interval_id:[],
+                      user_click_next_round_button:null,
+                      opponent_click_next_round_button:null,
+                      current_status:null,
+                      showNextRoundButton:false,
+                      user_opponent_agree:false,
+                      final_result_winner_counter:0,
+                      final_result_loser_counter:0,
+                      final_result_data:null,
+                      online_match_finish:false,
+                      start_game:false
+                    }
               
       default:
       return state;

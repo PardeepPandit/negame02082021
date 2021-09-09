@@ -21,7 +21,6 @@ import{
   SET_FINAL_RESULT_HC,
   RESET_HUMAN_STATE,
   SET_MATCH_ROUND_DETAILS,
-  SET_MASTER_HISTORY,
   SET_RANDOM_POSITION,
   SET_TEMP_WORD,
   SINGLE_SHIFT_COUNTER,
@@ -165,11 +164,6 @@ export default (state,action)=>{
                                                     return{
                                                         ...state,
                                                         match_round_details:payload
-                                                    }
-                                                case SET_MASTER_HISTORY:
-                                                    return{
-                                                        ...state,
-                                                        master_history_HC:[...state.master_history_HC,payload]
                                                     }
                                                     case SET_RANDOM_POSITION:
                                                         return{

@@ -6,14 +6,14 @@ import CommonContext from './MyComponent/context/common/commonContext'
 export const YouLose = () => {
 
     const commonContext=useContext(CommonContext)
-    const {setIsActive,setSeconds,seconds}=commonContext
+    const {setIsActive,setSeconds,seconds,setInputText,setBackUpInputText,inputText}=commonContext
   
     const playOnlineContext=useContext(PlayOnlineContext)
-    const {word_definition,resetState,winner_loser,saveWord,onlineUser,sendMatchRound,online_round_counter, get_word,setRoundComplete,setApiHit,setCurrentStatus,setShowKeyboard,user_click_next_round_button,opponent_click_next_round_button,showNextRoundButton,setShowNextRoundButton,round_complete,setUserOpponentAgree,finalResultCounter,final_result_winner_counter,final_result_loser_counter,setwinnerLoser,getFinalResultOnline,final_result_data,changeMatchStatus}=playOnlineContext
+    const {word_definition,resetStateHHForRound,winner_loser,saveWord,onlineUser,sendMatchRound,online_round_counter, get_word,setRoundComplete,setApiHit,setCurrentStatus,setShowKeyboard,user_click_next_round_button,opponent_click_next_round_button,showNextRoundButton,setShowNextRoundButton,round_complete,setUserOpponentAgree,finalResultCounter,final_result_winner_counter,final_result_loser_counter,setwinnerLoser,getFinalResultOnline,final_result_data,changeMatchStatus,nextRound,setResultWordHH}=playOnlineContext
     const {data}=get_word || {}
     const {word,user_id,gamestatus,challenge,concede}=data || {}
 
-    useEffect(()=>{
+  /*   useEffect(()=>{
 
         if(showNextRoundButton && (final_result_winner_counter!==3 && final_result_loser_counter!==3)){
             //Note:following code will execute in response of opponent action
@@ -22,26 +22,26 @@ export const YouLose = () => {
                 match_id:onlineUser.user1.match_id,
                 gamestatus:'0',
                 challenge:"0",
-                concede:"1", 
+                concede:"0", 
                 user_id:parseInt(onlineUser.user1.user_id),
-                word:""
+                word:"",
+                round:online_round_counter
             },2)      
         }
 
-    },[showNextRoundButton])
+    },[showNextRoundButton]) */
 
-    
- 
- 
-    
 
      useEffect(()=>{
+        console.log("winner_loser useEffect 2=",winner_loser)
         if(winner_loser==='loser')
         {
           //setCurrentStatus('loser')
+          console.log("Increment loser counter")
+          //alert("loser counter=",final_result_loser_counter)
           finalResultCounter(winner_loser)
           localStorage.setItem('current_status','loser')  
-          setApiHit(120)
+         // setApiHit(120)
              
              sendMatchRound(
                 {
@@ -53,20 +53,42 @@ export const YouLose = () => {
             )
            
                 console.log("you lose=",onlineUser.user1.user_id,",",user_id,",",gamestatus,",",challenge,",",concede)
-                    if(onlineUser.user1.user_id!==user_id && gamestatus==='1' && challenge==='0' && concede==='0'){
-                        //Note: it will execute when user itself checks incorrect word
+                    if(onlineUser.user1.user_id!==user_id && gamestatus==='1' && challenge==='0' && concede==='0')
+                    {
+                        //Note: it will execute when user checks incorrect word
                        
 
-                            console.log("Calling save word API after 7 seconds , users checked wrong word")
+                            console.log("Calling save word API from L status=1,0,0")
                             saveWord({
                             match_id:onlineUser.user1.match_id,
                             gamestatus:'101',
                             challenge:"0",
-                            concede:"1", 
+                            concede:"0", 
                             user_id:parseInt(onlineUser.user1.user_id),
-                            word:""
+                            word:"",
+                            round:online_round_counter
                         },3) 
               
+                    }
+                    else if(onlineUser.user1.user_id!==user_id && gamestatus==='3' && challenge==='0' && concede==='0')
+                    {
+                        //This will exexcute when opponent check complete complete word
+                        
+                        console.log("Nothing to DO")
+                    }
+                    else if(onlineUser.user1.user_id!==user_id && gamestatus==='0' && challenge==='1' && concede==='0')
+                    {
+                        saveWord({
+                            match_id:onlineUser.user1.match_id,
+                            gamestatus:'4',
+                            concede:'0',
+                            user_id:parseInt(onlineUser.user1.user_id),
+                            challenge:"0",
+                            word:inputText,
+                            round:online_round_counter
+                        },29,true)
+
+                        setResultWordHH(inputText,'Word not complete')
                     }
                    
                     console.log("Time Reset@@@@@@@@@@@@@  10")
@@ -77,7 +99,7 @@ export const YouLose = () => {
 
 
     useEffect(()=>{
-
+        console.log("winner_loser useEffect 1=",winner_loser)
         if(winner_loser==='loser'){
 
             setTimeout(()=>{
@@ -91,39 +113,65 @@ export const YouLose = () => {
 
 
     const finishFun=()=>{
+        console.log("Finish function called")
         localStorage.setItem('match_finish',true)
+        
         getFinalResultOnline(onlineUser.user1.match_id,onlineUser.user1.user_id)
-        setRoundComplete(true)
+        //setRoundComplete(true)
+        console.log("setwinnerloser 1")
         setwinnerLoser(false)
         changeMatchStatus(onlineUser.user1.match_id)
+        setIsActive(false)
     }
+
+
+
+useEffect(()=>{
+        console.log(`ROUND CHANGE YL-${online_round_counter}`)
+
+    if(user_click_next_round_button===true && opponent_click_next_round_button===true && winner_loser==='loser'){
+
+        console.log("calling save word API from LOSE set all fields to ZERO")
+        setUserOpponentAgree(true)
+        saveWord({
+            match_id:onlineUser.user1.match_id,
+            gamestatus:"0",
+            concede:"0",
+            user_id:parseInt(onlineUser.user1.user_id),
+            challenge:"0",
+            word:"",
+            round:online_round_counter
+        },1,false)
+
+
+        setTimeout(()=>{
+            console.log(`calling reset state in you lose after 3 seconds`)
+            resetStateHHForRound(true)
+        },[4000])
+        setRoundComplete(true)
+        console.log("Time Reset@@@@@@@@@@@@@  1")
+        setIsActive(false)
+        setSeconds(60)
+        setShowKeyboard(false)
+    }
+
+},[online_round_counter])
 
 
     useEffect(()=>
     {
+        console.log("user_click_next_round_button=",user_click_next_round_button)
+        console.log("opponent_click_next_round_button=",opponent_click_next_round_button)
         if(user_click_next_round_button===true && opponent_click_next_round_button===true && winner_loser==='loser'){
-
-            console.log("calling save word API from LOSE set all fields to ZERO")
-            setUserOpponentAgree(true)
-            saveWord({
-                match_id:onlineUser.user1.match_id,
-                gamestatus:"0",
-                concede:"0",
-                user_id:parseInt(onlineUser.user1.user_id),
-                challenge:"0",
-                word:""
-            },1,false)
-
-
+            console.log("BOTH USERS AGREE TO GO IN NEXT ROUND")
+            console.log("SET INPUT TEXT BLANK YL")
+            setInputText('')
+            setBackUpInputText('')
             setTimeout(()=>{
-                console.log("calling reset state in you win after 3 seconds")
-                resetState(true)
-            },[4000])
-            setRoundComplete(true)
-            console.log("Time Reset@@@@@@@@@@@@@  1")
-            setIsActive(false)
-            setSeconds(60)
-            setShowKeyboard(false)
+                nextRound()
+            },4000)
+        
+        
         }
 
     },[user_click_next_round_button,opponent_click_next_round_button])
@@ -138,25 +186,27 @@ export const YouLose = () => {
         saveWord({
             match_id:onlineUser.user1.match_id,
             gamestatus:'5',
-            concede:"1",
+            concede:"0",
             user_id:parseInt(onlineUser.user1.user_id),
             challenge:"0",
-            word:""
+            word:"",
+            round:online_round_counter
 
         },4)
        
     }
 
 
-    useEffect(()=>{
-        if(final_result_data){
+   /*  useEffect(()=>{
+        if(final_result_data)
+        {
             finalResultCounter(winner_loser)
             setIsActive(false)
             setSeconds(0)
             setwinnerLoser(null)
         }
     
-    },[final_result_data])
+    },[final_result_data]) */
 
    
 
@@ -187,7 +237,12 @@ export const YouLose = () => {
                                                 <h1><span style={{color:'white'}}>{word_definition.definition}</span></h1>
                                         </Fragment>
 
-                                      {showNextRoundButton && <Fragment>{(final_result_winner_counter===3 || final_result_loser_counter===3) ?<Link to='/dashboard' onClick={()=>finishFun()} className='play-again' >Finish</Link>:<Link to="/playonline" onClick={()=>onClick()} className="play-again">Next Round{"   "}{seconds}</Link>}</Fragment>
+                                      {showNextRoundButton && <Fragment>{(final_result_winner_counter===3 || final_result_loser_counter===3) ?<Link to='/dashboard' onClick={()=>{
+                                    
+                                              console.log("MATCH FINISH L,",round_complete)  
+                                                finishFun()
+                                    
+                                    }} className='play-again' >Finish-HH</Link>:<Link to="/playonline" onClick={()=>onClick()} className="play-again">Next Round{"   "}{seconds}</Link>}</Fragment>
                                     
                                 }
                                       

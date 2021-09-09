@@ -20,7 +20,7 @@ const Dashboard = (props) => {
     //console.log("Home rendring")
    const history=useHistory()
     const commonContext =useContext(CommonContext)
-    const {game_type,setInputText,setIsActive,setSeconds,setGameType,exitUser,setGameLevel,loadGameLevels,human_vs_computer,human_vs_online,load_game_level}=commonContext
+    const {game_type,setInputText,setIsActive,setSeconds,setGameType,exitUser,setGameLevel,loadGameLevels,human_vs_computer,human_vs_online}=commonContext
 
     const authContext=useContext(AuthContext)
     const {user,login_data}=authContext
@@ -39,9 +39,15 @@ const Dashboard = (props) => {
     const [search,setSearch]=useState(false)
     const [sec,setSec]=useState(()=>10)
     console.log("login data=",login_data)
-    const [wordLengthPopUp,setWordLengthPopUp]=useState(false)
+    //const [wordLengthPopUp,setWordLengthPopUp]=useState(false)
     const [startgame,setStartGame]=useState({levelno:null,l_type:null})
     
+
+      
+        
+
+
+
 /*     useEffect(()=>{
 
         window.addEventListener("beforeunload", (ev) => 
@@ -59,7 +65,7 @@ const Dashboard = (props) => {
        console.log("level check=",levelCheck)
     }, [levelCheck,showLevel]) */
 
-    useEffect(()=>{
+    /* useEffect(()=>{
         let mounted = true;
         //if onlineUser has data then setIsActive to start timer
         if(mounted)
@@ -71,7 +77,7 @@ const Dashboard = (props) => {
         }
        
         return () => mounted = false;
-    },[onlineUser,online_match_finish])
+    },[onlineUser,online_match_finish]) */
 
 
    /*    useEffect(()=>{
@@ -87,13 +93,14 @@ const Dashboard = (props) => {
     },[start_match_computer])   */
 
 
-    useEffect(()=>{
+  /*   useEffect(()=>{
         console.log("state=>",startgame.levelno,",",startgame.l_type)
-        if(startgame.levelno && startgame.l_type){
+        if(startgame.levelno && startgame.l_type)
+        {
             console.log("Game Start")
             //onClick(startgame.levelno,startgame.l_type)
         }
-    },[startgame])
+    },[startgame]) */
   
         /* const onClick=(levelno,l_type)=>{
             console.log("ONClick function called=",human_vs_computer)
@@ -112,16 +119,16 @@ const Dashboard = (props) => {
                     startMatchComputer(login_data.id,levelno)
             }            
             console.log("Test case 2")
-        }  */
+        } */
 
-        useEffect(()=>{
+  /*       useEffect(()=>{
             $(document).ready(function(){
                 $("#level").click(function(){
                   $("#level").hide();
 
                 });
               });
-        },[showLevel])
+        },[showLevel]) */
 
 
 
@@ -137,55 +144,45 @@ const Dashboard = (props) => {
     e.preventDefault()
     e.returnValue = '' 
   }  */
-
-
- /*  useEffect(()=>{
-    if(load_game_level){
-        setGameType('human_vs_computer')   
-    }
-  },[load_game_level]) */
-
-
+ /*  const routeChange = () =>{ 
+    console.log("Redirecting to gamelevels")
+    let path = `/gamelevels`; 
+       props.history.push({
+       pathname: path,
+       //state:{levelNumbers:levelNumbers},
+   
+     }); 
+ } */
   useEffect(()=>{
-    if(game_type){
-        console.log("Redirect to gameleves")
-        routeChange()
+    if(game_type!==null)
+    {
+            console.log("Redirect to gamelevels")
+            let path = `/gamelevels`; 
+        props.history.push({
+        pathname: path,
+        //state:{levelNumbers:levelNumbers},
+    
+        }); 
     }
   },[game_type])
   
 console.log("Dashboard=",onlineUser,",",online_match_finish)
 
-  if(onlineUser && onlineUser!=='opponent_not_found' && !online_match_finish){
+  /* if(onlineUser && onlineUser!=='opponent_not_found' && !online_match_finish){
         console.log("redirect")
         return <Redirect to='/playonline'/>
-    }
-const playOnline=()=>{
-    console.log("SET INPUT TEXT 1")
-    setInputText('')
-    searchUserOnline(user && user.data.id)  
-    //setSearch state for spinner
-    setSearch(true)
-}        
-const routeChange = () =>{ 
+    } */
     
-     let path = `/gamelevels`; 
-        props.history.push({
-        pathname: path,
-        //state:{levelNumbers:levelNumbers},
-    
-      }); 
-  }
-
-  
 
 
-    if((!onlineUser && search) || startMatch )
+/* 
+    if((!onlineUser))
     {
-        console.log("?????=>",!onlineUser,",",search,",",startMatch)
+        console.log("?????=>",!onlineUser)
         return <Spinner/>
     }
     else
-    {
+    { */
         return (
         <Fragment>
             <Header/>
@@ -266,7 +263,7 @@ const routeChange = () =>{
 
                                         <button  onClick={()=>{
                                                             setGameType('human_vs_computer')
-                                                            setWordLengthPopUp(true) 
+                                                           // setWordLengthPopUp(true) 
                                                             loadGameLevels()
                                                             }
                                                     }><img src="assets/img/play.png" /></button>
@@ -315,6 +312,6 @@ const routeChange = () =>{
 
   )
     }
-}
 
-export default Dashboard;
+
+export default React.memo(Dashboard);

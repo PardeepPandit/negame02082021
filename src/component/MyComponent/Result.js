@@ -53,7 +53,7 @@ const finishFun=()=>{
 setLoading()
 setTimeout(()=>{
     getFinalResultHC(start_match_computer.user1.match_id,start_match_computer.user1.user_id)
-    console.log("KEYBOARD ON 4")
+    console.log("KEYBOARD ON 41")
     setShowKeyboard(true)
     setFinish(true)
     changeMatchStatusHC(start_match_computer.user1.match_id)

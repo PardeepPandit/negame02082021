@@ -1,14 +1,17 @@
-import React,{ Fragment,useContext,useState } from "react";
-import { useHistory } from 'react-router-dom'
+import React,{ Fragment,useContext,useState,useEffect } from "react";
+import { Redirect, useHistory } from 'react-router-dom'
 import AuthContext from './MyComponent/context/auth/authContext'
 import CommonContext from './MyComponent/context/common/commonContext'
 import HumanContext from "./MyComponent/context/human/humanContext";
+import PlayOnlineContext from "./playonline/context/playOnlineContext";
 import WordLengthUI from './MyComponent/LevelUI/WordLengthUI'
 
-const PlayBackPopup = ({levelSelected,handleClose}) => {
+
+
+const PlayBackPopup = ({levelSelected,handleClose,playOnline,setStartMatch}) => {
 
   const commonContext =useContext(CommonContext)
-  const {setGameLevel,game_type,human_vs_online,setSeconds,game_level}=commonContext
+  const {setInputText,game_type,setSeconds,game_level,setIsActive}=commonContext
   
   const humanContext=useContext(HumanContext)
   const {checkHintCount,startMatchComputer,setWordLength}= humanContext
@@ -16,9 +19,16 @@ const PlayBackPopup = ({levelSelected,handleClose}) => {
   const authContext=useContext(AuthContext)
   const {user,login_data}=authContext
 
+  const playOnlineContext =useContext(PlayOnlineContext)
+  const {searchUserOnline,onlineUser,online_match_finish}=playOnlineContext
+
   const history=useHistory()
   const {l_no,l_name,}=levelSelected
   const [wordLengthPopUp,setWordLengthPopUp]=useState(false)
+
+
+
+
 
   const onClick=(levelno,l_type)=>{
     console.log("ONClick function called=",game_type,",",levelno,",",l_type)
@@ -26,9 +36,9 @@ const PlayBackPopup = ({levelSelected,handleClose}) => {
     checkHintCount(user && user.data.id)
     //setStartMatch(true) 
     
-    if(human_vs_online)
+    if(game_type==='human_vs_online')
     {
-          //  playOnline()
+          playOnline()
     }
     else if(game_type==='human_vs_computer')
     {
@@ -38,6 +48,9 @@ const PlayBackPopup = ({levelSelected,handleClose}) => {
     }            
     console.log("Test case 2")
 }
+
+   
+
 
 
   console.log("new prtops=",l_no,",",l_name)

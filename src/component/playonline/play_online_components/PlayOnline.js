@@ -10,19 +10,22 @@ import { Spinner } from "reactstrap";
 import CommonContext from '../../MyComponent/context/common/commonContext'
 import ChallengePopup from "./ChallengePopup";
 import Keyboard from "../../Keyboard";
+import HintPopup from '../../HintPopup'
+import ExitPopup from "../../ExitPopup";
+import WarningPopup from "../../WarningPopup";
 
 //comment add in playonline
 
 const PlayOnline = () => {
 
   const commonContext =useContext(CommonContext)
-  const {setInputText,inputText,setIsActive,seconds}=commonContext
+  const {setInputText,inputText,setIsActive,seconds,game_level,exitUser,setSeconds,backup_input_text}=commonContext
   const authContext = useContext(AuthContext);
   const { user } = authContext;
 
   const humanContext=useContext(HumanContext)
   const {hint,hint_used,hint_count,setHintUsed}=humanContext
-  const {count,hint_id}=hint_count
+  
 
   const playOnlineContext = useContext(PlayOnlineContext);
   const {
@@ -39,23 +42,24 @@ const PlayOnline = () => {
     winner_loser,
     online_round_counter,
     round_complete,
-    popdisabled,
-    setPopup,
+    challenge_popup_on,
+    setChallengePopup,
     round_result,
     showKeyboard,
     setShowKeyboard,
     reset_state,
     setApiHit,
+    setwinnerLoser,
     getwordapihit,
     clearAllInterval,
     finalResultCounter,
-    final_result_data
+    final_result_data,
   } = playOnlineContext;
 
   let gamestatus=''
   let challenge=''
   let word=''
-
+  const {count,hint_id}=hint_count
     if(get_word)
     {
       gamestatus=get_word.data.gamestatus
@@ -80,6 +84,14 @@ const PlayOnline = () => {
   );
   const [tempSeconds, setTempSeconds] = useState(() => 60);
   const [showResult, setShowResult] = useState(false);
+  const [isOpenExit, setIsOpenExit] = useState(false);
+  const [isOpenHint, setIsOpenHint] = useState(false);
+  const [warning,setWarning]=useState(false)
+  window.addEventListener("beforeunload", (ev) => 
+  {  
+      ev.preventDefault();
+      exitUser(user.data.id)
+  });
 
   useEffect(() => {
     $(document).ready(function () {
@@ -92,14 +104,16 @@ const PlayOnline = () => {
   useEffect(() => {
     if (user1.start === "0" && final_result_data===null) {
      // clearAllInterval()
-      console.log("calling save word API from playonline useEffect",final_result_data);
+       console.log("calling save word API from playonline useEffect",final_result_data);
       
        saveWord({
         match_id:onlineUser.user1.match_id,
         gamestatus:'0',
         concede:"0",
         user_id:parseInt(onlineUser.user1.user_id),
-        challenge:"0"
+        challenge:"0",
+        round:online_round_counter,
+        word:""
     },12)  
       //getWord(user1.match_id, user.data.id, 20);
     }
@@ -108,14 +122,16 @@ const PlayOnline = () => {
   useEffect(() => {
     if (reset_state===true && final_result_data===null) {
       //clearAllInterval()
-      console.log("calling save word API from playonline useEffect");
+      console.log("calling save word API from playonline useEffect reset_state");
       
        saveWord({
         match_id:onlineUser.user1.match_id,
         gamestatus:'0',
         concede:"0",
         user_id:parseInt(onlineUser.user1.user_id),
-        challenge:"0"
+        challenge:"0",
+        round:online_round_counter,
+        word:""
     },14)  
       //getWord(user1.match_id, user.data.id, 20);
     }
@@ -142,13 +158,7 @@ const PlayOnline = () => {
   },[reset_state])
  */
 
-
-
-
-
-
-                                            
-         
+  
 
   useEffect(() => {
     console.log("Input text changed=", inputText);
@@ -164,7 +174,8 @@ const PlayOnline = () => {
       match_id: user1.match_id,
       gamestatus:"1",
       concede:"0",
-      challenge:"0"
+      challenge:"0",
+      round:online_round_counter
     },13);
 
     setTurn(null);
@@ -178,6 +189,7 @@ const PlayOnline = () => {
     setIsActive(false);
   };
 
+
   const deleteChar = () => {
     //delete only last character from input text
     console.log("SET INPUT TEXT 7")
@@ -188,6 +200,35 @@ const PlayOnline = () => {
   };
 
 
+  let old_str=null
+  let new_str=null
+  const compareChallengedString=()=>{
+    //old_str=Array.from(word).sort().join('').toString()
+   // new_str=Array.from(inputText).sort().join('').toString()
+    console.log("compare1=",inputText,",",word)
+    console.log("compare2=",inputText.substring(0,word.length),",",word)
+    if(inputText.substring(0,word.length)===word)
+    {
+      console.log("calling getWordDefinition from playonline=",inputText.toLowerCase())
+      getWordDefinition(inputText.toString().toLowerCase())
+      //setCurrentWinnerLoserHC('winner')
+    }
+    else if(inputText.substring(0,word.length)!==word){
+      console.log("calling saveword API from playonline on word not complete")
+      setwinnerLoser('loser')
+
+      saveWord({
+        match_id:onlineUser.user1.match_id,
+        gamestatus:'4',
+        concede:'0',
+        user_id:parseInt(onlineUser.user1.user_id),
+        challenge:"0",
+        word:inputText,
+        round:online_round_counter
+    },28,true)
+     
+    }
+}
 
   const onClick = (e) => {
     //console.log("onClick called in playOnline", e.target.outerText);
@@ -212,17 +253,25 @@ const PlayOnline = () => {
     setPlayButtonHide(true);
   };
 
-
+  const togglePopupExit = () => {
+    setIsOpenExit(!isOpenExit);
+  }
+  const togglePopupHint = () => {
+    setIsOpenHint(!isOpenHint);
+  }
+  const togglePopupWarning=()=>{
+    setWarning(true)
+  }
 
   const onChange = (e) => {
     //console.log("onChange called in playOnline");
   };
   //console.log("SPINNER value===========",round_complete)
   if(round_complete){
-    console.log("SPINNER online")
+    console.log("SPINNER online,",round_complete)
     return <Spinner/>
   }
-  else if(challenge==="1" && !popdisabled){
+  else if(challenge_popup_on){
     return <ChallengePopup/>
   }
   else
@@ -231,7 +280,15 @@ const PlayOnline = () => {
     <Fragment>
       <div class="section_card_ga section_card">
         <div class="container">
-          <div class=" row">
+          <div class="row">
+          <div className="align-items hvc-top">
+              <button
+                  onClick={() => togglePopupExit()}
+                  type="button" className="cus-arrow35"
+                > <img src="assets/img/right-arrow.png" alt="" width="70" /></button>
+               
+               <Link  to='/setting'><img src="assets/img/settings.png" alt="" width="52"/></Link>
+              </div>
             <div class="col-lg-6 mb-5 offset-lg-3">
               <div class="logo-wrapper">
                 <img src="assets/img/logo-01copy.png" alt="" />
@@ -239,7 +296,7 @@ const PlayOnline = () => {
               </div>
             </div>
 
-            <div class="col-md-12 ">
+            <div class="round_text time house">
               <div class=" min_top">
                 <div class="ledt_img">
                   <img
@@ -252,138 +309,127 @@ const PlayOnline = () => {
                   />
                 </div>
                 <div class="ledt_img_mid">
-                  <span>
-                    Round{" "}
-                    {
-                      //JSON.parse(localStorage.getItem("info"))[JSON.parse(localStorage.getItem("info")).length - 1].round
-                      online_round_counter
-                    }
-                  </span>
-                  {/*  <span>Round {JSON.parse(localStorage.getItem('info')).map((item)=><h1>{item.round}</h1>)}</span> */}
+                
                   <div class="cup">
                     <h2 style={{ color: "white" }}></h2>
-                    <ul>
-                      <li>
-                        <div className="cup_icon">
+                    
+                    <div className="trophy-panel">
+                        <div className="tropy">
                           {online_round_counter === 1 ? (
                             <img
                               className="icon_g"
-                              src="assets/img/blank.png"
+                              src="assets/img/blank-2.png"
                               alt="trofi"
                             />
                           ) : round_result[0] === "loser" ? (
                             <img
                               class="icon_g"
-                              src="assets/img/red.png"
+                              src="assets/img/red-cup.png"
                               alt="trofi"
                             />
                           ) : (
                             <img
                               className="icon_g"
-                              src="assets/img/green.png"
+                              src="assets/img/green-cup.png"
                               alt="trofi"
                             />
                           )}
-                          {online_round_counter}
                         </div>
-                      </li>
-                      <li>
-                        <div className="cup_icon">
+                        
+                        <div className="tropy">
                           {online_round_counter <= 2 ? (
                             <img
                               className="icon_g"
-                              src="assets/img/blank.png"
+                              src="assets/img/blank-2.png"
                               alt="trofi"
                             />
                           ) : round_result[1] === "loser" ? (
                             <img
                               class="icon_g"
-                              src="assets/img/red.png"
+                              src="assets/img/red-cup.png"
                               alt="trofi"
                             />
                           ) : (
                             <img
                               className="icon_g"
-                              src="assets/img/green.png"
+                              src="assets/img/green-cup.png"
                               alt="trofi"
                             />
                           )}
-                          {online_round_counter}
                         </div>
-                      </li>
-                      <li>
-                        <div className="cup_icon">
+                        
+                        <div className="tropy">
                           {online_round_counter <= 3 ? (
                             <img
                               className="icon_g"
-                              src="assets/img/blank.png"
+                              src="assets/img/blank-2.png"
                               alt="trofi"
                             />
                           ) : round_result[2] === "loser" ? (
                             <img
                               class="icon_g"
-                              src="assets/img/red.png"
+                              src="assets/img/red-cup.png"
                               alt="trofi"
                             />
                           ) : (
                             <img
                               className="icon_g"
-                              src="assets/img/green.png"
+                              src="assets/img/green-cup.png"
                               alt="trofi"
                             />
                           )}
                         </div>
-                      </li>
-                      <li>
-                        <div className="cup_icon">
+                        
+                        <div className="tropy">
                           {online_round_counter <= 4 ? (
                             <img
                               className="icon_g"
-                              src="assets/img/blank.png"
+                              src="assets/img/blank-2.png"
                               alt="trofi"
                             />
                           ) : round_result[3] === "loser" ? (
                             <img
                               class="icon_g"
-                              src="assets/img/red.png"
+                              src="assets/img/red-cup.png"
                               alt="trofi"
                             />
                           ) : (
                             <img
                               className="icon_g"
-                              src="assets/img/green.png"
+                              src="assets/img/green-cup.png"
                               alt="trofi"
                             />
                           )}
                         </div>
-                      </li>
-                      <li>
-                        <div className="cup_icon">
+                        
+                        <div className="tropy">
                           {online_round_counter <= 5 ? (
                             <img
                               className="icon_g"
-                              src="assets/img/blank.png"
+                              src="assets/img/blank-2.png"
                               alt="trofi"
                             />
                           ) : round_result[4] === "loser" ? (
                             <img
                               class="icon_g"
-                              src="assets/img/red.png"
+                              src="assets/img/red-cup.png"
                               alt="trofi"
                             />
                           ) : (
                             <img
                               className="icon_g"
-                              src="assets/img/green.png"
+                              src="assets/img/green-cup.png"
                               alt="trofi"
                             />
                           )}
                         </div>
-                      </li>
+                        </div>
+                        
                       <div class="clear"></div>
-                    </ul>
+                    
                     <div class="clear"></div>
                   </div>
+                  
                 </div>
 
                 <div class="ledt_img">
@@ -406,8 +452,12 @@ const PlayOnline = () => {
                   {/* <div class="left_s"><span><b>{tempSeconds}</b></span></div> */}
                   <div class="clear"></div>
                 </div>
-                 <div class="btn_b2">
-                  <div className="round_text">
+                 
+                <div className="round">
+              <h1>Round: {online_round_counter} | Level: {game_level && game_level.toUpperCase()}</h1>
+              </div>
+                 
+                  <div className="round_text time house">
                     <input
                       type="text"
                       className="main-input"
@@ -415,41 +465,24 @@ const PlayOnline = () => {
                       value={inputText}
                     ></input>
                   </div>
-                </div> 
+                
 
-            {/* {challenge==='1' ?
+              {challenge==='1' &&
              <Fragment>
               <div class="btn_b2">
                   <div className="round_text">
                     <h2 style={{backgroundColor:"white",color:"black"}}>{word}
-                    <input
-                      type="text"
-                      className="main-input"
-                      onChange={onChange}
-                      value={inputText}
-                    ></input></h2>
+                    </h2>
                   </div>
                 </div> 
-            </Fragment> : 
-            <Fragment>
-              <div class="btn_b2">
-                  <div className="round_text">
-                    <input
-                      type="text"
-                      className="main-input"
-                      onChange={onChange}
-                      value={inputText}
-                    ></input>
-                  </div>
-                </div>
             </Fragment>
-            } */}
+            }  
 
 
-             <h2>keyboard {showKeyboard ? "show" :"hide"}</h2>
+             {/* <h2>keyboard {showKeyboard ? "show" :"hide"}</h2>
              <h2>online_round_counter {online_round_counter}</h2>
-             <h2>round_result {online_round_counter>=2 ? round_result[online_round_counter-2] : "wait"}</h2>
-            <h2>API HIT {getwordapihit}</h2>
+             <h2>round_result {online_round_counter>=2 ? round_result[online_round_counter-2] : "wait"}</h2> 
+            <h2>API HIT {getwordapihit}</h2>*/}
                 {onlineUser && showKeyboard ? (
                   <div class="keypad">
                     <div class="keypad_in">
@@ -467,12 +500,14 @@ const PlayOnline = () => {
                                       className="hinnt_r"
                                       id="hintDetail"
                                       //onClick={() => setCallHint(true)}
-                                      onClick={()=>setHintUsed(true,{
+                                      onClick={()=>{
+                                        togglePopupHint()
+                                        setHintUsed(true,{
                                         user_id:user.data.id,
                                         hint_id:hint_id,
                                         match_id:onlineUser.user1.match_id,
                                         round:round
-                                      })}
+                                      })}}
                                       data-toggle="modal"
                                       data-target="#hint"
                                     >
@@ -484,7 +519,17 @@ const PlayOnline = () => {
                                     >
                                       Challenge
                                     </button>
-                            </Fragment> :<Fragment> {challenge==='1' && <button>Check</button>}</Fragment>}
+                            </Fragment> :<Fragment> {challenge==='1' && 
+                            <Fragment> 
+                              <button onClick={() =>compareChallengedString('loser')}>Check-Word</button> 
+                              <button onClick={() => deleteChar()}>
+                          <img
+                            src="assets/img/backspace.svg"
+                            alt=""
+                            width="27"
+                          />
+                        </button>
+                            </Fragment>}</Fragment>}
                           </div>
                         </div>
                       </div>
@@ -506,131 +551,8 @@ const PlayOnline = () => {
                     ): challenge==='1' && <button>Check</button>}
                   </Fragment>
                 )}
-                {/* ---------lost-lost-over------ */}
 
-                {/* ---------lost-lost-over------ */}
-                {/* ------hint------ */}
-                <div
-                  className="modal fade"
-                  id="hint"
-                  tabIndex="-1"
-                  role="dialog"
-                  aria-labelledby="exampleModalLabel"
-                  aria-hidden="true"
-                >
-                  <div className="modal-dialog pop_m" role="document">
-                    <div class="modal-content hint-model">
-                      <div className="mod_contany text-center">
-                        {/* <div className="over_lay"></div> */}
-
-                        <div className="top-middl_t text-center">
-                          {hint ? (
-                            <h2 className="word">
-                              <span>HINT : {hint}</span>
-                            </h2>
-                          ) : (
-                            <h2 className="word">
-                              <span>
-                                HINT : Only one hint per match is allowed
-                              </span>
-                            </h2>
-                          )}
-                        </div>
-                        <div className="bott-footer text-center">
-                          <div className="next">
-                            <div className="bt_btnok">
-                              <button
-                                type="button"
-                                class="close btn btn-info next_r "
-                                id="hintok"
-                                data-dismiss="modal"
-                                aria-label="Close"
-                              >
-                                <span aria-hidden="true">OK</span>
-                              </button>
-                              <div className="clear"></div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="modal cus-modal fade" id="myModal">
-                  <div className="modal-dialog modal-md">
-                    <div className="modal-content">
-                      <div className="modal-header">
-                        <h4 className="modal-title">Chat</h4>
-                        <button
-                          type="button"
-                          className="close"
-                          data-dismiss="modal"
-                        >
-                          &times;
-                        </button>
-                      </div>
-
-                      <div className="modal-body cus-body">
-                        <div className="chat-container">
-                          <div className="chat-window">
-                            <div className="start-chat">
-                              <div className="received-msg">
-                                <div className="msg-align">
-                                  <p>Hi</p>
-                                </div>
-                              </div>
-
-                              <div className="received-msg outgoing-msg">
-                                <div className="msg-align-right">
-                                  <p>How r u?</p>
-                                </div>
-                              </div>
-
-                              <div className="received-msg">
-                                <div className="msg-align">
-                                  <p>I am fine</p>
-                                </div>
-                              </div>
-
-                              <div className="received-msg">
-                                <div className="msg-align">
-                                  <p>Lets play now</p>
-                                </div>
-                              </div>
-
-                              <div className="received-msg outgoing-msg">
-                                <div className="msg-align-right">
-                                  <p>Ok, lest play</p>
-                                </div>
-                              </div>
-                            </div>
-
-                            <div className="chatting-feild">
-                              <input type="text" placeholder="Chat..." />{" "}
-                              <button>
-                                <img src="assets/img/arrow.png" alt="" />
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="chat-wrapper">
-                  <span>1</span>
-                  <div
-                    className="chat-box"
-                    data-toggle="modal"
-                    data-target="#myModal"
-                  >
-                    <div className="chat-icon">
-                      <img src="assets/img/chat1.png" alt="" />
-                    </div>
-                  </div>
-                </div>
+             
               </div>
             </div>
           </div>
@@ -648,21 +570,30 @@ const PlayOnline = () => {
                   </Link>
                 </li>
                 <li>
-                  <Link to="#" onClick={()=>saveWord({
+                  <Link to="#" onClick={()=>{
+                                      
+                                      saveWord({
                                           match_id:onlineUser.user1.match_id,
                                           gamestatus:'0',
                                           concede:'0',
-                                          user_id:onlineUser.user1.user_id,
+                                          user_id:parseInt(onlineUser.user1.user_id),
                                           challenge:"1",
-                                          word:inputText
-                                })}>Complete Word</Link>
+                                          word:inputText,
+                                          round:online_round_counter
+                                },27,true)
+                                      setSeconds(120)
+                                      setTurn(null)
+                                      setShowKeyboard(false)
+                                }}>Complete Word</Link>
                 </li>
               </ul>
             </div>
           </div>
         </Fragment>
       )}
-      {}
+      {isOpenHint && <HintPopup handleClose={togglePopupHint} hint={hint}/>}
+      {isOpenExit && <ExitPopup handleClose={togglePopupExit}/>}
+      {warning && <WarningPopup handleClose={togglePopupWarning} setWarning={setWarning}/>}
     </Fragment>
   )
   }

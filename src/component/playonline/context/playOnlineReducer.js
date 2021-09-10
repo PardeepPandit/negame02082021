@@ -31,7 +31,8 @@ import{
   RESET_STATE_FOR_MATCH,
   SET_HINT_USED,
   SET_HINT_COUNT,
-  GET_HINT
+  GET_HINT,
+  GAME_TIMEOUT
   } from '../../../type'; 
   
   //comment
@@ -261,6 +262,11 @@ import{
                                                ...state,
                                                start_game:payload
                                              }
+                                             case GAME_TIMEOUT:
+                                               return{
+                                                 ...state,
+                                                 game_timeout:payload
+                                               }
 
                 case RESET_STATE_FOR_ROUND:
                   localStorage.setItem('user_click_NRB',false)
@@ -297,7 +303,7 @@ import{
                       get_word:null,
                       loading:false,
                       turn_change:null,
-                      word_definition:{word:"",definition:""},
+                      word_definition:{word:"",definition_1:""},
                       winner_loser:null,
                       online_round_counter:1,
                       info:[],

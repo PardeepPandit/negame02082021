@@ -11,10 +11,10 @@ import WordLengthUI from './MyComponent/LevelUI/WordLengthUI'
 const PlayBackPopup = ({levelSelected,handleClose,playOnline,setStartMatch}) => {
 
   const commonContext =useContext(CommonContext)
-  const {setInputText,game_type,setSeconds,game_level,setIsActive}=commonContext
+  const {setInputText,game_type,setSeconds,game_level,setIsActive,setWordLength}=commonContext
   
   const humanContext=useContext(HumanContext)
-  const {checkHintCount,startMatchComputer,setWordLength}= humanContext
+  const {checkHintCount,startMatchComputer}= humanContext
 
   const authContext=useContext(AuthContext)
   const {user,login_data}=authContext

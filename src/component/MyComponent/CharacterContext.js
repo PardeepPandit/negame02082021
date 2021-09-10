@@ -20,13 +20,13 @@ export function useCharacterConsumerUpdate() {
 export function CharacterProvider({ children }) {
   
 const commonContext=useContext(CommonContext)
-const {inputText,setInputText,setIsActive,isActive,setSeconds,backup_input_text,inputText2,setInputText2,game_level,human_position}=commonContext
+const {inputText,setInputText,setIsActive,isActive,word_length,backup_input_text,inputText2,setInputText2,game_level,human_position}=commonContext
 
 const playOnlineContext=useContext(PlayOnlineContext)
 const {game_type,onlineUser}=playOnlineContext
 
   const humanContext=useContext(HumanContext)
-  const {setShowKeyboard,play,setPlay,setTurn,round,current_winner_loser_HC,start_match_computer,word_length}=humanContext
+  const {setShowKeyboard,play,setPlay,setTurn,round,current_winner_loser_HC,start_match_computer}=humanContext
 
   const {keyAudio}=useBackgroundMusicConsumer();
  

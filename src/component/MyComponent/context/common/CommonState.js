@@ -16,7 +16,8 @@ import{
     SET_HUMAN_POSITION,
     SINGLE_SHIFT_COUNTER,
     SET_SHOW_KEYBOARD,
-    SET_RANDOM_POSITION
+    SET_RANDOM_POSITION,
+    SET_WORD_LENGTH
 } from '../../../../type'; 
 
 
@@ -33,6 +34,7 @@ const CommonState=({children})=>{
    human_position:null,
    showKeyboard:false,
    single_shift_counter:null,
+   word_length:null
   };
  
   console.log("Common State...")
@@ -240,6 +242,7 @@ const setHumanPosition=(position)=>{
 }
 
 
+
 const loadGameLevels=async()=>{
 
   const config={
@@ -332,6 +335,12 @@ const resetCommonState=()=>{
     type:RESET_COMMONSTATE,
   })
 }
+const setWordLength=(len)=>{
+  dispatch({
+    type:SET_WORD_LENGTH,
+    payload:len
+  })
+}
 
   return (
     <CommonContext.Provider
@@ -347,6 +356,7 @@ const resetCommonState=()=>{
     human_position:state.human_position,
     single_shift_counter:state.single_shift_counter,
     showKeyboard:state.showKeyboard,
+    word_length:state.word_length,
     setInputText,
     setInputText2,
     setIsActive,
@@ -360,7 +370,8 @@ const resetCommonState=()=>{
     getCampaign,
     setHumanPosition,
     deleteChar,
-    setShowKeyboard
+    setShowKeyboard,
+    setWordLength
     
       }}>
       {children}

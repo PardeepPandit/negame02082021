@@ -24,7 +24,6 @@ import{
   SET_RANDOM_POSITION,
   SET_TEMP_WORD,
   SINGLE_SHIFT_COUNTER,
-  SET_WORD_LENGTH,
   SET_ROUND_COMPLETE
   } from '../../../../type'; 
 
@@ -181,11 +180,6 @@ export default (state,action)=>{
                                                     single_shift_counter:payload,
                                                     human_position:null
                                                 }
-                                                case SET_WORD_LENGTH:
-                                                    return{
-                                                        ...state,
-                                                        word_length:payload
-                                                    }
                                             case RESET_STATE_FOR_ROUND_FINSH_HC:
                                                 return{
                                                     ...state,
@@ -215,7 +209,6 @@ export default (state,action)=>{
                                                         concede:false,
                                                         position:null,
                                                         start_match_computer:null,
-                                                        word_length:null,
                                                         turn:'human',
                                                         next_char:null,
                                                         temp_word:null,

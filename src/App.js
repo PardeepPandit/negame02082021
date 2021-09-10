@@ -1,4 +1,82 @@
-import {useEffect,useState} from 'react'
+import {useEffect,useState,Suspense,lazy} from 'react'
+import './App.css';
+import { Route, Switch } from "react-router-dom";
+import React from 'bootstrap/dist/css/bootstrap.min.css';
+
+import Forgot from './component/Forgot';
+
+import Register from './component/Register';
+import Update from './component/Update';
+
+import Word from './component/Word';
+import Post from './component/Post';
+import Notifiction from './component/Notifiction';
+import ChangePassword from './component/Changepassword';
+import { CustomHookProvider } from './component/MyComponent/CustomHook';
+import { MainProvider } from './component/MyComponent/MainContext'
+import { TimerProvider } from './component/MyComponent/TimerContext'
+import { CharacterProvider } from './component/MyComponent/CharacterContext';
+import PrivateRoute from './component/MyComponent/routing/PrivateRoute'
+import ShowResult from './component/MyComponent/ShowResult'
+import ResultComputer from './component/MyComponent/ResultComputer'
+import Friend from './component/Friend';
+import Alerts from './component/MyComponent/Alerts';
+import MasterState from './component/MyComponent/context/master/MasterState'
+import AuthState from './component/MyComponent/context/auth/AuthState'
+import AlertState from './component/MyComponent/context/alert/AlertState'
+import ReactFacebookLogin from './component/MyComponent/Facebook'
+import Google from './component/MyComponent/Google'
+import Profile from './component/Profile'
+import Leaderboard from './component/Leaderboard'
+import Country from './component/Country'
+import Age from './component/Age'
+import Details from './component/Details'
+import HistoryWithComputer from './component/HistoryWithComputer'
+import HistoryWithFriend from './component/HistoryWithFriend'
+import HistoryOnline from './component/HistoryOnline'
+import Hint from './component/Hint'
+
+import Computer from './component/Computer'
+import FileUpload from './component/FileUpload'
+import Signup from './component/Signup'
+import FriendRequest from './component/FriendRequest'
+import SentRequest from './component/SentRequest'
+import MyFriend from './component/MyFriend'
+import LeaderState from './component/MyComponent/context/leaderboard/LeaderState';
+import About from './component/About'
+
+import Payment from './component/Payment'
+import HumanState from './component/MyComponent/context/human/HumanState'
+import PayPal from './component/MyComponent/PayPal'
+import PlayOnline from './component/playonline/play_online_components/PlayOnline'
+import PlayOnlineState from './component/playonline/context/PlayOnlineState';
+import Challenge from './component/playonline/play_online_components/Challenge'
+import firebase from './firebase'
+import CommonState from './component/MyComponent/context/common/CommonState';
+import PageNotFound from './component/MyComponent/PageNotFound'
+import axios from 'axios';
+// import Setting from './component/Setting';
+// import Dashboard from './component/Dashboard';
+// import ChoosePlan from './component/ChoosePlan';
+// import HumanVsComputer from './component/HumanVsComputer';
+// import Level from './component/Level'
+// import YouWin from './component/YouWin'
+// import YouLose from './component/YouLose'
+// import GameLevels from './component/GameLevels';
+// import PlayBackPopup from './component/PlayBackPopup'
+// import Login from './component/Login';
+
+const Login=lazy(()=>import('./component/Login'));
+const Dashboard=lazy(()=>import('./component/Dashboard'));
+const Setting=lazy(()=>import('./component/Setting'));
+const ChoosePlan=lazy(()=>import('./component/ChoosePlan'));
+const HumanVsComputer=lazy(()=>import('./component/HumanVsComputer'));
+const GameLevels=lazy(()=>import('./component/GameLevels'));
+const PlayBackPopup=lazy(()=>import('./component/PlayBackPopup'));
+const YouWin=lazy(()=>import('./component/YouWin'));
+const YouLose=lazy(()=>import('./component/YouLose'));
+const Level=lazy(()=>import('./component/Level'));
+/* import {useEffect,useState} from 'react'
 import './App.css';
 import { Route, Switch } from "react-router-dom";
 import React from 'bootstrap/dist/css/bootstrap.min.css';
@@ -14,9 +92,6 @@ import Word from './component/Word';
 import Post from './component/Post';
 import Notifiction from './component/Notifiction';
 import ChangePassword from './component/Changepassword';
-
-
-///My Import//
 import { CustomHookProvider } from './component/MyComponent/CustomHook';
 import { MainProvider } from './component/MyComponent/MainContext'
 import { TimerProvider } from './component/MyComponent/TimerContext'
@@ -48,7 +123,6 @@ import FriendRequest from './component/FriendRequest'
 import SentRequest from './component/SentRequest'
 import MyFriend from './component/MyFriend'
 import LeaderState from './component/MyComponent/context/leaderboard/LeaderState';
-
 import About from './component/About'
 import YouWin from './component/YouWin'
 import YouLose from './component/YouLose'
@@ -63,14 +137,14 @@ import CommonState from './component/MyComponent/context/common/CommonState';
 import PageNotFound from './component/MyComponent/PageNotFound'
 import GameLevels from './component/GameLevels';
 import PlayBackPopup from './component/PlayBackPopup'
-import EasyGameLevel from './component/EasyGameLevel';
-import axios from 'axios';
+import axios from 'axios'; */
 
 function App(props) {
+
   var counter = 1;
 const [token,setToken]=useState()
 
-useEffect(async()=>{
+/* useEffect(async()=>{
   const config={
     headers:{
       'Context-type':'appplication/json',
@@ -81,7 +155,7 @@ useEffect(async()=>{
 const res=await axios.get(process.env.REACT_APP_BASEURL+'/api/getCampaigns',config)
     console.log("Response from campagin=",res.data)
     localStorage.setItem('campaign',JSON.stringify(res.data.data))
-},[])
+},[]) */
 
 
  /*  const [finishStatus, setfinishStatus] = useState(false);
@@ -171,6 +245,7 @@ else{ */
       <TimerProvider>
       <CharacterProvider>
       <Alerts/>
+       <Suspense fallback={<div>Loading...</div>}>
           <Switch>
             <Route exact path="/" component={Login} />
             <Route exact path="/PlayBackPopup" component={PlayBackPopup} />
@@ -222,7 +297,8 @@ else{ */
             <PrivateRoute exact path='/playonline' component={PlayOnline}/>
             <Route exact path='/challenge' component={Challenge}/>
           <Route component={PageNotFound}/>
-          </Switch>  
+          </Switch>
+          </Suspense> 
       </CharacterProvider>
       </TimerProvider>
       </CustomHookProvider>

@@ -28,10 +28,10 @@ if ($(this).hasClass("active")) {
                 <Link to="#" onClick={()=>setWordLength(5)}>5</Link>
               </li>
               <li>
-                <Link to="#" onClick={()=>setWordLength(7)}>7</Link>
+                <Link to="#" onClick={()=>setWordLength(6)}>6</Link>
               </li>
               <li>
-                <Link to="#" onClick={()=>setWordLength(9)}>9</Link>
+                <Link to="#" onClick={()=>setWordLength(7)}>7</Link>
               </li>
              <li>
                 <Link to="#" onClick={()=>setWordLength(8)}>8</Link>
@@ -44,21 +44,6 @@ if ($(this).hasClass("active")) {
               </li>
               <li>
                 <Link to="#" onClick={()=>setWordLength(11)}>11</Link>
-              </li>
-              <li>
-                <Link to="#" onClick={()=>setWordLength(12)}>12</Link>
-              </li>
-              <li>
-                <Link to="#" onClick={()=>setWordLength(13)}>13</Link>
-              </li>
-              <li>
-                <Link to="#" onClick={()=>setWordLength(14)}>14</Link>
-              </li>
-              <li>
-                <Link to="#" onClick={()=>setWordLength(15)}>15</Link>
-              </li>
-              <li>
-                <Link to="#" onClick={()=>setWordLength(16)}>16</Link>
               </li>
               <li>
                 <Link to="#" onClick={()=>setWordLength(12)}>12</Link>

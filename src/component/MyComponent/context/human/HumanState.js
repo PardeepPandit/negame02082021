@@ -34,7 +34,6 @@ import{
   SET_RANDOM_POSITION,
   SINGLE_SHIFT_COUNTER,
   SET_BACKUP_INPUT_TEXT,
-  SET_WORD_LENGTH,
   SET_ROUND_COMPLETE
 } from '../../../../type'; 
 
@@ -64,8 +63,7 @@ const HumanState=({children})=>{
         result_history:[],
         final_result_HC:null,
         match_round_details:null,
-        computer_position:null,
-        word_length:null
+        computer_position:null
        //[{round:1,word:,complete_word:,round_respnse}],[]
   };
 
@@ -77,7 +75,7 @@ const HumanState=({children})=>{
   const {user}=authContext
 
   const commonContext =useContext(CommmonContext)
-  const {inputText,setInputText,setSeconds,setIsActive,backup_input_text,inputText2,game_level,isActive,setInputText2,game_type}=commonContext
+  const {inputText,setInputText,setSeconds,setIsActive,backup_input_text,inputText2,game_level,isActive,setInputText2,game_type,word_length}=commonContext
 console.log("Human state....",inputText)
 useEffect(()=>{
     console.log("warning 1")
@@ -89,6 +87,8 @@ useEffect(()=>{
     }
   
 },[user])  
+
+
 
 
 
@@ -215,7 +215,7 @@ useEffect(()=>{
           {
             state.turn==='human' ? setCurrentWinnerLoserHC('loser') :setCurrentWinnerLoserHC('winner')
           }
-          else if(game_level==='Genius' && inputText!==null && inputText.length===state.word_length){
+          else if(game_level==='Genius' && inputText!==null && inputText.length===word_length){
             setCurrentWinnerLoserHC('winner')
           }else{
             getRandomWordFromApi()
@@ -224,7 +224,7 @@ useEffect(()=>{
       else if(state.word_exist==='word not found' && inputText!==null  && inputText.length > 3 && state.turn==='human')
       {
         console.log("Word not found in check word API , now calling Random word API")
-        if(game_level==='Genius' && inputText.length===state.word_length){
+        if(game_level==='Genius' && inputText.length===word_length){
           setCurrentWinnerLoserHC('loser')
         }
         else{
@@ -317,11 +317,6 @@ const setPlay=(true_false)=>{
   })
 }
 
-
-
-
-
- 
 
 const sendMatchRoundHC=async(formdata)=>{
 
@@ -474,9 +469,9 @@ const getWordFromRapidApiHC=async()=>{
       else if(game_level==='Genius')
       {
         dynamic_api=dynamicAPI()
-        console.log(`https://wordsapiv1.p.rapidapi.com/words/?letterPattern=^(?=.*^(\\w%2B[^ ])$)(?=.*^${dynamic_api})&random=true&letters=${state.word_length}`)
+        console.log(`https://wordsapiv1.p.rapidapi.com/words/?letterPattern=^(?=.*^(\\w%2B[^ ])$)(?=.*^${dynamic_api})&random=true&letters=${word_length}`)
          //res=await axios.get(`https://wordsapiv1.p.rapidapi.com/words/?letterPattern=^(?=.*^(\\w%2B[^ ])$)(?=.*^${dynamic_api})&random=true&letters=${state.word_length}`,config) 
-         res=await axios.get(process.env.REACT_APP_BASEURL+`/api/level_four?search=${inputText.toLowerCase()}&length=${state.word_length}`,config)
+         res=await axios.get(process.env.REACT_APP_BASEURL+`/api/level_four?search=${inputText.toLowerCase()}&length=${word_length}`,config)
       }
 
         if(res.status===200)
@@ -564,9 +559,9 @@ const getRandomWordFromApi=async()=>{
         else if(game_level==='Genius')
         {
           dynamic_api=dynamicAPI()
-          console.log(`https://wordsapiv1.p.rapidapi.com/words/?letterPattern=^(?=.*^(\\w%2B[^ ])$)(?=.*^${dynamic_api})&random=true&letters=${state.word_length}`)
-         // res=await axios.get(`https://wordsapiv1.p.rapidapi.com/words/?letterPattern=^(?=.*^(\\w%2B[^ ])$)(?=.*^${dynamic_api})&random=true&letters=${state.word_length}`,config) 
-         res=await axios.get(process.env.REACT_APP_BASEURL+`/api/level_four?search=${inputText.toLowerCase()}&length=${state.word_length}`,config)
+          console.log(`https://wordsapiv1.p.rapidapi.com/words/?letterPattern=^(?=.*^(\\w%2B[^ ])$)(?=.*^${dynamic_api})&random=true&letters=${word_length}`)
+         // res=await axios.get(`https://wordsapiv1.p.rapidapi.com/words/?letterPattern=^(?=.*^(\\w%2B[^ ])$)(?=.*^${dynamic_api})&random=true&letters=${word_length}`,config) 
+         res=await axios.get(process.env.REACT_APP_BASEURL+`/api/level_four?search=${inputText.toLowerCase()}&length=${word_length}`,config)
          console.log("Response from getRandomWordFromApi=",res.data)
         } 
       
@@ -628,7 +623,7 @@ const getRandomWordFromApi=async()=>{
       }
     }
     //let check_word=inputText
-    if(game_level==='Genius' && inputText!==null && inputText.length===state.word_length){
+    if(game_level==='Genius' && inputText!==null && inputText.length===word_length){
       check_word=inputText2
     }
     console.log("check_word=",check_word)
@@ -649,7 +644,7 @@ const getRandomWordFromApi=async()=>{
                   setResultWord(res.data.word)
                 }
 
-             /*    if(game_level==='genius' && state.inputText!==null && state.inputText.length===state.word_length){
+             /*    if(game_level==='genius' && state.inputText!==null && state.inputText.length===word_length){
                   setCurrentWinnerLoserHC('winner')
               } */
           dispatch({
@@ -997,12 +992,7 @@ else{
 }
 
 
-const setWordLength=(len)=>{
-    dispatch({
-      type:SET_WORD_LENGTH,
-      payload:len
-    })
-}
+
 
 
 const deleteChar = () => {
@@ -1045,7 +1035,7 @@ const deleteChar = () => {
     else if(game_level==='Genius' )
     {
       
-      if(inputText!==null && inputText.length===state.word_length )
+      if(inputText!==null && inputText.length===word_length )
       {
         setInputText2(inputText2.substring(0, inputText2.length - 1));
       }
@@ -1098,7 +1088,6 @@ const deleteChar = () => {
         final_result_HC:state.final_result_HC,
         match_round_details:state.match_round_details,
         temp_word:state.temp_word,
-        word_length:state.word_length,
         getRandomWordFromApi,
         setResultWord,
         startMatchComputer,
@@ -1122,7 +1111,6 @@ const deleteChar = () => {
         setLoading,
         setRandomPosition,
         setSingleShiftCounter,
-        setWordLength,
         getWordFromRapidApiHC,
         deleteChar
       }}>

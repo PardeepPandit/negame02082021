@@ -2,40 +2,33 @@ import React, { Fragment ,useEffect,useContext,useState} from 'react'
 import {Link} from 'react-router-dom'
 import PlayOnlineContext from './playonline/context/playOnlineContext'
 import CommonContext from './MyComponent/context/common/commonContext'
-
+import Spinner from '../component/MyComponent/Spinner'
 export const YouLose = () => {
 
     const commonContext=useContext(CommonContext)
     const {setIsActive,setSeconds,seconds,setInputText,setBackUpInputText,inputText,setShowKeyboard}=commonContext
   
     const playOnlineContext=useContext(PlayOnlineContext)
-    const {word_definition,resetStateHHForRound,winner_loser,saveWord,onlineUser,sendMatchRound,online_round_counter, get_word,setRoundComplete,setApiHit,setCurrentStatus,user_click_next_round_button,opponent_click_next_round_button,showNextRoundButton,setShowNextRoundButton,round_complete,setUserOpponentAgree,finalResultCounter,final_result_winner_counter,final_result_loser_counter,setwinnerLoser,getFinalResultOnline,final_result_data,changeMatchStatus,nextRound,setResultWordHH}=playOnlineContext
+    const {word_definition,resetStateHHForRound,winner_loser,saveWord,onlineUser,sendMatchRound,online_round_counter, get_word,setRoundComplete,setApiHit,setCurrentStatus,user_click_next_round_button,opponent_click_next_round_button,showNextRoundButton,setShowNextRoundButton,round_complete,setUserOpponentAgree,finalResultCounter,final_result_winner_counter,final_result_loser_counter,setwinnerLoser,getFinalResultOnline,final_result_data,changeMatchStatus,nextRound,setResultWordHH,game_timeout}=playOnlineContext
     const {data}=get_word || {}
     const {word,user_id,gamestatus,challenge,concede}=data || {}
+    const [spinnerShow,setSpinnerShow]=useState(false)
+    
+    useEffect(()=>{
 
-  /*   useEffect(()=>{
-
-        if(showNextRoundButton && (final_result_winner_counter!==3 && final_result_loser_counter!==3)){
-            //Note:following code will execute in response of opponent action
-                console.log("Calling save word API after 7 seconds from you lose on loser popup")
-                saveWord({
-                match_id:onlineUser.user1.match_id,
-                gamestatus:'0',
-                challenge:"0",
-                concede:"0", 
-                user_id:parseInt(onlineUser.user1.user_id),
-                word:"",
-                round:online_round_counter
-            },2)      
-        }
-
-    },[showNextRoundButton]) */
+        if(showNextRoundButton && (final_result_winner_counter===3 || final_result_loser_counter===3))
+                 {
+                     console.log("STOP TIMER *W*")
+                   setIsActive(false)
+                 }
+    },[final_result_winner_counter,final_result_loser_counter])
 
 
      useEffect(()=>{
         console.log("winner_loser useEffect 2=",winner_loser)
         if(winner_loser==='loser')
         {
+            setShowNextRoundButton(true)
           //setCurrentStatus('loser')
           console.log("Increment loser counter")
           //alert("loser counter=",final_result_loser_counter)
@@ -73,8 +66,17 @@ export const YouLose = () => {
                     else if(onlineUser.user1.user_id!==user_id && gamestatus==='3' && challenge==='0' && concede==='0')
                     {
                         //This will exexcute when opponent check complete complete word
+                        console.log("SAVEWORD API 20=",gamestatus,challenge,",",concede)
+                        saveWord({
+                            match_id:onlineUser.user1.match_id,
+                            gamestatus:"0",
+                            concede:"0",
+                            user_id:parseInt(onlineUser.user1.user_id),
+                            challenge:"0",
+                            word:"",
+                            round:online_round_counter
+                        },20,true)
                         
-                        console.log("Nothing to DO")
                     }
                     else if(onlineUser.user1.user_id!==user_id && gamestatus==='0' && challenge==='1' && concede==='0')
                     {
@@ -91,25 +93,40 @@ export const YouLose = () => {
 
                         setResultWordHH(inputText,'Word not complete')
                     }
+                    else if(game_timeout)
+                    {
+                        saveWord({
+                            match_id:onlineUser.user1.match_id,
+                            gamestatus:'2',
+                            concede:"0",
+                            user_id:parseInt(onlineUser.user1.user_id),
+                            challenge:"0",
+                            round:online_round_counter,
+                            word:""
+                        },10,true) 
+                    }
                    
                     console.log("Time Reset@@@@@@@@@@@@@  10")
                             setSeconds(120)
-                            setIsActive(true)
+
+           
+                setIsActive(true) 
+             
         }
     },[winner_loser]) 
 
 
-    useEffect(()=>{
+    /* useEffect(()=>{
         console.log("winner_loser useEffect 1=",winner_loser)
         if(winner_loser==='loser'){
 
             setTimeout(()=>{
                 console.log("Show Next round button you lose")
                 setShowNextRoundButton(true)
-            },10000)
+            },1000)
 
         }
-},[winner_loser])
+},[winner_loser]) */
 
 
 
@@ -129,8 +146,8 @@ export const YouLose = () => {
 
 useEffect(()=>{
         console.log(`ROUND CHANGE YL-${online_round_counter}`)
-
-    if(winner_loser==='loser' && showNextRoundButton){
+        
+    if(winner_loser==='loser' && (showNextRoundButton || (user_click_next_round_button===true && opponent_click_next_round_button===true))){
         setShowNextRoundButton(false)
         console.log("SAVEWORD API 1=",gamestatus,challenge,",",concede)
         setUserOpponentAgree(true)
@@ -142,7 +159,7 @@ useEffect(()=>{
             challenge:"0",
             word:"",
             round:online_round_counter
-        },1,false)
+        },111,false)
 
 
         setTimeout(()=>{
@@ -154,18 +171,19 @@ useEffect(()=>{
         setIsActive(false)
         setSeconds(60)
         setShowKeyboard(false)
+        setSpinnerShow(true)
     }
 
 },[online_round_counter])
 
 
-useEffect(()=>{
+/* useEffect(()=>{
         console.log(`ROUND CHANGE YL-${online_round_counter}`)
 
     if(user_click_next_round_button===true && opponent_click_next_round_button===true && winner_loser==='loser'){
 
         console.log("SAVEWORD API 1=",gamestatus,challenge,",",concede)
-        setUserOpponentAgree(true)
+        
         saveWord({
             match_id:onlineUser.user1.match_id,
             gamestatus:"0",
@@ -186,9 +204,10 @@ useEffect(()=>{
         setIsActive(false)
         setSeconds(60)
         setShowKeyboard(false)
+        
     }
 
-},[online_round_counter])
+},[online_round_counter]) */
 
 
     useEffect(()=>
@@ -198,15 +217,14 @@ useEffect(()=>{
         if(user_click_next_round_button===true && opponent_click_next_round_button===true && winner_loser==='loser'){
             console.log("BOTH USERS AGREE TO GO IN NEXT ROUND")
             console.log("SET INPUT TEXT BLANK YL")
+            localStorage.setItem('user_opponent_agree',true)
+            setUserOpponentAgree(true)
             setInputText('')
             setBackUpInputText('')
             setTimeout(()=>{
                 nextRound()
             },4000)
-        
-        
         }
-
     },[user_click_next_round_button,opponent_click_next_round_button])
 
 
@@ -243,7 +261,12 @@ useEffect(()=>{
 
    
 
-
+    if((spinnerShow))
+    {
+        console.log("spinneron==",spinnerShow)
+        return <Spinner/>
+    }
+    else{
     return (
 
         <Fragment>
@@ -292,8 +315,7 @@ useEffect(()=>{
 
 
     );
-
-
+                            }
 }
 
 export default YouLose

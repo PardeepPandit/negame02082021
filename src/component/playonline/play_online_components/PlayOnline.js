@@ -217,7 +217,9 @@ const PlayOnline = () => {
     }
     else if(inputText.substring(0,word.length)!==word){
       console.log("calling saveword API from playonline on word not complete")
-      setwinnerLoser('loser')
+     
+      togglePopupWarning()
+     /*  setwinnerLoser('loser')
 
       saveWord({
         match_id:onlineUser.user1.match_id,
@@ -227,7 +229,7 @@ const PlayOnline = () => {
         challenge:"0",
         word:inputText,
         round:online_round_counter
-    },28,true)
+    },28,true) */
      
     }
 }
@@ -542,7 +544,7 @@ const PlayOnline = () => {
                         <button onClick={() => playButton()}>Play</button>
                         <button onClick={() => {
                           
-                          
+                          setHumanPosition(null)
                           deleteChar()}}>
                           <img
                             src="assets/img/backspace.svg"
@@ -584,7 +586,8 @@ const PlayOnline = () => {
                                           word:inputText,
                                           round:online_round_counter
                                 },27,true)
-                                      setSeconds(120)
+
+                                      //setSeconds(120)
                                       setTurn(null)
                                       setShowKeyboard(false)
                                 }}>Complete Word</Link>

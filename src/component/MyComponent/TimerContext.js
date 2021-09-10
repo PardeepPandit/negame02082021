@@ -7,13 +7,13 @@ const TimerContext = React.createContext();
 export function TimerProvider({ children }) {
 
 const commonContext=useContext(CommonContext)
-const {inputText,isActive,seconds,setSeconds,game_type,human_vs_online}=commonContext
+const {inputText,isActive,seconds,setSeconds,game_type,setInputText}=commonContext
 
 const humanContext=useContext(HumanContext)
 const {setCurrentWinnerLoserHC,setResultWord}=humanContext
 
   const playOnlineContext=useContext(PlayOnlineContext)
-  const {onlineUser,saveWord,setRoundComplete,resetStateHHForRound,setwinnerLoser,online_round_counter,setResultWordHH,showNextRoundButton,nextRound,setShowNextRoundButton}=playOnlineContext
+  const {onlineUser,saveWord,setRoundComplete,resetStateHHForRound,setwinnerLoser,online_round_counter,setResultWordHH,showNextRoundButton,nextRound,gameTimeOut}=playOnlineContext
 
 
   var myVar;
@@ -37,23 +37,15 @@ const {setCurrentWinnerLoserHC,setResultWord}=humanContext
         {
             console.log("PLAY ONLINE TIME UP ")
 
-            if(showNextRoundButton)
+             if(showNextRoundButton)
             {
               console.log("Next Round after Timer out")
+              setInputText('')
               nextRound()
             }
-            else{
-                saveWord({
-                        match_id:onlineUser.user1.match_id,
-                        gamestatus:'2',
-                        concede:"0",
-                        user_id:parseInt(onlineUser.user1.user_id),
-                        challenge:"0",
-                        round:online_round_counter,
-                        word:""
-                    },10,false)  
-        
-           setwinnerLoser('loser')
+            else {
+          gameTimeOut(true)       
+        setwinnerLoser('loser')
         console.log("ALL STATE RESET for playonline IN Timer Context")
         setResultWordHH(inputText,'Time Over')
             }

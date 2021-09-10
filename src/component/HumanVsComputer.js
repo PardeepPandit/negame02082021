@@ -26,7 +26,7 @@ const HumanVsComputer = () => {
   console.log("element=",element)
  */
   const commonContext=useContext(CommonContext)
-  const {inputText,setIsActive,seconds,setInputText,backup_input_text,inputText2,game_level,setSeonds}=commonContext
+  const {inputText,setIsActive,seconds,setInputText,backup_input_text,inputText2,game_level,word_length}=commonContext
   const authContext=useContext(AuthContext)
   const {user,login_data}=authContext
   const {level}=login_data
@@ -52,7 +52,6 @@ const HumanVsComputer = () => {
     getHint,
     setSingleShiftCounter,
     single_shift_counter,
-    word_length,
     deleteChar,
     setWordLength
   } = humanContext;
@@ -221,7 +220,7 @@ else
                 {/*  {loser.out && <div className="bg-white">{JSON.stringify(val)}</div>} */}
                 {game_level==="Medium" && show_keyboard && <MediumLevelUI />}
 
-                {(game_level==="Expert" || (game_level==="Genius" && backup_input_text!==null && backup_input_text.length!==word_length)) && show_keyboard && <ExpertAndGeniusLevelUI/>}
+               {/*  {(game_level==="Expert" || (game_level==="Genius" && backup_input_text!==null && backup_input_text.length!==word_length)) && show_keyboard && <ExpertAndGeniusLevelUI/>} */}
                 
                 {/* {game_level==="genius" && show_keyboard && inputText!==null && inputText.length!==word_length &&<GeniusLevelUI/>} */}
            

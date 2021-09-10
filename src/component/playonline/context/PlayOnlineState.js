@@ -36,7 +36,8 @@ import {
     START_GAME,
     SET_HINT_COUNT,
     SET_HINT_USED,
-    GET_HINT
+    GET_HINT,
+    GAME_TIMEOUT
 } from '../../../type'
 const PlayOnlineState=({children})=>{
 
@@ -73,12 +74,13 @@ start_game:false,
 hint:null,
 hint_used:false,
 hint_count:null,
+game_timeout:false
 }
 
 const [state, dispatch] = useReducer(playOnlineReducer, initialState)
 
 const commonContext=useContext(CommonContext)
-const{inputText,setInputText,isActive,setIsActive,setSeconds,backup_input_text,setShowKeyboard,showKeyboard}=commonContext
+const{inputText,setInputText,isActive,setIsActive,setSeconds,backup_input_text,setShowKeyboard,showKeyboard,seconds}=commonContext
 
 console.log("play online state...")
 const finalResultCounter=(winner_loser)=>{
@@ -171,6 +173,9 @@ const setCurrentStatus=(winner_loser)=>{
         payload:winner_loser
     })
 }
+
+
+
 
 
 useEffect(() => {
@@ -427,6 +432,13 @@ const searchUserOnline=async(id)=>{
 }
   
 }
+
+
+
+
+
+
+
 ////////////////////////////////////////////////SAVE WORD
 const saveWord=async(formData,callingID,flag=true)=>{
 
@@ -447,6 +459,7 @@ const saveWord=async(formData,callingID,flag=true)=>{
 
         const res=await axios.post(process.env.REACT_APP_BASEURL+`/api/save/word`,body,config)
         console.log(`Response from saveWord  ${callingID}=`,res.data)
+        const {challenge}=res.data.data
 
         if(JSON.stringify(res.status)==='200' && JSON.stringify(res.data.status)==='200'){
         dispatch({
@@ -464,7 +477,7 @@ const saveWord=async(formData,callingID,flag=true)=>{
 
             if(flag)
             {           
-                setTimeout(()=>{
+                 setTimeout(()=>{
                     if(state.final_result_winner_counter===3 || state.final_result_loser_counter===3)
                     {
 
@@ -473,19 +486,22 @@ const saveWord=async(formData,callingID,flag=true)=>{
                     }
                     else
                     { 
-                        if(state.winner_loser==="winner" || state.winner_loser==="loser") 
+                        console.log("Challenge value=",challenge)
+                        if(challenge==="1" || state.winner_loser==="winner" || state.winner_loser==="loser") 
                         {
                             console.log("calling getword API form saveword 240=",match_id,",",user_id)
-                            getWord(match_id,user_id,120)//240 because getword api hits twice in a second and screen timer in 120 sec. so to equate both (on screen timer and getword api hit timer) 
+                            getWord(match_id,user_id,150)
+                            setSeconds(120) 
                         }
                         else
                         {
-                            console.log("calling getword API form saveword 120=",match_id,",",user_id)
-                            getWord(match_id,user_id,60)//120 because getword api hits twice in a second and screen timer in 60 sec. so to equate both (on screen timer and getword api hit timer) 
+                            console.log("calling getword API form saveword 120=",match_id,",",user_id,",",challenge)
+                            getWord(match_id,user_id,100)
+                            setSeconds(60)
                         } 
                     }
 
-                },2000)
+                },1000) 
             }
            
         }
@@ -516,15 +532,19 @@ const nextRoundButton=(user)=>{
 
 
 //////////////////////////////      GET WORD
-const getWord=(match_id,user_id,time)=>{
+const getWord=async(match_id,user_id,time)=>{
 
         let old_object=null;
         let new_object=null;
 
 
+        let opponent_click_NRB=localStorage.getItem('opponent_click_NRB')
+        let user_click_NRB=localStorage.getItem('user_click_NRB')
+
     //console.log("My interval in get word API =",user_id)
 //state.interval_id.forEach(clearInterval);
     clearAllInterval()
+  //  let myinterval=101
     let myinterval= setInterval(async()=>{
 
         //console.log("My Interval instance start=",myinterval)
@@ -637,15 +657,16 @@ const getWord=(match_id,user_id,time)=>{
                 setInputText('')
                // setInputText(res.data.data.word)
                 nextRoundButton(false)
+
         }
         else if(user_id!==parseInt(res.data.data.user_id) && gamestatus==="5"  ){
 
-            console.log("YOUR OPPONENT CLICKED ON NEXT ROUND BUTTON=",state.opponent_click_next_round_button,",",state.user_click_next_round_button,",",state.user_opponent_agree)
+            console.log("YOUR OPPONENT CLICKED ON NEXT ROUND BUTTON=",user_click_NRB,",",opponent_click_NRB,",",state.user_opponent_agree)
             nextRoundButton("opponent")
             //clearInterval(myinterval)
         }
         else if(user_id===parseInt(res.data.data.user_id) && gamestatus==="5" ){
-            console.log("YOU CLICKED ON  NEXT ROUND BUTTON")
+            console.log("YOU CLICKED ON  NEXT ROUND BUTTON=",user_click_NRB,",",opponent_click_NRB,",",state.user_opponent_agree)
             nextRoundButton("user")
             //clearInterval(myinterval)
         }
@@ -661,7 +682,7 @@ const getWord=(match_id,user_id,time)=>{
             // getWordDefinition(res.data.data.word)
             console.log("setwinnerloser 3")
             //time=240
-            setResultWordHH(backup_input_text,'Word is complete')
+            setResultWordHH(backup_input_text,'Word complete')
             console.log("SAVEWORD API 20=",gamestatus,challenge,",",concede)
             saveWord({
                 match_id:state.onlineUser.user1.match_id,
@@ -799,6 +820,48 @@ const getWord=(match_id,user_id,time)=>{
 
 }
 
+
+/* useEffect(()=>{
+
+    const matchData=JSON.parse(localStorage.getItem('start_match_online'))
+    const {match_id,user_id}=matchData || {}
+
+    console.log("matchData=",match_id,",",user_id)
+    if(state.onlineUser){
+        setInterval(() => {
+            if(!showKeyboard )
+    {
+        
+
+        if(state.final_result_winner_counter===3 || state.final_result_loser_counter===3)
+        {
+
+            console.log("Not calling getword API")
+               
+        }
+        else
+        { 
+            
+            if(state.winner_loser==="winner" || state.winner_loser==="loser") 
+            {
+                console.log("calling getword API form saveword 240=",match_id,",",user_id)
+                getWord(match_id,user_id,seconds)
+                //setSeconds(120) 
+            }
+            else
+            {
+                console.log("calling getword API form saveword 120=",match_id,",",user_id)
+                getWord(match_id,user_id,seconds)
+                //setSeconds(60)
+            } 
+        }
+    }
+        }, 1000);
+    }
+
+},[seconds,showKeyboard]) */
+
+
 const setHintUsedHH=async(true_false,param='')=>{
 
     //setLoading()
@@ -820,9 +883,6 @@ const setHintUsedHH=async(true_false,param='')=>{
             } catch (error) {
               console.log("Error in setHintUsed=",error)
             }
-  
-          
-  
   
             try {
               const res=await axios.get(process.env.REACT_APP_BASEURL+`/api/userHints?user_id=${user_id}`,config)
@@ -867,11 +927,11 @@ const getWordDefinition=async(word)=>{
          
           console.log("word meaning=====>",res.data)
           if(JSON.stringify(res.data.status)==='400'){
-            console.log("setting demo word")
+            
             //setResultWord({word:inputText ,definition:res.data.error_message})
             dispatch({
               type:SET_WORD_DEFINITION,
-              payload:{word:inputText,definition:''}
+              payload:{word:inputText,definition:'Data not found!'}
               /* payload:{word:inputText ,definition:res.data.error_message} */
             })
             console.log("Setting Loser from playonline getWordDefinition API")
@@ -879,7 +939,8 @@ const getWordDefinition=async(word)=>{
             setwinnerLoser('loser')
           }
           //console.log("word meaning=====>",res.data.data.definition) 
-          if(JSON.stringify(res.data.status)==='200'){
+          if(JSON.stringify(res.data.status)==='200')
+          {
               console.log("definition found=",res.data.data.definition_1)
             dispatch({
               type:SET_WORD_DEFINITION,
@@ -895,7 +956,6 @@ const getWordDefinition=async(word)=>{
             //store increamented round in localstorage
             localStorage.setItem('info',JSON.stringify(state.info))
           }
-          
           } catch (error) {
               console.log("Error=",error)
             //setResultWord({word:inputText,definition:''})
@@ -926,7 +986,12 @@ const setResultWordHH=(word=inputText,def='')=>{
 }
 
 
-
+const gameTimeOut=(true_false)=>{
+    dispatch({
+        type:GAME_TIMEOUT,
+        payload:true_false
+    })
+}
  ////////////////////////////////// TIMER
 
 
@@ -1015,6 +1080,7 @@ const setApiHit=(count)=>{
             hint:state.hint,
             hint_used:state.hint_used,
             hint_count:state.hint_count,
+            game_timeout:state.game_timeout,
             setLoading,
             searchUserOnline,
             saveWord,
@@ -1046,7 +1112,8 @@ const setApiHit=(count)=>{
             setStartGame,
             setResultWordHH,
             setHintUsedHH,
-            getHintHH
+            getHintHH,
+            gameTimeOut
         }}>
             {children }
 

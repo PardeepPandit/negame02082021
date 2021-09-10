@@ -4,6 +4,7 @@ import {Link} from 'react-router-dom'
 import PlayOnlineContext from './playonline/context/playOnlineContext'
 import CommonContext from './MyComponent/context/common/commonContext'
 import HumanContext from  './MyComponent/context/human/humanContext'
+import Spinner from '../component/MyComponent/Spinner'
 
 
 const YouWin = () => {
@@ -22,29 +23,25 @@ const YouWin = () => {
     const {user_id,gamestatus,challenge,concede}=data || {}
 
         const [useExit,setUserExit]=useState(false)
+const [spinnerShow,setSpinnerShow]=useState(false)
 
 
 
-   /*  useEffect(()=>{
-        if(showNextRoundButton===true && (final_result_winner_counter!==3 && final_result_loser_counter!==3)){
+useEffect(()=>{
 
-            console.log("call save word API=",showNextRoundButton,",",final_result_winner_counter,",",final_result_loser_counter)
-            saveWord({
-                match_id:onlineUser.user1.match_id,
-                gamestatus:'0',
-                concede:"0",
-                user_id:parseInt(onlineUser.user1.user_id),
-                challenge:"0",
-                word:"",
-                round:online_round_counter
-            },5)
-        }
-    },[showNextRoundButton]) */
+    if(showNextRoundButton && (final_result_winner_counter===3 || final_result_loser_counter===3))
+             {
+                 console.log("STOP TIMER *W*")
+               setIsActive(false)
+             }
+},[final_result_winner_counter,final_result_loser_counter])
 
 
     useEffect(()=>{
         if(winner_loser==='winner')
         {
+            setShowNextRoundButton(true)
+
             finalResultCounter(winner_loser)
             console.log("Sending Status Winner=",gamestatus,",",challenge,",",concede)
             //setCurrentStatus('winner')
@@ -62,6 +59,7 @@ const YouWin = () => {
 
                     if(onlineUser.user1.user_id!==user_id && gamestatus==='101' && challenge==='0' && concede==='0'){
                         console.log("SAVEWORD API 6=",gamestatus,challenge,",",concede)
+                        setResultWordHH(inputText,'Opponent checked incomplete word')
                         saveWord({
                             match_id:onlineUser.user1.match_id,
                             gamestatus:'0',
@@ -88,6 +86,15 @@ const YouWin = () => {
                     else if(onlineUser.user1.user_id!==user_id && gamestatus==='2' && challenge==='0' && concede==='0')
                     {
                             setResultWordHH(inputText,'Opponent\'s Time Out')
+                            saveWord({
+                                match_id:onlineUser.user1.match_id,
+                                gamestatus:'0',
+                                concede:"0",
+                                user_id:parseInt(onlineUser.user1.user_id),
+                                challenge:"0",
+                                round:online_round_counter,
+                                word:""
+                            },60,true) 
                     }
                     else if(onlineUser.user1.user_id!==user_id && gamestatus==='18' && challenge==='0' && concede==='0')
                     {
@@ -121,24 +128,35 @@ const YouWin = () => {
 
              setSeconds(120)
              console.log("setisActive true")
-             setIsActive(true)
+
+           
+                setIsActive(true) 
+             
+
+
+             
             //setRoundComplete(true)
       
      }
      
     },[winner_loser])
     
-    useEffect(()=>{
+
+ 
+
+
+
+    /* useEffect(()=>{
 
         if(winner_loser==='winner'){
 
             setTimeout(()=>{
                 console.log("Show Next round button after 10 sec you winner")
                 setShowNextRoundButton(true)
-            },10000)
+            },1000)
 
         }
-},[winner_loser])
+},[winner_loser]) */
 
 
 
@@ -159,7 +177,8 @@ const YouWin = () => {
    useEffect(()=>{
 
     console.log(`ROUND CHANGE YW-${online_round_counter}`)
-    if(winner_loser==='winner' && showNextRoundButton)
+    
+    if(winner_loser==='winner' && (showNextRoundButton || (user_click_next_round_button===true && opponent_click_next_round_button===true)))
     {
         setShowNextRoundButton(false)
         console.log("SAVEWORD API 8=",gamestatus,challenge,",",concede)
@@ -172,9 +191,8 @@ const YouWin = () => {
             challenge:"0",
             word:"",
             round:online_round_counter
-        },8,false)
-            
-        
+        },86,false)
+                   
         setTimeout(()=>{
             console.log(`calling reset state in you win after 3 seconds,ROUND CHANGE-${online_round_counter}`)
             resetStateHHForRound(true)
@@ -185,19 +203,20 @@ const YouWin = () => {
         setSeconds(60)
         console.log("KEYBOARD ON 1")
         setShowKeyboard(true)
+        setSpinnerShow(true)
     }
 
    },[online_round_counter])
 
 
-   useEffect(()=>{
+  /*  useEffect(()=>{
 
     console.log(`ROUND CHANGE YW-${online_round_counter}`)
     if(user_click_next_round_button===true && opponent_click_next_round_button===true && winner_loser==='winner')
     {
             
         console.log("SAVEWORD API 8=",gamestatus,challenge,",",concede)
-        setUserOpponentAgree(true)
+        
         saveWord({
             match_id:onlineUser.user1.match_id,
             gamestatus:"0",
@@ -221,7 +240,7 @@ const YouWin = () => {
         setShowKeyboard(true)
     }
 
-   },[online_round_counter])
+   },[online_round_counter]) */
 
 
     useEffect(()=>
@@ -232,10 +251,12 @@ const YouWin = () => {
         {
             console.log("BOTH USERS AGREE TO GO IN NEXT ROUND")
             console.log("SET INPUT TEXT BLANK YW")
+            localStorage.setItem('Both_Users_Agree',true)
+            setUserOpponentAgree(true)
             setInputText('')
             setBackUpInputText('')
             setTimeout(()=>{
-                    nextRound()
+                nextRound()
             },4000)
             
         }
@@ -261,6 +282,13 @@ const onClick=()=>{
    // interval_id.forEach(clearInterval)
 }
 
+
+if((spinnerShow))
+    {
+        console.log("spinneron==",spinnerShow)
+        return <Spinner/>
+    }
+    else{
     return (
 
         <Fragment>
@@ -284,7 +312,7 @@ const onClick=()=>{
                                     
                                 <h1 className="win-text">You Win</h1>
                                 <h1><span style={{color:'white'}}>{word_definition && word_definition.word}</span></h1>
-                                <h1><span style={{color:'white'}}>{word_definition &&  word_definition.definition_1}</span></h1>
+                                <h1><span style={{color:'white'}}>{word_definition &&  word_definition.definition}</span></h1>
                                 {showNextRoundButton &&
                                     <Fragment>{(final_result_winner_counter===3 || final_result_loser_counter===3) ?<Link to='/dashboard' onClick={()=>{
                                     
@@ -316,6 +344,7 @@ const onClick=()=>{
     );
 
 
+}
 }
 
 export default YouWin;

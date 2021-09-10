@@ -9,7 +9,8 @@ import{
      RESET_COMMONSTATE,
      LOAD_LEVEL,
      SET_HUMAN_POSITION,
-     SET_SHOW_KEYBOARD
+     SET_SHOW_KEYBOARD,
+     SET_WORD_LENGTH
     } from '../../../../type'; 
     
     //comment
@@ -69,12 +70,18 @@ import{
                                     showKeyboard:payload,
                                     reset_state:false
                                   }
+                                  case SET_WORD_LENGTH:
+                                      return{
+                                          ...state,
+                                          word_length:payload
+                                      }
                                 case RESET_COMMONSTATE:
                                   return{
                                     ...state,
                                     inputText:null,
                                     inputText2:null,
                                     backup_input_text:null,
+                                    word_length:null,
                                     isActive:false,
                                     load_game_level:null,
                                     seconds:60,
